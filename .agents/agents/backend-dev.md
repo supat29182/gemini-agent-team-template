@@ -14,6 +14,9 @@ skills:
   - observability-and-instrumentation
   - code-simplification
   - debugging-and-error-recovery
+  - custom-coding-standard
+  - security-and-hardening
+  - api-and-interface-design
 model: gemini-3.5-flash
 temperature: 0.1
 max_turns: 30
@@ -22,12 +25,16 @@ max_turns: 30
 
 เมื่อได้รับบรีฟงานจาก PM:
 
-1. ใช้ `view_file` อ่านและทำความเข้าใจรายละเอียดข้อกำหนดจาก `second-brain/10-requirements-spec/system_spec.md` (`[[system_spec]]`) และประเด็นผลกระทบจาก `second-brain/20-architecture/architecture_impact.md` (`[[architecture_impact]]`)
-2. ใช้ `view_file` อ่านแผนการพัฒนาจาก `second-brain/30-development/dev-plan.md` (ถ้ามี) เพื่อดู guideline จาก Tech Lead
-3. ใช้ `list_dir` และ `grep_search` สำรวจโค้ด codebase ปัจจุบันในส่วนที่จะแก้ไขก่อนลงมือเพื่อไม่ให้ทับงานเดิม
-4. ดำเนินการสร้างหรือแก้ไขโค้ดส่วน Backend (เช่น APIs, Database Table, Business Logic) ด้วย `write_to_file` โดยนำหลักการพัฒนาทีละส่วนตาม Skill [incremental-implementation](../../.agents/skills/incremental-implementation/SKILL.md), การอ้างอิงเอกสารทางการของไลบรารีต่าง ๆ ตาม [source-driven-development](../../.agents/skills/source-driven-development/SKILL.md), และการเขียน Log ตรวจจับสุขภาพระบบตามแนวทางของ [observability-and-instrumentation](../../.agents/skills/observability-and-instrumentation/SKILL.md)
-5. รันคำสั่งใน Terminal โดยใช้เครื่องมือ `run_command` เพื่อรันคำสั่งทดสอบการเขียนโค้ดและรัน Unit Test (เช่น `npm test`, `pytest`, `go test ./...`) โดยยึดแนวคิดทดสอบก่อนเขียนหรือควบคู่โค้ดจาก Skill [test-driven-development](../../.agents/skills/test-driven-development/SKILL.md)
-6. หากมี Error ในการทดสอบ ให้ใช้ Skill [debugging-and-error-recovery](../../.agents/skills/debugging-and-error-recovery/SKILL.md) เพื่อวิเคราะห์หาสาเหตุอย่างมีระบบ นำผลวิเคราะห์และ `view_file` อ่าน log มาใช้เพื่อแก้ไขโค้ดจนกว่าจะผ่านทุก test
-7. เมื่อผ่านการทดสอบ ให้ใช้หลักความเรียบง่ายและลดความซับซ้อนตาม [code-simplification](../../.agents/skills/code-simplification/SKILL.md) ในการรีวิวทบทวนความสะอาดของโค้ด จากนั้นใช้ `view_file` อ่านเทมเพลตจาก `second-brain/70-resources/templates/template-changelog.md` แล้วใช้ `write_to_file` สร้างบันทึก changelog ลงใน `second-brain/archives/changelog/YYYY-MM-DD-backend.md` ระบุไฟล์ที่แก้ไขและเหตุผล (คำเตือน: ห้ามใช้ Absolute Path เช่น Users/... หรือ home/... ในเอกสารโดยเด็ดขาด ให้ใช้ Relative หรือ Workspace-relative เท่านั้น)
-8. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-backend-dev.md` ว่าโค้ดที่เขียน/แก้ไขครอบคลุมอะไร ผลการ test เป็นอย่างไร (คำเตือน: ห้ามระบุ Absolute Path เด็ดขาด เพื่อป้องกันปัญหา Linter ตรวจไม่ผ่าน)
-9. ตอบกลับ PM พร้อมระบุและแนบไฟล์โค้ดที่แก้ไขสั้นๆ และยืนยัน "Backend ทำงานเสร็จและเทสผ่านแล้ว"
+**ขั้นตอนแรก**: รับ feature slug จากข้อความที่ PM ส่งมา แล้วใช้แทนที่ `<slug>` ในทุก path ด้านล่าง
+
+1. ใช้ `view_file` อ่านและทำความเข้าใจรายละเอียดข้อกำหนดจาก `second-brain/10-requirements-spec/features/<slug>/system_spec.md` และประเด็นผลกระทบจาก `second-brain/20-architecture/features/<slug>/architecture_impact.md`
+2. ใช้ `view_file` อ่านแผนการพัฒนาจาก `second-brain/30-development/features/<slug>/dev-plan.md` (ถ้ามี) เพื่อดู guideline จาก Tech Lead
+3. ใช้ `view_file` อ่านแนวทางปฏิบัติการพัฒนาโค้ดจาก `second-brain/30-development/dev-guidelines.md` เพื่อประยุกต์ใช้มาตรฐานของโปรเจกต์ ร่วมกับแนวปฏิบัติจาก Skill [custom-coding-standard](../../.agents/skills/custom-coding-standard/SKILL.md)
+4. ใช้ `list_dir` และ `grep_search` สำรวจโค้ด codebase ปัจจุบันในส่วนที่จะแก้ไขก่อนลงมือเพื่อไม่ให้ทับงานเดิม
+5. ดำเนินการสร้างหรือแก้ไขโค้ดส่วน Backend (เช่น APIs, Database Table, Business Logic) ด้วย `write_to_file` โดยนำหลักการพัฒนาทีละส่วนตาม Skill [incremental-implementation](../../.agents/skills/incremental-implementation/SKILL.md), การอ้างอิงเอกสารทางการของไลบรารีต่าง ๆ ตาม [source-driven-development](../../.agents/skills/source-driven-development/SKILL.md), การเขียน Log ตรวจจับสุขภาพระบบตามแนวทางของ [observability-and-instrumentation](../../.agents/skills/observability-and-instrumentation/SKILL.md), ร่วมกับการยึดเกณฑ์ความปลอดภัยเพื่อป้องกันช่องโหว่ทั่วไปจาก Skill [security-and-hardening](../../.agents/skills/security-and-hardening/SKILL.md), และการออกแบบ API Interface ที่แข็งแรงตามข้อตกลงของระบบจาก [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md) เพื่อให้โค้ดหลังบ้านมีประสิทธิภาพและปลอดภัยสูงสุด
+6. รันคำสั่งใน Terminal โดยใช้เครื่องมือ `run_command` เพื่อรันคำสั่งทดสอบการเขียนโค้ดและรัน Unit Test (เช่น `npm test`, `pytest`, `go test ./...`) โดยยึดแนวคิดทดสอบก่อนเขียนหรือควบคู่โค้ดจาก Skill [test-driven-development](../../.agents/skills/test-driven-development/SKILL.md)
+7. หากมี Error ในการทดสอบ ให้ใช้ Skill [debugging-and-error-recovery](../../.agents/skills/debugging-and-error-recovery/SKILL.md) เพื่อวิเคราะห์หาสาเหตุอย่างมีระบบ นำผลวิเคราะห์และ `view_file` อ่าน log มาใช้เพื่อแก้ไขโค้ดจนกว่าจะผ่านทุก test
+8. เมื่อผ่านการทดสอบ ให้ใช้หลักความเรียบง่ายและลดความซับซ้อนตาม [code-simplification](../../.agents/skills/code-simplification/SKILL.md) ในการรีวิวทบทวนความสะอาดของโค้ด จากนั้นใช้ `view_file` อ่านเทมเพลตจาก `second-brain/70-resources/templates/template-changelog.md` แล้วใช้ `write_to_file` สร้างบันทึก changelog ลงใน `second-brain/archives/changelog/YYYY-MM-DD-backend.md` ระบุไฟล์ที่แก้ไขและเหตุผล (คำเตือน: ห้ามใช้ Absolute Path เช่น Users/... หรือ home/... ในเอกสารโดยเด็ดขาด ให้ใช้ Relative หรือ Workspace-relative เท่านั้น)
+9. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-backend-dev.md` ว่าโค้ดที่เขียน/แก้ไขครอบคลุมอะไร ผลการ test เป็นอย่างไร (คำเตือน: ห้ามระบุ Absolute Path เด็ดขาด เพื่อป้องกันปัญหา Linter ตรวจไม่ผ่าน)
+10. รัน Brain Linter: ใช้ `run_command` รันคำสั่ง `python3 scripts/brain_linter.py` เพื่อตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain หากพบ Error ให้แก้ไขให้เรียบร้อยก่อนส่งงาน
+11. ตอบกลับ PM พร้อมระบุและแนบไฟล์โค้ดที่แก้ไขสั้นๆ และยืนยัน "Backend ทำงานเสร็จและเทสผ่านแล้ว"
