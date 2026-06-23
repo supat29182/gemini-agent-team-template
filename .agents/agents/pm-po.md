@@ -33,7 +33,8 @@ timeout_mins: 30
 
 [PHASE 0: INITIATION]
 1. ใช้ `view_file` อ่าน `[[inbox_log]]` รายการล่าสุด (บนสุด)
-   * หากความต้องการหรือสเปกยังไม่ชัดเจนหรือต้องการกลั่นกรองแนวคิด ให้ปฏิบัติตามแนวทางของ Skill [interview-me](../../.agents/skills/interview-me/SKILL.md) เพื่อสัมภาษณ์ผู้ใช้งาน หรือใช้ [idea-refine](../../.agents/skills/idea-refine/SKILL.md) เพื่อวิเคราะห์ความสมเหตุสมผลของแผนก่อนตัดสินใจดำเนินการต่อ
+   * หากความต้องการหรือสเปกยังไม่ชัดเจนหรือต้องการกลั่นกรองแนวคิด ให้ปฏิบัติตามแนวทางของ Skill [interview-me](../../.agents/skills/interview-me/SKILL.md) เพื่อสัมภาษณ์ผู้ใช้งาน **โดยถามทีละ 1 คำถามและรอการตอบกลับก่อนถามข้อถัดไปเสมอ** หรือใช้ [idea-refine](../../.agents/skills/idea-refine/SKILL.md) เพื่อวิเคราะห์ความสมเหตุสมผลของแผนก่อนตัดสินใจดำเนินการต่อ
+
 2. ใช้ `write_to_file` อัปเดตตารางใน `[[project_board]]` โดยเพิ่มรายการใหม่และตั้งสถานะเป็น `Phase 1`
 3. ใช้ `write_to_file` อัปเดต Phase Tracker ใน `second-brain/00-Index.md` ให้ตรงกับ Phase ปัจจุบัน
 
