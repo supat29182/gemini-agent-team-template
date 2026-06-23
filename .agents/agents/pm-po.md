@@ -44,7 +44,7 @@ timeout_mins: 30
 
 [PHASE 1: DESIGN]
 5. ส่ง Requirement บรีฟ พร้อมกับลิงก์ไปยัง `brd.md` และ `epics_user_stories.md` ในโฟลเดอร์ฟีเจอร์ ไปให้ `@sa` และสั่งให้วิเคราะห์ออกแบบรายละเอียดทางเทคนิค (Technical Specification) แล้วสร้าง/แก้ไขข้อมูลลงในไฟล์ `second-brain/10-requirements-spec/features/<slug>/system_spec.md`
-6. เมื่อ SA ทำงานเสร็จ ให้ส่งเนื้อหาจากไฟล์สเปกฟีเจอร์นั้น ไปให้ `@solution-architect` เพื่อวิเคราะห์หาจุดผลกระทบและบันทึกลงไฟล์ `second-brain/20-architecture/architecture_impact.md` (`[[architecture_impact]]`)
+6. เมื่อ SA ทำงานเสร็จ ให้ส่งเนื้อหาจากไฟล์สเปกฟีเจอร์นั้น ไปให้ `@solution-architect` เพื่อวิเคราะห์หาจุดผลกระทบและบันทึกลงไฟล์ `second-brain/20-architecture/features/<slug>/architecture_impact.md`
 (รอจนกระทั่งเอกสารทั้งหมดเสร็จสมบูรณ์และลิงก์หากัน)
 
 [PHASE 2: IMPLEMENTATION]
@@ -52,13 +52,13 @@ timeout_mins: 30
 8. เรียกใช้งาน `@tech-lead` เพื่อให้วางแผนการพัฒนาใน `second-brain/30-development/features/<slug>/dev-plan.md` พร้อมระบุการแตก **Tasks และ Subtasks** ทางเทคนิคสำหรับการพัฒนา
 9. เรียกใช้งาน `@backend-dev` สั่งให้สร้าง/แก้ไข API, Database และเขียน Unit Test ตามสเปกฟีเจอร์และแผนงาน
 10. เมื่อ Backend เสร็จ เรียกใช้งาน `@frontend-dev` สั่งให้ทำ UI, เชื่อมต่อ API และทดสอบหน้าบ้านตามที่ได้รับมอบหมายใน Subtasks
-11. เมื่อ Dev เสร็จ เรียกใช้งาน `@security` สั่งให้ตรวจสอบช่องโหว่ของโค้ดที่ถูกสร้างและรายงานลงใน `[[security_audit]]`
+11. เมื่อ Dev เสร็จ เรียกใช้งาน `@security` สั่งให้ตรวจสอบช่องโหว่ของโค้ดที่ถูกสร้างและรายงานลงใน `second-brain/40-security/features/<slug>/security_audit.md`
 12. หากได้รับรายงาน `[STATUS: FAILED]` ให้ส่งปัญหากลับไปยัง `@backend-dev` หรือ `@frontend-dev` เพื่อแก้ไข แล้วเรียก `@security` ตรวจซ้ำจนกว่าจะ PASSED (ข้อควรระวัง/Loop Protection: หากส่งกลับไปแก้ไขซ้ำเกิน 2 รอบแล้วตรวจยังไม่ผ่าน ให้หยุดการวนซ้ำและแจ้งรายงานความปลอดภัยเพื่อให้ผู้ใช้พิจารณาช่วยเหลือการวิเคราะห์)
 
 [PHASE 3: VERIFICATION & DELIVERY]
 13. ใช้ `write_to_file` อัปเดตสถานะงานใน `[[project_board]]` เป็น `Phase 3` และอัปเดต Phase Tracker ใน `00-Index.md`
-14. เรียกใช้งาน `@qa` สั่งให้อ่านไฟล์สเปกฟีเจอร์ `system_spec.md` และ `epics_user_stories.md` จากโฟลเดอร์ฟีเจอร์ เพื่อจัดทำ Test Plan `[[test_plan]]`
-15. เรียกใช้งาน `@qa-automate` สั่งให้รันทดสอบ E2E ตาม `[[test_plan]]` แล้วบันทึกผลใน `[[test_execution]]`
+14. เรียกใช้งาน `@qa` สั่งให้อ่านไฟล์สเปกฟีเจอร์ `system_spec.md` และ `epics_user_stories.md` จากโฟลเดอร์ฟีเจอร์ เพื่อจัดทำ Test Plan ใน `second-brain/50-qa-testing/features/<slug>/test_plan.md`
+15. เรียกใช้งาน `@qa-automate` สั่งให้รันทดสอบ E2E ตามแผนการทดสอบนั้น แล้วบันทึกผลใน `second-brain/50-qa-testing/features/<slug>/test_execution.log`
 16. หาก QA ตรวจสอบพบ Bug ให้ส่งรายงาน Bug กลับไปยัง `@backend-dev` หรือ `@frontend-dev` เพื่อแก้ไข แล้วเรียก `@qa-automate` ทดสอบซ้ำ (ข้อควรระวัง/Loop Protection: หากแก้ Bug วนเวียนและทดสอบซ้ำเกิน 2 รอบ ให้หยุดรันและรายงาน Log ล่าสุดเพื่อให้ผู้ใช้แทรกแซงช่วยเหลือ)
 17. เมื่อผลการรันเป็น "Passed" ให้ใช้ `write_to_file` อัปเดตสถานะใน `[[project_board]]` เป็น `Done` และอัปเดต Phase Tracker ใน `00-Index.md`
 

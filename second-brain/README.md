@@ -21,8 +21,9 @@
 *   **เอกสารหลัก**: `system_spec.md` และโฟลเดอร์ใน `features/`
 
 ### [📐 20-architecture](20-architecture/)
-*   **เป้าหมาย**: แผนผังโครงสร้างสถาปัตยกรรมระบบ, การออกแบบส่วนประกอบย่อย และรายงานการวิเคราะห์ผลกระทบเมื่อเกิดการแก้ไขโค้ด (Blast Radius/Architecture Impact) จัดการโดย `@solution-architect`
-*   **เอกสารหลัก**: `architecture_impact.md`
+*   **เป้าหมาย**: การวิเคราะห์โครงสร้างสถาปัตยกรรมระบบและการวิเคราะห์ผลกระทบเมื่อมีการแก้ไขโค้ด (Blast Radius Analysis):
+    *   `features/<feature-id-slug>/architecture_impact.md`: จัดทำโดย `@solution-architect` เพื่อแสดงไฟล์ที่ได้รับผลกระทบและการออกแบบ API Boundaries
+*   **เอกสารหลัก**: โฟลเดอร์ใน `features/`
 
 ### [💻 30-development](30-development/)
 *   **เป้าหมาย**: เอกสารวางแผนและแนวทางการเขียนโค้ด ประกอบด้วย:
@@ -30,12 +31,15 @@
 *   **เอกสารหลัก**: โฟลเดอร์ใน `features/`
 
 ### [🛡️ 40-security](40-security/)
-*   **เป้าหมาย**: รายงานการสแกนความปลอดภัยโค้ด (Security Audit Report), รายการช่องโหว่ OWASP ที่วิเคราะห์, และวิธีการบรรเทาผลกระทบ (Mitigation Guidelines) จัดการโดย `@security`
-*   **เอกสารหลัก**: `security_audit.md`
+*   **เป้าหมาย**: การประเมินความปลอดภัยและสแกนช่องโหว่ (OWASP Top 10):
+    *   `features/<feature-id-slug>/security_audit.md`: จัดทำโดย `@security` เพื่อแสดงผลการสแกนช่องโหว่และวิธีการแก้ไข (Remediation Steps)
+*   **เอกสารหลัก**: โฟลเดอร์ใน `features/`
 
 ### [🧪 50-qa-testing](50-qa-testing/)
-*   **เป้าหมาย**: แผนการทดสอบระบบ (Test Plans), เคสสำหรับการทดสอบความถูกต้อง (Test Cases) และ Log การทดสอบระบบระดับ End-to-End จัดการโดย `@qa` และ `@qa-automate`
-*   **เอกสารหลัก**: `test_plan.md`
+*   **เป้าหมาย**: แผนและการทดสอบคุณภาพระบบระดับ E2E:
+    *   `features/<feature-id-slug>/test_plan.md`: แผนการทดสอบที่ออกแบบโดย `@qa`
+    *   `features/<feature-id-slug>/test_execution.log`: บันทึกผลการรันทดสอบจริงโดย `@qa-automate`
+*   **เอกสารหลัก**: โฟลเดอร์ใน `features/`
 
 ### [🚀 60-delivery-ops](60-delivery-ops/)
 *   **เป้าหมาย**: รายละเอียดการเตรียมระบบสำหรับการนำส่ง (Deployment Playbooks), ข้อมูลการ Deploy, สรุปประวัติการอัปเดต (Release Notes) และรายงานวิเคราะห์หลังเกิดเหตุ (Post-Mortem Reports)
@@ -62,7 +66,7 @@ graph TD
         US -.->|ใช้อ้างอิง| SA
         SA -->|4. เขียน Spec ทางเทคนิคเฉพาะฟีเจอร์| Spec[features/slug/system_spec.md]
         PM -->|5. ส่งต่อ Spec เพื่อหาผลกระทบ| Arch[solution-architect]
-        Arch -->|6. วิเคราะห์ Impact| Impact[architecture_impact.md]
+        Arch -->|6. วิเคราะห์ Impact| Impact[features/slug/architecture_impact.md]
     end
 
     subgraph "Phase 2: Implementation (Tasks Breakdown)"
@@ -73,16 +77,16 @@ graph TD
         PM -->|9. สั่งเขียน Server/Test ตาม Subtasks| BE[backend-dev]
         PM -->|10. สั่งเขียน UI ตาม Subtasks| FE[frontend-dev]
         PM -->|11. สั่งตรวจสอบความปลอดภัย| SE[security]
-        SE -->|12. ตรวจ Code Audit| Audit[security_audit.md]
+        SE -->|12. ตรวจ Code Audit| Audit[features/slug/security_audit.md]
     end
 
     subgraph "Phase 3: Verification & Delivery"
         PM -->|13. ให้เขียนแผนการทดสอบ| QA[qa]
         US -.->|ใช้อ้างอิง| QA
         Spec -.->|ใช้อ้างอิง| QA
-        QA -->|14. ส่ง Test Plan| TP[test_plan.md]
+        QA -->|14. ส่ง Test Plan| TP[features/slug/test_plan.md]
         PM -->|15. สั่งทดสอบระบบ E2E| QAA[qa-automate]
-        QAA -->|16. บันทึกผลการทดสอบ| Exec[test_execution.log]
+        QAA -->|16. บันทึกผลการทดสอบ| Exec[features/slug/test_execution.log]
     end
 
     subgraph "Phase 4: Release & Closure"
