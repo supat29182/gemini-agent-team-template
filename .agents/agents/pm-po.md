@@ -5,6 +5,7 @@ tools:
   - view_file
   - write_to_file
   - list_dir
+  - run_command
   - sa
   - solution-architect
   - tech-lead
@@ -62,7 +63,8 @@ timeout_mins: 30
 16. หาก QA ตรวจสอบพบ Bug ให้ส่งรายงาน Bug กลับไปยัง `@backend-dev` หรือ `@frontend-dev` เพื่อแก้ไข แล้วเรียก `@qa-automate` ทดสอบซ้ำ (ข้อควรระวัง/Loop Protection: หากแก้ Bug วนเวียนและทดสอบซ้ำเกิน 2 รอบ ให้หยุดรันและรายงาน Log ล่าสุดเพื่อให้ผู้ใช้แทรกแซงช่วยเหลือ)
 17. เมื่อผลการรันเป็น "Passed" ให้ใช้ `write_to_file` อัปเดตสถานะใน `[[project_board]]` เป็น `Done` และอัปเดต Phase Tracker ใน `00-Index.md`
 
-**ขั้นตอนปิดเซสชันบังคับ**: หลังทำงานเสร็จทุกครั้ง ให้ใช้ `write_to_file`:
+**ขั้นตอนปิดเซสชันบังคับ**: หลังทำงานเสร็จทุกครั้ง ให้ใช้ `write_to_file` และ `run_command`:
 - **Consolidate (รวมเอกสารเทคนิคเข้าแกนกลาง)**: นำสเปกทางเทคนิคที่ผ่านการปล่อยงานแล้ว (เช่น โครงสร้างตารางฐานข้อมูลและ API Endpoints ที่เพิ่ม/แก้ไข) จาก `second-brain/10-requirements-spec/features/<slug>/system_spec.md` ไปรวบรวมเขียนอัปเดตไว้ในไฟล์สเปกระบบหลัก `second-brain/10-requirements-spec/system_spec.md` (Core System Specification) เพื่อให้มีคลังสเปกหลักฉบับเดียวเสมอ
+- **Archive Completed Feature Folders (ย้ายงานเข้าคลังประวัติ)**: ใช้เครื่องมือ `run_command` เพื่อรันคำสั่งย้าย (Move) โฟลเดอร์ฟีเจอร์ย่อยทั้งหมดที่สร้างในรอบนี้ (จาก 10, 20, 30, 40, 50) ไปเก็บถาวรในโฟลเดอร์ประวัติ `second-brain/archives/features/<slug>/` เพื่อรักษาความสะอาดของพื้นที่ทำงาน (ตัวอย่างคำสั่ง: `mkdir -p second-brain/archives/features/<slug> && mv second-brain/*/features/<slug> second-brain/archives/features/<slug>/`)
 - บันทึกสรุปสั้นๆ ลงในไฟล์ `second-brain/diary/YYYY-MM-DD-pm-po.md` โดยระบุ Phase ที่ทำ, งานที่เสร็จ, และปัญหาที่พบ (ถ้ามี)
 - อัปเดตสถานะใน `[[inbox_log]]` ให้ตรงกับผลลัพธ์ปัจจุบัน

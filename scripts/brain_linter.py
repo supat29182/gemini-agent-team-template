@@ -22,8 +22,10 @@ VALID_TAGS = {
     'doc/index', 'doc/adr', 'doc/changelog',
     'doc/kb', 'doc/diary', 'doc/snapshot',
     'doc/spec', 'doc/eval', 'doc/postmortem',
+    'doc/brd', 'doc/user-story', 'doc/dev-plan',
     'phase/inbox', 'phase/design', 'phase/implement',
-    'phase/verify', 'phase/ship',
+    'phase/verify', 'phase/ship', 'phase/initiation',
+    'phase/implementation',
 }
 
 # Files/dirs to skip frontmatter check
@@ -121,7 +123,7 @@ def check_orphans(file_map, linked_basenames):
     for basename, rel_path in file_map.items():
         if basename in exempt_basenames:
             continue
-        if 'diary/' in rel_path or 'archives/' in rel_path or 'templates/' in rel_path:
+        if 'diary/' in rel_path or 'archives/' in rel_path or 'templates/' in rel_path or 'features/' in rel_path:
             continue
             
         if basename not in linked_basenames:
@@ -449,6 +451,29 @@ def check_workspace_rules(workspace_dir):
         
     return errors
 
+def check_strategy_b_folders(workspace_dir):
+    """ตรวจสอบความสมบูรณ์ของโฟลเดอร์ฟีเจอร์ตาม Strategy B"""
+    errors = []
+    features_dir = os.path.join(workspace_dir, 'second-brain', '10-requirements-spec', 'features')
+    if not os.path.exists(features_dir):
+        return errors
+        
+    for slug in os.listdir(features_dir):
+        slug_dir = os.path.join(features_dir, slug)
+        if os.path.isdir(slug_dir):
+            # Check for required files
+            required_files = ['brd.md', 'epics_user_stories.md', 'system_spec.md']
+            for req_file in required_files:
+                file_path = os.path.join(slug_dir, req_file)
+                if not os.path.exists(file_path):
+                    rel_path = os.path.relpath(file_path, workspace_dir)
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'missing_feature_artifact',
+                        'reason': f"ฟีเจอร์ '{slug}' ขาดไฟล์สเปกที่จำเป็น: {req_file} (กลยุทธ์ B บังคับให้มี BRD, Epics & User Stories, และ System Spec ในทุกๆ ฟีเจอร์)"
+                    })
+    return errors
+
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     workspace_dir = os.path.abspath(os.path.join(script_dir, '..'))
@@ -489,6 +514,11 @@ def main():
     print(f"Checked absolute paths in Second Brain files.")
     all_errors.extend(sb_abs_errors)
 
+    # Check 2.6: Strategy B Folder Completeness
+    strategy_b_errors = check_strategy_b_folders(workspace_dir)
+    print(f"Checked Strategy B active feature folders.")
+    all_errors.extend(strategy_b_errors)
+
     # Check 3: Agent configurations
     total_agents, agent_errors = check_agent_configurations(workspace_dir)
     print(f"Checked {total_agents} agent configurations in .agents/agents/.")
@@ -516,6 +546,7 @@ def main():
         print("   - Second Brain (No orphan files): OK")
         print("   - Critical Files & Templates: OK")
         print("   - Secrets & Credentials Leak Scan: OK")
+        print("   - Strategy B Feature Folders: OK")
         print("   - Agent Configs (No absolute paths & links valid): OK")
         print("   - AGENTS.md Workspace Rules (No absolute paths): OK")
         sys.exit(0)
