@@ -12,15 +12,20 @@
 *   **เป้าหมาย**: บันทึกความต้องการดิบ (Raw Requirements), บันทึกการประชุม (Meeting Notes), รายละเอียดบรีฟจากลูกค้า หรือไอเดียเริ่มต้นสำหรับการพัฒนา
 
 ### [📝 10-requirements-spec](10-requirements-spec/)
-*   **เป้าหมาย**: เอกสารคุณสมบัติเฉพาะของระบบ (System Specification) ซึ่งเขียนโดย `@sa` ประกอบด้วยรายละเอียด Business Logic, รายละเอียดของ API Endpoints, และโครงสร้างฐานข้อมูล (Database Schema)
-*   **เอกสารหลัก**: `system_spec.md`
+*   **เป้าหมาย**: คลังเอกสารข้อกำหนดความต้องการทางธุรกิจและการออกแบบระบบ ประกอบด้วย:
+    *   `brd.md` (Business Requirement Document): จัดทำโดย `@pm-po` เพื่อระบุเป้าหมาย ขอบเขต และผู้ใช้งาน
+    *   `epics_user_stories.md` (Epics, User Stories & Acceptance Criteria): จัดทำโดย `@pm-po` ในการแตกฟีเจอร์เป็นหน่วยย่อยพร้อม AC (Given-When-Then)
+    *   `system_spec.md` (System Specification): จัดทำโดย `@sa` เพื่ออธิบาย Technical Detail, API Endpoints, Database Schema
+*   **เอกสารหลัก**: `brd.md`, `epics_user_stories.md`, `system_spec.md`
 
 ### [📐 20-architecture](20-architecture/)
 *   **เป้าหมาย**: แผนผังโครงสร้างสถาปัตยกรรมระบบ, การออกแบบส่วนประกอบย่อย และรายงานการวิเคราะห์ผลกระทบเมื่อเกิดการแก้ไขโค้ด (Blast Radius/Architecture Impact) จัดการโดย `@solution-architect`
 *   **เอกสารหลัก**: `architecture_impact.md`
 
 ### [💻 30-development](30-development/)
-*   **เป้าหมาย**: ข้อตกลงในการเขียนโปรแกรม (Coding Conventions), การตกลงรูปแบบ API (API Contracts), รายละเอียดการทำ Database Migration, และคู่มือการตั้งค่าสภาพแวดล้อมเพื่อให้นักพัฒนาเขียนโค้ดได้อย่างถูกต้อง
+*   **เป้าหมาย**: เอกสารวางแผนและแนวทางการเขียนโค้ด ประกอบด้วย:
+    *   `dev-plan.md` (Development Plan): จัดทำโดย `@tech-lead` เพื่อระบุความเสี่ยง ลำดับขั้นตอน และการแตก **Tasks & Subtasks** อย่างชัดเจนเพื่อมอบหมายให้นักพัฒนา
+*   **เอกสารหลัก**: `dev-plan.md`
 
 ### [🛡️ 40-security](40-security/)
 *   **เป้าหมาย**: รายงานการสแกนความปลอดภัยโค้ด (Security Audit Report), รายการช่องโหว่ OWASP ที่วิเคราะห์, และวิธีการบรรเทาผลกระทบ (Mitigation Guidelines) จัดการโดย `@security`
@@ -44,32 +49,43 @@
 graph TD
     User([User Requirement]) -->|เขียนลงบนสุดของ Inbox Log| PM[pm-po]
     
-    subgraph "Phase 1: Design"
-        PM -->|1. มอบหมายสเปก| SA[sa]
-        SA -->|2. เขียน Spec| Spec[system_spec.md]
-        PM -->|3. ส่งต่อ Spec เพื่อหาผลกระทบ| Arch[solution-architect]
-        Arch -->|4. วิเคราะห์ Impact| Impact[architecture_impact.md]
+    subgraph "Phase 0: Initiation (Business Align)"
+        PM -->|1. สร้างเอกสารธุรกิจ| BRD[brd.md]
+        PM -->|2. สร้าง User Stories & AC| US[epics_user_stories.md]
     end
 
-    subgraph "Phase 2: Implementation"
-        PM -->|5. ให้วางแผน| TL[tech-lead]
-        TL -->|6. ส่งแผนพัฒนา| Plan[dev-plan.md]
-        PM -->|7. สั่งเขียน Server/Test| BE[backend-dev]
-        PM -->|8. สั่งเขียน UI/Integration| FE[frontend-dev]
-        PM -->|9. สั่งตรวจสอบความปลอดภัย| SE[security]
-        SE -->|10. ตรวจ Code Audit| Audit[security_audit.md]
+    subgraph "Phase 1: Design (Technical Specification)"
+        PM -->|3. มอบหมายวิเคราะห์| SA[sa]
+        BRD -.->|ใช้อ้างอิง| SA
+        US -.->|ใช้อ้างอิง| SA
+        SA -->|4. เขียน Spec ทางเทคนิค| Spec[system_spec.md]
+        PM -->|5. ส่งต่อ Spec เพื่อหาผลกระทบ| Arch[solution-architect]
+        Arch -->|6. วิเคราะห์ Impact| Impact[architecture_impact.md]
+    end
+
+    subgraph "Phase 2: Implementation (Tasks Breakdown)"
+        PM -->|7. ให้วางแผนและแบ่งงาน| TL[tech-lead]
+        Spec -.->|ใช้อ้างอิง| TL
+        Impact -.->|ใช้อ้างอิง| TL
+        TL -->|8. แตกแผนงาน Tasks & Subtasks| Plan[dev-plan.md]
+        PM -->|9. สั่งเขียน Server/Test ตาม Subtasks| BE[backend-dev]
+        PM -->|10. สั่งเขียน UI ตาม Subtasks| FE[frontend-dev]
+        PM -->|11. สั่งตรวจสอบความปลอดภัย| SE[security]
+        SE -->|12. ตรวจ Code Audit| Audit[security_audit.md]
     end
 
     subgraph "Phase 3: Verification & Delivery"
-        PM -->|11. ให้เขียนแผนการทดสอบ| QA[qa]
-        QA -->|12. ส่ง Test Plan| TP[test_plan.md]
-        PM -->|13. สั่งทดสอบระบบ E2E| QAA[qa-automate]
-        QAA -->|14. บันทึกผลการทดสอบ| Exec[test_execution.log]
+        PM -->|13. ให้เขียนแผนการทดสอบ| QA[qa]
+        US -.->|ใช้อ้างอิง| QA
+        Spec -.->|ใช้อ้างอิง| QA
+        QA -->|14. ส่ง Test Plan| TP[test_plan.md]
+        PM -->|15. สั่งทดสอบระบบ E2E| QAA[qa-automate]
+        QAA -->|16. บันทึกผลการทดสอบ| Exec[test_execution.log]
     end
 
     PM -.->|อัปเดตสถานะงาน| PB[project_board.md]
     PM -.->|อัปเดต Phase Tracker| Idx[00-Index.md]
-    PM -->|15. สรุปความสำเร็จโครงการ| User
+    PM -->|17. สรุปความสำเร็จโครงการ| User
 ```
 
 ระบบเอกสารนี้เป็น "สมองส่วนที่สอง" ที่ช่วยให้มั่นใจได้ว่า AI Agents ทุกตัวที่ทำงานในลูปสามารถเข้าถึงข้อมูลที่ตรงกัน อัปเดตล่าสุด และส่งมอบงานได้อย่างมีมาตรฐานสูงและปลอดภัย
