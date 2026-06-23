@@ -6,8 +6,8 @@ mcpServers:
     command: 'npx'
     args: ['-y', '@playwright/mcp@latest']
 tools:
-  - read_file
-  - write_file
+  - view_file
+  - write_to_file
   - run_command
   - mcp_playwright_*
 skills:
@@ -21,8 +21,8 @@ max_turns: 25
 
 เมื่อได้รับคำสั่งจาก PM หรือ QA Lead:
 
-1. ใช้ `read_file` อ่านและศึกษาความต้องการทดสอบจาก `second-brain/50-qa-testing/test_plan.md` (`[[test_plan]]`) ให้เข้าใจทุก Test Scenario ก่อนเริ่มรัน
+1. ใช้ `view_file` อ่านและศึกษาความต้องการทดสอบจาก `second-brain/50-qa-testing/test_plan.md` (`[[test_plan]]`) ให้เข้าใจทุก Test Scenario ก่อนเริ่มรัน
 2. ใช้เครื่องมือ `run_command` เพื่อรันชุดการทดสอบ E2E อัตโนมัติที่มีอยู่ในระบบ (เช่น `npm run test:e2e` หรือ `npx playwright test`)
 3. ใช้เครื่องมือของ `playwright` MCP (เช่น `mcp_playwright_navigate`, `mcp_playwright_click`, `mcp_playwright_fill`) ในการเปิดหน้าเว็บจริงและทดสอบ Flow แบบ Interactive ตามที่ระบุในแผนการทดสอบ และสามารถประยุกต์ใช้แนวทางทดสอบเบราว์เซอร์จาก Skill [browser-testing-with-devtools](../../.agents/skills/browser-testing-with-devtools/SKILL.md) เพื่อเก็บข้อมูลหรือวิเคราะห์การทดสอบเพิ่มเติม
-4. หากเกิดข้อผิดพลาดขึ้นระหว่างการทดสอบ ให้ใช้ Skill [debugging-and-error-recovery](../../.agents/skills/debugging-and-error-recovery/SKILL.md) เข้าช่วยสืบค้นหาสาเหตุอย่างละเอียด จากนั้นรวบรวมผลลัพธ์ทั้งหมด (Passed/Failed, Error messages, Screenshots ถ้ามี) แล้วใช้ `write_file` บันทึกรายงานการรัน (Test Execution Log) ไว้ที่ไฟล์ `second-brain/50-qa-testing/test_execution.log` (`[[test_execution]]`)
+4. หากเกิดข้อผิดพลาดขึ้นระหว่างการทดสอบ ให้ใช้ Skill [debugging-and-error-recovery](../../.agents/skills/debugging-and-error-recovery/SKILL.md) เข้าช่วยสืบค้นหาสาเหตุอย่างละเอียด จากนั้นรวบรวมผลลัพธ์ทั้งหมด (Passed/Failed, Error messages, Screenshots ถ้ามี) แล้วใช้ `write_to_file` บันทึกรายงานการรัน (Test Execution Log) ไว้ที่ไฟล์ `second-brain/50-qa-testing/test_execution.log` (`[[test_execution]]`)
 5. แจ้งผลการตรวจสอบ (หากมี Error ใน Console หรือจุดทำงานล้มเหลว) หรือยืนยันสถานะ "Passed" ส่งกลับไปยัง QA Lead พร้อมแนบลิงก์ไฟล์ `[[test_execution]]`
