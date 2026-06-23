@@ -23,6 +23,7 @@ VALID_TAGS = {
     'doc/kb', 'doc/diary', 'doc/snapshot',
     'doc/spec', 'doc/eval', 'doc/postmortem',
     'doc/brd', 'doc/user-story', 'doc/dev-plan',
+    'doc/architecture',
     'phase/inbox', 'phase/design', 'phase/implement',
     'phase/verify', 'phase/ship', 'phase/initiation',
     'phase/implementation',
@@ -31,7 +32,7 @@ VALID_TAGS = {
 # Files/dirs to skip frontmatter check
 SKIP_FRONTMATTER = {
     '00-Index.md', 'README.md', 'project_board.md',
-    'inbox_log.md', 'tagging-policy.md',
+    'inbox_log.md', 'tagging-policy.md', 'AGENTS.md',
 }
 
 def clean_heading(heading_text):
@@ -39,7 +40,7 @@ def clean_heading(heading_text):
     text = re.sub(r'[*_`]', '', text)
     return text
 
-def build_index(root_dir):
+def build_index(root_dir, workspace_dir=None):
     file_map = {}
     headings_map = {}
     
@@ -63,6 +64,24 @@ def build_index(root_dir):
                 
                 headings_map[rel_path] = headings
                 
+    if workspace_dir:
+        agents_md = os.path.join(workspace_dir, '.agents', 'AGENTS.md')
+        if os.path.exists(agents_md):
+            rel_path = '../.agents/AGENTS.md'
+            basename = 'agents'
+            file_map[basename] = rel_path
+            
+            headings = set()
+            try:
+                with open(agents_md, 'r', encoding='utf-8') as f:
+                    for line in f:
+                        if line.strip().startswith('#'):
+                            header = line.strip()
+                            headings.add(clean_heading(header))
+            except Exception as e:
+                print(f"Warning: Could not read headings from AGENTS.md: {e}")
+            headings_map[rel_path] = headings
+            
     return file_map, headings_map
 
 def scan_for_secrets(content, rel_file_path):
@@ -117,7 +136,7 @@ def check_orphans(file_map, linked_basenames):
     # ไฟล์/ไดเรกทอรีที่ไม่จำเป็นต้องถูก Link ถึง
     exempt_basenames = {
         '00-index', 'readme', 'project_board', 
-        'inbox_log', 'tagging-policy',
+        'inbox_log', 'tagging-policy', 'agents',
     }
     
     for basename, rel_path in file_map.items():
@@ -179,12 +198,18 @@ def check_links(root_dir, file_map, headings_map):
             matches = WIKILINK_RE.findall(content)
             for match in matches:
                 total_links += 1
-                if '#' in match:
-                    file_part, heading_part = match.split('#', 1)
+                
+                # Split display text if any (e.g. [[LinkTarget|DisplayName]])
+                clean_match = match
+                if '|' in match:
+                    clean_match, _ = match.split('|', 1)
+                
+                if '#' in clean_match:
+                    file_part, heading_part = clean_match.split('#', 1)
                     file_part = file_part.strip()
                     heading_part = heading_part.strip()
                 else:
-                    file_part = match.strip()
+                    file_part = clean_match.strip()
                     heading_part = None
                 
                 file_part_lower = file_part.lower()
@@ -484,7 +509,7 @@ def main():
         sys.exit(1)
         
     print(f"🧠 Scanning Workspace Linter in: {workspace_dir}")
-    file_map, headings_map = build_index(root_dir)
+    file_map, headings_map = build_index(root_dir, workspace_dir)
     print(f"Found {len(file_map)} markdown files in Second Brain.")
     
     all_errors = []

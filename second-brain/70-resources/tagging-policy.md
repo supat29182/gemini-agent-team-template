@@ -14,6 +14,7 @@
 doc/index        doc/adr         doc/changelog  
 doc/kb           doc/diary       doc/snapshot   
 doc/spec         doc/eval        doc/postmortem
+doc/architecture
 
 # AISDLC Phase (ช่วงเวลาของโครงการ)
 phase/inbox      phase/design    phase/implement   
