@@ -12,11 +12,13 @@
 *   **เป้าหมาย**: บันทึกความต้องการดิบ (Raw Requirements), บันทึกการประชุม (Meeting Notes), รายละเอียดบรีฟจากลูกค้า หรือไอเดียเริ่มต้นสำหรับการพัฒนา
 
 ### [📝 10-requirements-spec](10-requirements-spec/)
-*   **เป้าหมาย**: คลังเอกสารข้อกำหนดความต้องการทางธุรกิจและการออกแบบระบบ ประกอบด้วย:
-    *   `brd.md` (Business Requirement Document): จัดทำโดย `@pm-po` เพื่อระบุเป้าหมาย ขอบเขต และผู้ใช้งาน
-    *   `epics_user_stories.md` (Epics, User Stories & Acceptance Criteria): จัดทำโดย `@pm-po` ในการแตกฟีเจอร์เป็นหน่วยย่อยพร้อม AC (Given-When-Then)
-    *   `system_spec.md` (System Specification): จัดทำโดย `@sa` เพื่ออธิบาย Technical Detail, API Endpoints, Database Schema
-*   **เอกสารหลัก**: `brd.md`, `epics_user_stories.md`, `system_spec.md`
+*   **เป้าหมาย**: คลังเอกสารข้อกำหนดความต้องการทางธุรกิจและการออกแบบระบบ โดยมีทั้งแกนกลางหลัก (Core) และแยกย่อยรายฟีเจอร์/CR:
+    *   `system_spec.md` (Core System Specification): **เอกสารสเปกระบบหลักที่เป็นแกนกลางและ Single Source of Truth** (รวบรวมข้อมูล API และ DB Schema ทั้งหมดของระบบในปัจจุบัน)
+    *   `features/<feature-id-slug>/`: โฟลเดอร์เฉพาะสำหรับฟีเจอร์หรือ CR แต่ละตัว เก็บเอกสารการพัฒนาในรอบนั้น ๆ:
+        *   `brd.md` (Business Requirement Document): จัดทำโดย `@pm-po` เพื่อระบุเป้าหมาย ขอบเขต และผู้ใช้งานของฟีเจอร์นี้
+        *   `epics_user_stories.md` (Epics, User Stories & Acceptance Criteria): จัดทำโดย `@pm-po` ในการแตกฟีเจอร์เป็นหน่วยย่อยพร้อม AC (Given-When-Then)
+        *   `system_spec.md` (Feature System Specification): จัดทำโดย `@sa` เพื่ออธิบายสเปกทางเทคนิคเฉพาะของฟีเจอร์นี้
+*   **เอกสารหลัก**: `system_spec.md` และโฟลเดอร์ใน `features/`
 
 ### [📐 20-architecture](20-architecture/)
 *   **เป้าหมาย**: แผนผังโครงสร้างสถาปัตยกรรมระบบ, การออกแบบส่วนประกอบย่อย และรายงานการวิเคราะห์ผลกระทบเมื่อเกิดการแก้ไขโค้ด (Blast Radius/Architecture Impact) จัดการโดย `@solution-architect`
@@ -24,8 +26,8 @@
 
 ### [💻 30-development](30-development/)
 *   **เป้าหมาย**: เอกสารวางแผนและแนวทางการเขียนโค้ด ประกอบด้วย:
-    *   `dev-plan.md` (Development Plan): จัดทำโดย `@tech-lead` เพื่อระบุความเสี่ยง ลำดับขั้นตอน และการแตก **Tasks & Subtasks** อย่างชัดเจนเพื่อมอบหมายให้นักพัฒนา
-*   **เอกสารหลัก**: `dev-plan.md`
+    *   `features/<feature-id-slug>/dev-plan.md` (Development Plan): จัดทำโดย `@tech-lead` เพื่อระบุความเสี่ยง ลำดับขั้นตอน และการแตก **Tasks & Subtasks** อย่างชัดเจนสำหรับฟีเจอร์นี้
+*   **เอกสารหลัก**: โฟลเดอร์ใน `features/`
 
 ### [🛡️ 40-security](40-security/)
 *   **เป้าหมาย**: รายงานการสแกนความปลอดภัยโค้ด (Security Audit Report), รายการช่องโหว่ OWASP ที่วิเคราะห์, และวิธีการบรรเทาผลกระทบ (Mitigation Guidelines) จัดการโดย `@security`
@@ -43,22 +45,22 @@
 
 ---
 
-## 🔄 แผนผังการทำงาน AISDLC (Flat PM Architecture)
+## 🔄 แผนผังการทำงาน AISDLC (Flat PM Architecture - Strategy B)
 
 ```mermaid
 graph TD
     User([User Requirement]) -->|เขียนลงบนสุดของ Inbox Log| PM[pm-po]
     
-    subgraph "Phase 0: Initiation (Business Align)"
-        PM -->|1. สร้างเอกสารธุรกิจ| BRD[brd.md]
-        PM -->|2. สร้าง User Stories & AC| US[epics_user_stories.md]
+    subgraph "Phase 0: Initiation (Business Align in Feature Folder)"
+        PM -->|1. สร้างเอกสารธุรกิจเฉพาะฟีเจอร์| BRD[features/slug/brd.md]
+        PM -->|2. สร้าง User Stories & AC เฉพาะฟีเจอร์| US[features/slug/epics_user_stories.md]
     end
 
-    subgraph "Phase 1: Design (Technical Specification)"
+    subgraph "Phase 1: Design (Technical Specification in Feature Folder)"
         PM -->|3. มอบหมายวิเคราะห์| SA[sa]
         BRD -.->|ใช้อ้างอิง| SA
         US -.->|ใช้อ้างอิง| SA
-        SA -->|4. เขียน Spec ทางเทคนิค| Spec[system_spec.md]
+        SA -->|4. เขียน Spec ทางเทคนิคเฉพาะฟีเจอร์| Spec[features/slug/system_spec.md]
         PM -->|5. ส่งต่อ Spec เพื่อหาผลกระทบ| Arch[solution-architect]
         Arch -->|6. วิเคราะห์ Impact| Impact[architecture_impact.md]
     end
@@ -67,7 +69,7 @@ graph TD
         PM -->|7. ให้วางแผนและแบ่งงาน| TL[tech-lead]
         Spec -.->|ใช้อ้างอิง| TL
         Impact -.->|ใช้อ้างอิง| TL
-        TL -->|8. แตกแผนงาน Tasks & Subtasks| Plan[dev-plan.md]
+        TL -->|8. แตกแผนงาน Tasks & Subtasks ในโฟลเดอร์ฟีเจอร์| Plan[features/slug/dev-plan.md]
         PM -->|9. สั่งเขียน Server/Test ตาม Subtasks| BE[backend-dev]
         PM -->|10. สั่งเขียน UI ตาม Subtasks| FE[frontend-dev]
         PM -->|11. สั่งตรวจสอบความปลอดภัย| SE[security]
@@ -83,9 +85,14 @@ graph TD
         QAA -->|16. บันทึกผลการทดสอบ| Exec[test_execution.log]
     end
 
+    subgraph "Phase 4: Release & Closure"
+        PM -->|17. รวมเอกสารเทคนิคฟีเจอร์ เข้าเอกสารหลัก| Master[system_spec.md Core]
+        Spec -.->|ดึงข้อมูล APIs, DB| Master
+    end
+
     PM -.->|อัปเดตสถานะงาน| PB[project_board.md]
     PM -.->|อัปเดต Phase Tracker| Idx[00-Index.md]
-    PM -->|17. สรุปความสำเร็จโครงการ| User
+    PM -->|18. สรุปความสำเร็จโครงการ| User
 ```
 
 ระบบเอกสารนี้เป็น "สมองส่วนที่สอง" ที่ช่วยให้มั่นใจได้ว่า AI Agents ทุกตัวที่ทำงานในลูปสามารถเข้าถึงข้อมูลที่ตรงกัน อัปเดตล่าสุด และส่งมอบงานได้อย่างมีมาตรฐานสูงและปลอดภัย

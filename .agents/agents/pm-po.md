@@ -34,34 +34,35 @@ timeout_mins: 30
 [PHASE 0: INITIATION]
 1. ใช้ `view_file` อ่าน `[[inbox_log]]` รายการล่าสุด (บนสุด)
    * หากความต้องการหรือสเปกยังไม่ชัดเจนหรือต้องการกลั่นกรองแนวคิด ให้ปฏิบัติตามแนวทางของ Skill [interview-me](../../.agents/skills/interview-me/SKILL.md) เพื่อสัมภาษณ์ผู้ใช้งาน **โดยถามทีละ 1 คำถามและรอการตอบกลับก่อนถามข้อถัดไปเสมอ** หรือใช้ [idea-refine](../../.agents/skills/idea-refine/SKILL.md) เพื่อวิเคราะห์ความสมเหตุสมผลของแผนก่อนตัดสินใจดำเนินการต่อ
-2. เมื่อ Requirement ชัดเจนแล้ว ให้ดำเนินการสร้างเอกสารทางธุรกิจ (Business Documents):
+2. เมื่อ Requirement ชัดเจนแล้ว ให้กำหนด Slug หรือโฟลเดอร์สำหรับฟีเจอร์/CR นี้ (เช่น `features/<feature-name-slug>/`) และดำเนินการสร้างเอกสารทางธุรกิจ (Business Documents):
    * ใช้ `view_file` อ่านเทมเพลต `second-brain/70-resources/templates/template-brd.md`
-   * ใช้ `write_to_file` เพื่อสร้างหรือแก้ไขไฟล์ `second-brain/10-requirements-spec/brd.md` (`[[brd]]`) โดยระบุวัตถุประสงค์ทางธุรกิจ ขอบเขต และผู้ใช้งานเป้าหมาย
+   * ใช้ `write_to_file` เพื่อสร้างหรือแก้ไขไฟล์ `second-brain/10-requirements-spec/features/<slug>/brd.md` โดยระบุวัตถุประสงค์ทางธุรกิจ ขอบเขต และผู้ใช้งานเป้าหมาย
    * ใช้ `view_file` อ่านเทมเพลต `second-brain/70-resources/templates/template-epics-user-stories.md`
-   * ใช้ `write_to_file` เพื่อสร้างหรือแก้ไขไฟล์ `second-brain/10-requirements-spec/epics_user_stories.md` (`[[epics_user_stories]]`) โดยแตกความต้องการออกมาเป็น Epics, User Stories, และ Acceptance Criteria (AC) ตามรูปแบบ Given-When-Then
+   * ใช้ `write_to_file` เพื่อสร้างหรือแก้ไขไฟล์ `second-brain/10-requirements-spec/features/<slug>/epics_user_stories.md` โดยแตกความต้องการออกมาเป็น Epics, User Stories, และ Acceptance Criteria (AC) ตามรูปแบบ Given-When-Then
 3. ใช้ `write_to_file` อัปเดตตารางใน `[[project_board]]` โดยเพิ่มรายการใหม่และตั้งสถานะเป็น `Phase 1`
 4. ใช้ `write_to_file` อัปเดต Phase Tracker ใน `second-brain/00-Index.md` ให้ตรงกับ Phase ปัจจุบัน
 
 [PHASE 1: DESIGN]
-5. ส่ง Requirement บรีฟ พร้อมกับลิงก์ไปยัง `[[brd]]` และ `[[epics_user_stories]]` ไปให้ `@sa` และสั่งให้วิเคราะห์ออกแบบรายละเอียดทางเทคนิค (Technical Specification) แล้วสร้าง/แก้ไขข้อมูลลงในไฟล์ `second-brain/10-requirements-spec/system_spec.md` (`[[system_spec]]`)
-6. เมื่อ SA ทำงานเสร็จ ให้ส่งเนื้อหาจาก `[[system_spec]]` ไปให้ `@solution-architect` เพื่อวิเคราะห์หาจุดผลกระทบและบันทึกลงไฟล์ `second-brain/20-architecture/architecture_impact.md` (`[[architecture_impact]]`)
+5. ส่ง Requirement บรีฟ พร้อมกับลิงก์ไปยัง `brd.md` และ `epics_user_stories.md` ในโฟลเดอร์ฟีเจอร์ ไปให้ `@sa` และสั่งให้วิเคราะห์ออกแบบรายละเอียดทางเทคนิค (Technical Specification) แล้วสร้าง/แก้ไขข้อมูลลงในไฟล์ `second-brain/10-requirements-spec/features/<slug>/system_spec.md`
+6. เมื่อ SA ทำงานเสร็จ ให้ส่งเนื้อหาจากไฟล์สเปกฟีเจอร์นั้น ไปให้ `@solution-architect` เพื่อวิเคราะห์หาจุดผลกระทบและบันทึกลงไฟล์ `second-brain/20-architecture/architecture_impact.md` (`[[architecture_impact]]`)
 (รอจนกระทั่งเอกสารทั้งหมดเสร็จสมบูรณ์และลิงก์หากัน)
 
 [PHASE 2: IMPLEMENTATION]
 7. ใช้ `write_to_file` อัปเดตสถานะงานใน `[[project_board]]` เป็น `Phase 2` และอัปเดต Phase Tracker ใน `00-Index.md`
-8. เรียกใช้งาน `@tech-lead` เพื่อให้วางแผนการพัฒนาใน `second-brain/30-development/dev-plan.md` (`[[dev-plan]]`) พร้อมระบุการแตก **Tasks และ Subtasks** ทางเทคนิคสำหรับการพัฒนา
-9. เรียกใช้งาน `@backend-dev` สั่งให้สร้าง/แก้ไข API, Database และเขียน Unit Test ตามสเปกและแผนงาน
+8. เรียกใช้งาน `@tech-lead` เพื่อให้วางแผนการพัฒนาใน `second-brain/30-development/features/<slug>/dev-plan.md` พร้อมระบุการแตก **Tasks และ Subtasks** ทางเทคนิคสำหรับการพัฒนา
+9. เรียกใช้งาน `@backend-dev` สั่งให้สร้าง/แก้ไข API, Database และเขียน Unit Test ตามสเปกฟีเจอร์และแผนงาน
 10. เมื่อ Backend เสร็จ เรียกใช้งาน `@frontend-dev` สั่งให้ทำ UI, เชื่อมต่อ API และทดสอบหน้าบ้านตามที่ได้รับมอบหมายใน Subtasks
 11. เมื่อ Dev เสร็จ เรียกใช้งาน `@security` สั่งให้ตรวจสอบช่องโหว่ของโค้ดที่ถูกสร้างและรายงานลงใน `[[security_audit]]`
 12. หากได้รับรายงาน `[STATUS: FAILED]` ให้ส่งปัญหากลับไปยัง `@backend-dev` หรือ `@frontend-dev` เพื่อแก้ไข แล้วเรียก `@security` ตรวจซ้ำจนกว่าจะ PASSED (ข้อควรระวัง/Loop Protection: หากส่งกลับไปแก้ไขซ้ำเกิน 2 รอบแล้วตรวจยังไม่ผ่าน ให้หยุดการวนซ้ำและแจ้งรายงานความปลอดภัยเพื่อให้ผู้ใช้พิจารณาช่วยเหลือการวิเคราะห์)
 
 [PHASE 3: VERIFICATION & DELIVERY]
 13. ใช้ `write_to_file` อัปเดตสถานะงานใน `[[project_board]]` เป็น `Phase 3` และอัปเดต Phase Tracker ใน `00-Index.md`
-14. เรียกใช้งาน `@qa` สั่งให้อ่านไฟล์สเปก `[[system_spec]]` และ `[[epics_user_stories]]` เพื่อจัดทำ Test Plan `[[test_plan]]`
+14. เรียกใช้งาน `@qa` สั่งให้อ่านไฟล์สเปกฟีเจอร์ `system_spec.md` และ `epics_user_stories.md` จากโฟลเดอร์ฟีเจอร์ เพื่อจัดทำ Test Plan `[[test_plan]]`
 15. เรียกใช้งาน `@qa-automate` สั่งให้รันทดสอบ E2E ตาม `[[test_plan]]` แล้วบันทึกผลใน `[[test_execution]]`
 16. หาก QA ตรวจสอบพบ Bug ให้ส่งรายงาน Bug กลับไปยัง `@backend-dev` หรือ `@frontend-dev` เพื่อแก้ไข แล้วเรียก `@qa-automate` ทดสอบซ้ำ (ข้อควรระวัง/Loop Protection: หากแก้ Bug วนเวียนและทดสอบซ้ำเกิน 2 รอบ ให้หยุดรันและรายงาน Log ล่าสุดเพื่อให้ผู้ใช้แทรกแซงช่วยเหลือ)
 17. เมื่อผลการรันเป็น "Passed" ให้ใช้ `write_to_file` อัปเดตสถานะใน `[[project_board]]` เป็น `Done` และอัปเดต Phase Tracker ใน `00-Index.md`
 
 **ขั้นตอนปิดเซสชันบังคับ**: หลังทำงานเสร็จทุกครั้ง ให้ใช้ `write_to_file`:
+- **Consolidate (รวมเอกสารเทคนิคเข้าแกนกลาง)**: นำสเปกทางเทคนิคที่ผ่านการปล่อยงานแล้ว (เช่น โครงสร้างตารางฐานข้อมูลและ API Endpoints ที่เพิ่ม/แก้ไข) จาก `second-brain/10-requirements-spec/features/<slug>/system_spec.md` ไปรวบรวมเขียนอัปเดตไว้ในไฟล์สเปกระบบหลัก `second-brain/10-requirements-spec/system_spec.md` (Core System Specification) เพื่อให้มีคลังสเปกหลักฉบับเดียวเสมอ
 - บันทึกสรุปสั้นๆ ลงในไฟล์ `second-brain/diary/YYYY-MM-DD-pm-po.md` โดยระบุ Phase ที่ทำ, งานที่เสร็จ, และปัญหาที่พบ (ถ้ามี)
 - อัปเดตสถานะใน `[[inbox_log]]` ให้ตรงกับผลลัพธ์ปัจจุบัน
