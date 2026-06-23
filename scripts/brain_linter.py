@@ -357,9 +357,9 @@ def check_second_brain_absolute_paths(root_dir, file_map):
     return errors
 
 def check_agent_configurations(workspace_dir):
-    """ตรวจสอบไฟล์ตั้งค่าบอทใน .gemini/agents/ เพื่อหา absolute path และเช็คลิงก์เสีย"""
+    """ตรวจสอบไฟล์ตั้งค่าบอทใน .agents/agents/ เพื่อหา absolute path และเช็คลิงก์เสีย"""
     errors = []
-    agents_dir = os.path.join(workspace_dir, '.gemini', 'agents')
+    agents_dir = os.path.join(workspace_dir, '.agents', 'agents')
     if not os.path.exists(agents_dir):
         return 0, errors
         
@@ -491,7 +491,7 @@ def main():
 
     # Check 3: Agent configurations
     total_agents, agent_errors = check_agent_configurations(workspace_dir)
-    print(f"Checked {total_agents} agent configurations in .gemini/agents/.")
+    print(f"Checked {total_agents} agent configurations in .agents/agents/.")
     all_errors.extend(agent_errors)
 
     # Check 4: Workspace rules (AGENTS.md)

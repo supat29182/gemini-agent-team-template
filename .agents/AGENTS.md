@@ -73,9 +73,9 @@
 
 ---
 
-## 🤖 5. รายละเอียดและบทบาทการทำงานของ Agent Team (`.gemini/agents/`)
+## 🤖 5. รายละเอียดและบทบาทการทำงานของ Agent Team (`.agents/agents/`)
 
-ระบบนี้ควบคุมการทำงานร่วมกันของ Agent 9 ตัวที่ถูกบันทึกคอนฟิกูเรชันไว้ในไดเรกทอรี [.gemini/agents/](file://.gemini/agents) ซึ่งจัดโครงสร้างการสั่งงานแบบ **Flat Orchestration** (ไม่มี nesting) ดังนี้:
+ระบบนี้ควบคุมการทำงานร่วมกันของ Agent 9 ตัวที่ถูกบันทึกคอนฟิกูเรชันไว้ในไดเรกทอรี [.agents/agents/](file://.agents/agents) ซึ่งจัดโครงสร้างการสั่งงานแบบ **Flat Orchestration** (ไม่มี nesting) ดังนี้:
 
 ### 1. PM/PO (`pm-po.md`)
 *   **บทบาท**: ศูนย์กลางและผู้ควบคุมกระบวนการ AISDLC (Flat Orchestrator)
