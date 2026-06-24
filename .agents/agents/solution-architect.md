@@ -31,4 +31,4 @@ max_turns: 20
 5. ในไฟล์ `architecture_impact.md` ท้องถิ่น ให้ใช้วิกิลิงก์ชี้ไปยังหัวข้อที่เกี่ยวข้องในสเปกของฟีเจอร์ เช่น `[[system_spec#API Endpoints]]` หรือแบบสัมพัทธ์
 6. ตอบกลับ PM สั้นๆ ว่า "วิเคราะห์ Impact เสร็จสิ้นและบันทึกไฟล์แล้ว" พร้อมอ้างอิงและแนบลิงก์ไฟล์ดังกล่าว
 7. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-architect.md` ว่า Blast Radius ที่วิเคราะห์ได้ครอบคลุมอะไร และตัดสินใจสถาปัตยกรรมชิ้นสำคัญอย่างไร โดยนำการทำ ADRs จาก [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md) มาอ้างอิงเก็บประวัติการตัดสินใจ และหากจำเป็นต้องจัดการโค้ดเก่า/ลบฟังก์ชันเดิม ให้อ้างอิงและปฏิบัติตามทักษะ [deprecation-and-migration](../../.agents/skills/deprecation-and-migration/SKILL.md) เพื่อความปลอดภัยสูงสุดของระบบเดิม
-8. รัน Brain Linter: ใช้ `run_command` รันคำสั่ง `python3 scripts/brain_linter.py` เพื่อตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain หากพบ Error ให้แก้ไขให้เรียบร้อยก่อนส่งงาน
+8. รัน Brain Linter: ระบบจะตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain ให้โดยอัตโนมัติผ่าน IDE Hook

@@ -35,5 +35,5 @@ max_turns: 25
 5. หากเกิดข้อผิดพลาดขึ้นระหว่างการทดสอบ ให้ใช้ Skill [debugging-and-error-recovery](../../.agents/skills/debugging-and-error-recovery/SKILL.md) เข้าช่วยสืบค้นหาสาเหตุอย่างละเอียด จากนั้นรวบรวมผลลัพธ์ทั้งหมด (Passed/Failed, Error messages, Screenshots ถ้ามี) แล้วใช้ `write_to_file` บันทึกรายงานการรัน (Test Execution Log) ไว้ที่ไฟล์เฉพาะของฟีเจอร์นี้: `second-brain/50-qa-testing/features/<slug>/test_execution.log`
 6. **ปลดล็อกและทำเครื่องหมายเสร็จสิ้น (Release Task Lock)**: ใช้ `write_to_file` อัปเดตไฟล์ `second-brain/30-development/features/<slug>/task_locks.json` โดยอัปเดตคีย์ `"qa-automate-execution"` ให้เปลี่ยนสถานะเป็น `"status": "completed"` และใส่ค่า timestamp ที่เสร็จสิ้นใน `"completed_at"`
 7. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-qa-automate.md` ว่า Test Scenarios ใดผ่าน/ไม่ผ่าน และมีข้อสังเกตสำคัญของการรันระบบ E2E
-8. รัน Brain Linter: ใช้ `run_command` รันคำสั่ง `python3 scripts/brain_linter.py` เพื่อตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain หากพบ Error ให้แก้ไขให้เรียบร้อยก่อนส่งงาน
+8. รัน Brain Linter: ระบบจะตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain ให้โดยอัตโนมัติผ่าน IDE Hook
 9. แจ้งผลการตรวจสอบ (หากมี Error ใน Console หรือจุดทำงานล้มเหลว) หรือยืนยันสถานะ "Passed" ส่งกลับไปยัง QA Lead พร้อมแนบลิงก์ไฟล์ดังกล่าว

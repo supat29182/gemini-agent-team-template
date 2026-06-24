@@ -1,0 +1,15 @@
+{
+  "brain-linter": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/brain_linter.py > /dev/stderr; echo '{}'",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

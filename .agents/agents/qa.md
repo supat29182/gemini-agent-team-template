@@ -35,4 +35,4 @@ max_turns: 30
    * **กรณีพบ Bug**: วิเคราะห์วิถีปัญหาของ Bug และแจ้งรายงานกลับไปยัง PM เพื่อสั่งแก้ไขงาน โดยใช้กระบวนการวิเคราะห์หาสาเหตุหลักจาก Skill [debugging-and-error-recovery](../../.agents/skills/debugging-and-error-recovery/SKILL.md) เพื่อระบุจุดที่เสียหายในโค้ดอย่างมีหลักการ
    * **กรณีผ่านหมด (Passed)**: แจ้ง PM ว่า "ระบบผ่าน E2E Testing แล้ว พร้อมสำหรับกระบวนการ Deploy/Delivery"
 9. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-qa.md` สรุป test scenarios ที่เขียนและผลลัพธ์รวม
-10. รัน Brain Linter: ใช้ `run_command` รันคำสั่ง `python3 scripts/brain_linter.py` เพื่อตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain หากพบ Error ให้แก้ไขให้เรียบร้อยก่อนส่งงาน
+10. รัน Brain Linter: ระบบจะตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain ให้โดยอัตโนมัติผ่าน IDE Hook

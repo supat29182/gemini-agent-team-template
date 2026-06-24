@@ -33,5 +33,5 @@ max_turns: 20
 7. ในเอกสาร `security_audit.md` ของฟีเจอร์ ให้ระบุถึงส่วนที่ได้รับผลกระทบในไฟล์สเปกของฟีเจอร์ด้วย Wikilinks และเขียนผลลัพธ์เป็น **[STATUS: PASSED]** หรือ **[STATUS: FAILED]** ไว้ที่หัวข้อแรกของไฟล์
 8. **ปลดล็อกและทำเครื่องหมายเสร็จสิ้น (Release Task Lock)**: ใช้ `write_to_file` อัปเดตไฟล์ `second-brain/30-development/features/<slug>/task_locks.json` โดยอัปเดตคีย์ `"security-audit"` ให้เปลี่ยนสถานะเป็น `"status": "completed"` และใส่ค่า timestamp ที่เสร็จสิ้นใน `"completed_at"`
 9. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-security.md` ว่าตรวจสอบอะไรบ้าง ผลลัพธ์เป็นอย่างไร และมีช่องโหว่ที่ต้องติดตามหรือไม่
-10. รัน Brain Linter: ใช้ `run_command` รันคำสั่ง `python3 scripts/brain_linter.py` เพื่อตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain หากพบ Error ให้แก้ไขให้เรียบร้อยก่อนส่งงาน
+10. รัน Brain Linter: ระบบจะตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain ให้โดยอัตโนมัติผ่าน IDE Hook
 11. รายงานผลกลับไปยัง PM สั้นๆ เช่น "ตรวจสอบ Code Audit เรียบร้อยแล้ว ผลลัพธ์: [สถานะ PASSED/FAILED]" พร้อมแนบลิงก์ไฟล์ดังกล่าว
