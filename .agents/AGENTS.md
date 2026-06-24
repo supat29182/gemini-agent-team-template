@@ -9,14 +9,16 @@
 กระบวนการพัฒนาซอฟต์แวร์ใน Workspace นี้แบ่งออกเป็น 3 เฟสหลัก ซึ่งดำเนินตามลำดับขั้นตอนและเชื่อมโยงกันด้วยเอกสารเสมอ โดยมี `@pm-po` ทำหน้าที่เป็นผู้ประสานงานหลัก (Flat Orchestrator) ที่สั่งการและติดตามงานกับ Specialist Agents ทุกตัวโดยตรง:
 
 ```
-                  ┌────────────────────── pm-po ──────────────────────┐
-                  │                        │                          │
-                  ▼                        ▼                          ▼
-          [PHASE 1: DESIGN]      [PHASE 2: IMPLEMENTATION]    [PHASE 3: VERIFICATION]
-          - sa (Spec)            - tech-lead (Plan/Review)    - qa (Test Plan)
-          - solution-architect   - backend-dev (Code/Test)    - qa-automate (E2E)
-            (Impact Analysis)    - frontend-dev (UI/Build)
-                                 - security (Audit Report)
+                  ┌───────────────────── pm-po ─────────────────────┐
+                  │                       │                         │
+                  ▼                       ▼                         ▼
+          [PHASE 1: DESIGN]     [PHASE 2: IMPLEMENTATION]   [PHASE 3: VERIFICATION]
+          (Sequential)          (Parallel Block 1)          (Parallel Block 2)
+          - sa (Spec)           - tech-lead (Plan) ←seq     - security (Audit)
+          - solution-architect  - backend-dev  ←parallel    - qa-automate (E2E)
+            (Impact Analysis)   - frontend-dev ←parallel    ── Sync Point 2 ──
+                                - qa (Test Plan)←parallel
+                                ── Sync Point 1 ──
 ```
 
 1.  **ห้ามข้ามขั้นตอนการทำงาน**: การทำงานจะต้องเริ่มจากเฟสดีไซน์เสมอ ห้ามมิให้ทีมพัฒนาลงมือเขียนโค้ดก่อนที่เอกสารสเปกระบบและผลกระทบสถาปัตยกรรมจะเสร็จสมบูรณ์
@@ -24,6 +26,11 @@
 3.  **กลไกแก้ไขงาน (Feedback Loop)**:
     *   หาก `@security` ตรวจพบช่องโหว่ระดับ FAILED ใน `[[security_audit]]` ให้ส่งรายงานตรงไปยัง `@pm-po` เพื่อให้ PM ส่งงานกลับไปให้ทีม Dev แก้ไขจนกว่าจะผ่าน
     *   หาก `@qa` หรือ `@qa-automate` ตรวจพบ Bug ในระหว่างการทดสอบ ให้ส่ง Log บั๊กและรายงานการทดสอบที่ล้มเหลวกลับไปยัง `@pm-po` เพื่อสั่งการแก้ไขงาน
+4.  **กลไกประสานงานคู่ขนาน (Parallel Coordination)**:
+    *   ใน Phase 2 และ Phase 3 มีการรันเอเจนต์แบบขนาน โดยใช้ไฟล์ `task_locks.json` ภายใน Feature Folder เป็นตัวควบคุมสถานะ
+    *   Agent ที่รันคู่ขนานต้องล็อกงาน (`in-progress`) ก่อนเริ่ม และปลดล็อก (`completed`) เมื่อเสร็จ
+    *   Agent ปลายน้ำ (`@security`, `@qa-automate`) ต้องตรวจสอบว่างาน upstream เสร็จสมบูรณ์ก่อนเริ่มทำงาน
+    *   `@pm-po` ใช้ Sync Points ตรวจสอบสถานะใน lock file เพื่อเปลี่ยน Phase
 
 ---
 
@@ -81,55 +88,55 @@
 *   **บทบาท**: ศูนย์กลางและผู้ควบคุมกระบวนการ AISDLC (Flat Orchestrator)
 *   **อินพุตเริ่มต้น**: อ่านความต้องการล่าสุดจาก `[[inbox_log]]`
 *   **การส่งงาน**: สั่งงานตรงไปยัง specialist agents แต่ละตัวตาม Phase (sa, solution-architect, tech-lead, backend-dev, frontend-dev, security, qa, qa-automate)
-*   **ทักษะที่ใช้ (Skills)**: `using-agent-skills`, `context-engineering`, `idea-refine`, `interview-me`
+*   **ทักษะที่ใช้ (Skills)**: `using-agent-skills`, `context-engineering`, `idea-refine`, `interview-me`, `planning-and-task-breakdown`, `git-workflow-and-versioning`
 
 ### 2. System Analyst (`sa.md`)
 *   **บทบาท**: วิเคราะห์และจัดทำข้อกำหนดเฉพาะของระบบ
 *   **อินพุต**: บรีฟงานและ `[[inbox_log]]` จาก `@pm-po`
 *   **เอาต์พุต**: เขียนสเปกลงไฟล์ `[[system_spec]]` พร้อมทำวิกิลิงก์กลับหา Inbox และรัน brain linter
-*   **ทักษะที่ใช้ (Skills)**: `spec-driven-development`, `obsidian-markdown`, `documentation-and-adrs`
+*   **ทักษะที่ใช้ (Skills)**: `spec-driven-development`, `obsidian-markdown`, `documentation-and-adrs`, `api-and-interface-design`, `interview-me`
 
 ### 3. Solution Architect (`solution-architect.md`)
 *   **บทบาท**: ออกแบบสถาปัตยกรรมและวิเคราะห์ผลกระทบ
 *   **อินพุต**: อ่านจาก `[[system_spec]]` ตามคำสั่งของ `@pm-po`
 *   **เอาต์พุต**: ใช้ `mcp_gitnexus_*` วิเคราะห์ผลกระทบ บันทึกลงใน `[[architecture_impact]]` และรัน brain linter
-*   **ทักษะที่ใช้ (Skills)**: `api-and-interface-design`, `documentation-and-adrs`
+*   **ทักษะที่ใช้ (Skills)**: `api-and-interface-design`, `documentation-and-adrs`, `doubt-driven-development`, `deprecation-and-migration`
 
 ### 4. Tech Lead (`tech-lead.md`)
 *   **บทบาท**: ที่ปรึกษาเชิงเทคนิค ผู้จัดทำ Development Plan และทำ Code Review
 *   **อินพุต**: อ่านจาก `[[system_spec]]` และ `[[architecture_impact]]` ตามคำสั่งของ `@pm-po`
 *   **เอาต์พุต**: บันทึกแผนการพัฒนาลงใน `dev-plan.md` เพื่อให้ Dev ใช้อ้างอิง (ไม่มีการ delegate งานเอง)
-*   **ทักษะที่ใช้ (Skills)**: `code-review-and-quality`, `code-simplification`, `doubt-driven-development`
+*   **ทักษะที่ใช้ (Skills)**: `code-review-and-quality`, `code-simplification`, `doubt-driven-development`, `planning-and-task-breakdown`, `api-and-interface-design`, `git-workflow-and-versioning`
 
 ### 5. Backend Developer (`backend-dev.md`)
 *   **บทบาท**: เขียน APIs, จัดทำ Schema Database และรัน Unit Test ฝั่ง Backend
 *   **อินพุต**: สเปกจาก `[[system_spec]]` และแผนจาก Tech Lead (ตามคำสั่งของ `@pm-po`)
 *   **เอาต์พุต**: เขียนโค้ดฝั่ง Server, รัน Unit Test ให้ผ่าน, เขียน changelog entry และจด diary
-*   **ทักษะที่ใช้ (Skills)**: `test-driven-development`, `incremental-implementation`, `source-driven-development`, `observability-and-instrumentation`, `code-simplification`, `debugging-and-error-recovery`
+*   **ทักษะที่ใช้ (Skills)**: `test-driven-development`, `incremental-implementation`, `source-driven-development`, `observability-and-instrumentation`, `code-simplification`, `debugging-and-error-recovery`, `custom-coding-standard`, `security-and-hardening`, `api-and-interface-design`
 
 ### 6. Frontend Developer (`frontend-dev.md`)
 *   **บทบาท**: ออกแบบและพัฒนา UI/UX และเชื่อมต่อ API ฝั่ง Frontend
 *   **อินพุต**: สเปกจาก `[[system_spec]]` และแผนจาก Tech Lead (ตามคำสั่งของ `@pm-po`)
 *   **เอาต์พุต**: เขียนโค้ดฝั่ง Client, รัน build ให้ผ่าน, เขียน changelog entry และจด diary
-*   **ทักษะที่ใช้ (Skills)**: `frontend-ui-engineering`, `test-driven-development`, `incremental-implementation`, `source-driven-development`, `code-simplification`, `debugging-and-error-recovery`
+*   **ทักษะที่ใช้ (Skills)**: `frontend-ui-engineering`, `test-driven-development`, `incremental-implementation`, `source-driven-development`, `code-simplification`, `debugging-and-error-recovery`, `custom-coding-standard`, `performance-optimization`, `browser-testing-with-devtools`
 
 ### 7. Security Engineer (`security.md`)
 *   **บทบาท**: ตรวจสอบช่องโหว่ความปลอดภัยของโค้ดที่เพิ่ม/แก้ไข
 *   **อินพุต**: สเปกจาก `[[system_spec]]` และซอร์สโค้ดปัจจุบัน (ตามคำสั่งของ `@pm-po`)
 *   **เอาต์พุต**: บันทึกรายงานผลลงใน `[[security_audit]]` โดยระบุหัวไฟล์เป็น **[STATUS: PASSED]** หรือ **[STATUS: FAILED]** ส่งตรงไปยัง `@pm-po`
-*   **ทักษะที่ใช้ (Skills)**: `security-and-hardening`, `doubt-driven-development`
+*   **ทักษะที่ใช้ (Skills)**: `security-and-hardening`, `doubt-driven-development`, `code-review-and-quality`, `api-and-interface-design`
 
 ### 8. QA Lead (`qa.md`)
 *   **บทบาท**: ออกแบบ Test Scenario และวิเคราะห์รายงานการรันเทส
 *   **อินพุต**: สเปกจาก `[[system_spec]]` (ตามคำสั่งของ `@pm-po`)
 *   **เอาต์พุต**: เขียน Test Cases ลงใน `[[test_plan]]` เพื่อให้ PM ใช้สั่งงาน qa-automate ต่อไป
-*   **ทักษะที่ใช้ (Skills)**: `test-driven-development`, `obsidian-markdown`
+*   **ทักษะที่ใช้ (Skills)**: `test-driven-development`, `obsidian-markdown`, `planning-and-task-breakdown`, `debugging-and-error-recovery`
 
 ### 9. QA Automation Engineer (`qa-automate.md`)
 *   **บทบาท**: พัฒนาและรันชุดทดสอบ E2E อัตโนมัติด้วย Playwright MCP
 *   **อินพุต**: อ่านเงื่อนไขจาก `[[test_plan]]` (ตามคำสั่งของ `@pm-po`)
 *   **เอาต์พุต**: ใช้ `mcp_playwright_*` และ `run_command` ทดสอบระบบจริงและบันทึกประวัติลงใน `[[test_execution]]`
-*   **ทักษะที่ใช้ (Skills)**: `browser-testing-with-devtools`, `debugging-and-error-recovery`
+*   **ทักษะที่ใช้ (Skills)**: `browser-testing-with-devtools`, `debugging-and-error-recovery`, `test-driven-development`, `ci-cd-and-automation`
 
 ---
 

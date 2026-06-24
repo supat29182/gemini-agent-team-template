@@ -1,0 +1,44 @@
+{
+  "tech-lead-plan": {
+    "status": "idle",
+    "locked_by": "",
+    "locked_at": "",
+    "completed_at": "",
+    "ttl_mins": 30
+  },
+  "backend-dev": {
+    "status": "idle",
+    "locked_by": "",
+    "locked_at": "",
+    "completed_at": "",
+    "ttl_mins": 30
+  },
+  "frontend-dev": {
+    "status": "idle",
+    "locked_by": "",
+    "locked_at": "",
+    "completed_at": "",
+    "ttl_mins": 30
+  },
+  "qa-test-plan": {
+    "status": "idle",
+    "locked_by": "",
+    "locked_at": "",
+    "completed_at": "",
+    "ttl_mins": 20
+  },
+  "security-audit": {
+    "status": "idle",
+    "locked_by": "",
+    "locked_at": "",
+    "completed_at": "",
+    "ttl_mins": 20
+  },
+  "qa-automate-execution": {
+    "status": "idle",
+    "locked_by": "",
+    "locked_at": "",
+    "completed_at": "",
+    "ttl_mins": 25
+  }
+}
