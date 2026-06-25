@@ -13,12 +13,12 @@
                   │                       │                         │
                   ▼                       ▼                         ▼
           [PHASE 1: DESIGN]     [PHASE 2: IMPLEMENTATION]   [PHASE 3: VERIFICATION]
-          (Sequential)          (Parallel Block 1)          (Parallel Block 2)
-          - sa (Spec)           - tech-lead (Plan) ←seq     - security (Audit)
-          - solution-architect  - backend-dev  ←parallel    - qa-automate (E2E)
-            (Impact Analysis)   - frontend-dev ←parallel    ── Sync Point 2 ──
-                                - qa (Test Plan)←parallel
-                                ── Sync Point 1 ──
+          (Sequential)          (Sequential/Parallel)       (Parallel Block)
+          - sa (Spec)           - backend-dev  &            - security (Audit)
+          - solution-architect    qa-automate (Test Plan)   - qa-automate (E2E)
+            (Impact Analysis)   ── Sync Point 2 ──          ── Sync Point 3 ──
+                                - frontend-dev
+                                ── Sync Point 2.5 ──
 ```
 
 1.  **ห้ามข้ามขั้นตอนการทำงาน**: การทำงานจะต้องเริ่มจากเฟสดีไซน์เสมอ ห้ามมิให้ทีมพัฒนาลงมือเขียนโค้ดก่อนที่เอกสารสเปกระบบและผลกระทบสถาปัตยกรรมจะเสร็จสมบูรณ์
@@ -81,13 +81,13 @@
 
 ## 🤖 5. รายละเอียดและบทบาทการทำงานของ Agent Team (`.agents/agents/`)
 
-ระบบนี้ควบคุมการทำงานร่วมกันของ Agent 9 ตัวที่ถูกบันทึกคอนฟิกูเรชันไว้ในไดเรกทอรี [.agents/agents/](file://.agents/agents) ซึ่งจัดโครงสร้างการสั่งงานแบบ **Flat Orchestration** (ไม่มี nesting) ดังนี้:
+ระบบนี้ควบคุมการทำงานร่วมกันของ Agent 8 ตัวที่ถูกบันทึกคอนฟิกูเรชันไว้ในไดเรกทอรี [.agents/agents/](file://.agents/agents) ซึ่งจัดโครงสร้างการสั่งงานแบบ **Flat Orchestration** (ไม่มี nesting) ดังนี้:
 
 ### 1. PM/PO (`pm-po.md`)
 *   **บทบาท**: ศูนย์กลางและผู้ควบคุมกระบวนการ AISDLC (Flat Orchestrator)
-*   **ข้อจำกัดสำคัญ (Critical Constraints)**: **ห้าม PM/PO ดำเนินการเขียนหรือแก้ไขโค้ดโปรเจกต์หลัก และห้ามร่างเอกสารข้อกำหนดทางเทคนิค (เช่น system_spec.md, architecture_impact.md) ด้วยตนเองโดยเด็ดขาด** รวมถึง **ห้ามจดจำสถานะโปรเจกต์ด้วยตนเอง ต้องพึ่งพา Project Board เป็นแกนหลักเสมอ** PM/PO ทำหน้าที่ได้เพียงการสัมภาษณ์ความต้องการ, ปรับปรุง Inbox/Project Board, และสั่งการ Subagents ตามเฟสเท่านั้น
+*   **ข้อจำกัดสำคัญ (Critical Constraints)**: **ห้าม PM/PO ดำเนินการเขียนหรือแก้ไขโค้ดโปรเจกต์หลัก และห้ามร่างเอกสารข้อกำหนดทางเทคนิคด้วยตนเองโดยเด็ดขาด** PM/PO มีฐานะเป็น **Blind Orchestrator** ห้ามใช้คำสั่งอ่านไฟล์สเปกเทคนิค (เช่น `system_spec.md`, `api_contract.yaml`) หรือไฟล์ซอร์สโค้ดใดๆ ด้วยตัวเองเพื่อตรวจสอบงานเด็ดขาด (เพื่อประหยัด Token) รวมถึง **ห้ามจดจำสถานะโปรเจกต์ด้วยตนเอง ต้องพึ่งพา Project Board เป็นแกนหลักเสมอ** PM/PO ทำหน้าที่แจก Feature Slug ให้ Specialist Agents ไปอ่านไฟล์เองเท่านั้น
 *   **อินพุตเริ่มต้น**: อ่านความต้องการล่าสุดจาก `[[inbox_log]]` และสถานะจาก `[[project_board]]`
-*   **การส่งงาน**: สั่งงานตรงไปยัง specialist agents แต่ละตัวตาม Phase (sa, solution-architect, tech-lead, backend-dev, frontend-dev, security, qa, qa-automate)
+*   **การส่งงาน**: สั่งงานตรงไปยัง specialist agents แต่ละตัวตาม Phase (sa, solution-architect, backend-dev, frontend-dev, security, qa-automate)
 *   **ทักษะที่ใช้ (Skills)**: `using-agent-skills`, `context-engineering`, `idea-refine`, `interview-me`, `planning-and-task-breakdown`, `git-workflow-and-versioning`
 
 ### 2. System Analyst (`sa.md`)
@@ -102,11 +102,7 @@
 *   **เอาต์พุต**: ใช้ `mcp_gitnexus_*` วิเคราะห์ผลกระทบ บันทึกลงใน `[[architecture_impact]]` และรัน brain linter
 *   **ทักษะที่ใช้ (Skills)**: `api-and-interface-design`, `documentation-and-adrs`, `doubt-driven-development`, `deprecation-and-migration`
 
-### 4. Tech Lead (`tech-lead.md`)
-*   **บทบาท**: ที่ปรึกษาเชิงเทคนิค ผู้จัดทำ Development Plan และทำ Code Review
-*   **อินพุต**: อ่านจาก `[[system_spec]]` และ `[[architecture_impact]]` ตามคำสั่งของ `@pm-po`
-*   **เอาต์พุต**: บันทึกแผนการพัฒนาลงใน `dev-plan.md` เพื่อให้ Dev ใช้อ้างอิง (ไม่มีการ delegate งานเอง)
-*   **ทักษะที่ใช้ (Skills)**: `code-review-and-quality`, `code-simplification`, `doubt-driven-development`, `planning-and-task-breakdown`, `api-and-interface-design`, `git-workflow-and-versioning`
+
 
 ### 5. Backend Developer (`backend-dev.md`)
 *   **บทบาท**: เขียน APIs, จัดทำ Schema Database และรัน Unit Test ฝั่ง Backend
@@ -126,17 +122,11 @@
 *   **เอาต์พุต**: บันทึกรายงานผลลงใน `[[security_audit]]` โดยระบุหัวไฟล์เป็น **[STATUS: PASSED]** หรือ **[STATUS: FAILED]** ส่งตรงไปยัง `@pm-po`
 *   **ทักษะที่ใช้ (Skills)**: `security-and-hardening`, `doubt-driven-development`, `code-review-and-quality`, `api-and-interface-design`
 
-### 8. QA Lead (`qa.md`)
-*   **บทบาท**: ออกแบบ Test Plan และตรวจสอบระบบแบบ Manual Test (Manual QA & Test Planner)
+### 7. QA Automation Engineer (`qa-automate.md`)
+*   **บทบาท**: เขียน Test Plan และรันชุดทดสอบ E2E อัตโนมัติด้วย Playwright MCP (รวบรวมหน้าที่ของ QA Manual เข้ามาด้วย)
 *   **อินพุต**: สเปกจาก `[[system_spec]]` (ตามคำสั่งของ `@pm-po`)
-*   **เอาต์พุต**: เขียน Test Cases และขั้นตอนการทดสอบด้วยมืออย่างละเอียดลงใน `[[test_plan]]` เพื่อให้ PM หรือผู้ใช้ทดสอบตาม
-*   **ทักษะที่ใช้ (Skills)**: `test-driven-development`, `obsidian-markdown`, `planning-and-task-breakdown`, `debugging-and-error-recovery`
-
-### 9. QA Automation Engineer (`qa-automate.md`)
-*   **บทบาท**: พัฒนาและรันชุดทดสอบ E2E อัตโนมัติด้วย Playwright MCP
-*   **อินพุต**: อ่านเงื่อนไขจาก `[[test_plan]]` (ตามคำสั่งของ `@pm-po`)
-*   **เอาต์พุต**: ใช้ `mcp_playwright_*` และ `run_command` ทดสอบระบบจริงและบันทึกประวัติลงใน `[[test_execution]]`
-*   **ทักษะที่ใช้ (Skills)**: `browser-testing-with-devtools`, `debugging-and-error-recovery`, `test-driven-development`, `ci-cd-and-automation`
+*   **เอาต์พุต**: ร่าง `[[test_plan]]` ใน Phase 2 และใช้ `mcp_playwright_*` รันทดสอบระบบจริงใน Phase 3 พร้อมบันทึกประวัติลงใน `[[test_execution]]` โดยต้องตัดตอน Log ให้เหลือแต่สาระสำคัญไม่เกิน 50 บรรทัดเมื่อเกิด Error
+*   **ทักษะที่ใช้ (Skills)**: `browser-testing-with-devtools`, `debugging-and-error-recovery`, `test-driven-development`, `ci-cd-and-automation`, `planning-and-task-breakdown`
 
 ### 10. Nexus Librarian (`nexus-librarian.md`)
 *   **บทบาท**: บรรณารักษ์ข้อมูลประจำระบบ (Knowledge Broker) ทำหน้าที่สืบค้นโครงสร้างโค้ดและเอกสารผ่านระบบ GitNexus
@@ -229,6 +219,7 @@ This project is indexed by GitNexus as **gemini-agent-team-template** (222 symbo
 - NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
 - NEVER rename symbols with find-and-replace — use `gitnexus_rename` which understands the call graph.
 - NEVER commit changes without running `gitnexus_detect_changes()` to check affected scope.
+- NEVER use `view_file` or `grep` to explore unfamiliar code or architecture initially. Use `gitnexus_context` or `gitnexus_query` first to save context window tokens.
 
 ## Resources
 

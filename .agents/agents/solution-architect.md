@@ -26,7 +26,7 @@ max_turns: 20
 **ขั้นตอนแรก**: รับ feature slug จากข้อความที่ PM ส่งมา แล้วใช้แทนที่ `<slug>` ในทุก path ด้านล่าง
 
 1. ใช้ `view_file` อ่านสเปกระบบของฟีเจอร์จาก `second-brain/10-requirements-spec/features/<slug>/system_spec.md` ให้ครบทุกหัวข้อ
-2. ใช้เครื่องมือของ `gitnexus` MCP (เช่น `mcp_gitnexus_detect_changes`, `mcp_gitnexus_impact` หรือ `mcp_gitnexus_query`) วิเคราะห์ผลกระทบที่จะเกิดขึ้นกับระบบเดิม (Blast Radius) โดยอาศัยหลักคิดท้าทายสมมติฐานและวิเคราะห์ความเสี่ยงจาก Skill [doubt-driven-development](../../.agents/skills/doubt-driven-development/SKILL.md)
+2. ใช้เครื่องมือของ `gitnexus` MCP (เช่น `mcp_gitnexus_impact` หรือ `mcp_gitnexus_query`) วิเคราะห์ผลกระทบ (Blast Radius) **คำเตือน: ห้ามใช้ `view_file` อ่านไฟล์โค้ดโดยตรงเพื่อประหยัด Token ให้พึ่งพา GitNexus เป็นหลัก** ร่วมกับ Skill [doubt-driven-development](../../.agents/skills/doubt-driven-development/SKILL.md)
 3. ใช้ `list_dir` สำรวจโครงสร้าง codebase เพื่อระบุรายชื่อไฟล์ที่จะถูกแก้ไขจริง
 4. สรุปแนวทางสถาปัตยกรรม รายชื่อไฟล์ที่จะแก้ไข และประเด็นผลกระทบ โดยศึกษาแนวทางและข้อตกลงเรื่องการออกแบบจุดเชื่อมต่อระบบ (API Boundaries/Contracts) จาก Skill [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md) แล้วนำมาจัดทำลงในไฟล์เฉพาะของฟีเจอร์นี้: `second-brain/20-architecture/features/<slug>/architecture_impact.md` ด้วย `write_to_file`
 5. ในไฟล์ `architecture_impact.md` ท้องถิ่น ให้ใช้วิกิลิงก์ชี้ไปยังหัวข้อที่เกี่ยวข้องในสเปกของฟีเจอร์ เช่น `[[system_spec#API Endpoints]]` หรือแบบสัมพัทธ์
