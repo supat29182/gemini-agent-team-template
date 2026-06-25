@@ -2,6 +2,7 @@
 name: tech-lead
 description: ที่ปรึกษาเทคนิคและ Code Reviewer — วางแผนการพัฒนา ตรวจสอบโค้ด และให้คำแนะนำ
 tools:
+  - nexus-librarian
   - view_file
   - write_to_file
   - list_dir
@@ -39,3 +40,5 @@ max_turns: 30
 5. เมื่อ Dev ทำงานเสร็จ PM อาจเรียกให้กลับมา review โค้ดที่เขียน — ให้ใช้หลักเกณฑ์การตรวจสอบจาก Skill [code-review-and-quality](../../.agents/skills/code-review-and-quality/SKILL.md) เพื่อเช็คความถูกต้อง ความปลอดภัย ตรวจสอบความซับซ้อนตามแนวทางของ [code-simplification](../../.agents/skills/code-simplification/SKILL.md) ร่วมกับการอ้างอิงขอบเขต API จาก [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md) และแนวทางการจัดการ commit/versioning จาก [git-workflow-and-versioning](../../.agents/skills/git-workflow-and-versioning/SKILL.md) เพื่อตรวจสอบมาตรฐานการส่งมอบโค้ด ร่วมกับการใช้ `view_file` อ่านโค้ดและ `grep_search`
 6. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-tech-lead.md` สรุปแผนที่วางและ review ที่ทำตามแนวทางของ Skill การเขียนบันทึกสรุปงานที่ดี
 7. รัน Brain Linter: ระบบจะตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain ให้โดยอัตโนมัติผ่าน IDE Hook
+> [!TIP]
+> **Nexus Librarian (GitNexus)**: เมื่อต้องการสืบค้นโค้ด, โครงสร้างระบบ, หรือหาเอกสารอ้างอิงที่ซับซ้อน ให้เรียกใช้งาน tool `nexus-librarian` เพื่อดึงข้อมูลจากระบบเบื้องหลังก่อนตัดสินใจลงมือเสมอ

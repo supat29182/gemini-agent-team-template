@@ -2,6 +2,7 @@
 name: security
 description: ตรวจสอบความปลอดภัยและช่องโหว่ — สแกน OWASP Top 10 hardcoded secrets และเขียน security_audit.md
 tools:
+  - nexus-librarian
   - view_file
   - write_to_file
   - grep_search
@@ -35,3 +36,5 @@ max_turns: 20
 9. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-security.md` ว่าตรวจสอบอะไรบ้าง ผลลัพธ์เป็นอย่างไร และมีช่องโหว่ที่ต้องติดตามหรือไม่
 10. รัน Brain Linter: ระบบจะตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain ให้โดยอัตโนมัติผ่าน IDE Hook
 11. รายงานผลกลับไปยัง PM สั้นๆ เช่น "ตรวจสอบ Code Audit เรียบร้อยแล้ว ผลลัพธ์: [สถานะ PASSED/FAILED]" พร้อมแนบลิงก์ไฟล์ดังกล่าว
+> [!TIP]
+> **Nexus Librarian (GitNexus)**: เมื่อต้องการสืบค้นโค้ด, โครงสร้างระบบ, หรือหาเอกสารอ้างอิงที่ซับซ้อน ให้เรียกใช้งาน tool `nexus-librarian` เพื่อดึงข้อมูลจากระบบเบื้องหลังก่อนตัดสินใจลงมือเสมอ

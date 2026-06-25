@@ -499,6 +499,46 @@ def check_strategy_b_folders(workspace_dir):
                     })
     return errors
 
+def sync_gitnexus_agents(workspace_dir):
+    """ซิงค์ข้อมูล GitNexus จาก AGENTS.md (Root) ไปยัง .agents/AGENTS.md แบบอัตโนมัติ"""
+    root_agents = os.path.join(workspace_dir, 'AGENTS.md')
+    target_agents = os.path.join(workspace_dir, '.agents', 'AGENTS.md')
+    
+    if not os.path.exists(root_agents) or not os.path.exists(target_agents):
+        return
+        
+    try:
+        with open(root_agents, 'r', encoding='utf-8') as f:
+            root_content = f.read()
+            
+        start_tag = '<!-- gitnexus:start -->'
+        end_tag = '<!-- gitnexus:end -->'
+        
+        if start_tag not in root_content or end_tag not in root_content:
+            return
+            
+        start_idx = root_content.find(start_tag)
+        end_idx = root_content.find(end_tag) + len(end_tag)
+        gitnexus_block = root_content[start_idx:end_idx]
+        
+        with open(target_agents, 'r', encoding='utf-8') as f:
+            target_content = f.read()
+            
+        if start_tag in target_content and end_tag in target_content:
+            t_start_idx = target_content.find(start_tag)
+            t_end_idx = target_content.find(end_tag) + len(end_tag)
+            new_content = target_content[:t_start_idx] + gitnexus_block + target_content[t_end_idx:]
+        else:
+            header = "\n\n## 🤖 12. GitNexus — Code Intelligence\n\n"
+            new_content = target_content.rstrip() + header + gitnexus_block + "\n"
+            
+        if new_content != target_content:
+            with open(target_agents, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            print("🔄 Auto-synced GitNexus block from root AGENTS.md to .agents/AGENTS.md")
+    except Exception as e:
+        print(f"Warning: Error syncing GitNexus block: {e}")
+
 def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     workspace_dir = os.path.abspath(os.path.join(script_dir, '..'))
@@ -507,6 +547,9 @@ def main():
     if not os.path.exists(root_dir):
         print(f"Error: second-brain directory not found at {root_dir}")
         sys.exit(1)
+        
+    # Sync GitNexus before scanning
+    sync_gitnexus_agents(workspace_dir)
         
     print(f"🧠 Scanning Workspace Linter in: {workspace_dir}")
     file_map, headings_map = build_index(root_dir, workspace_dir)

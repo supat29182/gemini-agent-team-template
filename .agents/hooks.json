@@ -1,8 +1,13 @@
 {
-  "brain-linter": {
+  "brain-linter-and-gitnexus": {
     "Stop": [
       {
         "hooks": [
+          {
+            "type": "command",
+            "command": "npx gitnexus analyze > /dev/stderr; echo '{}'",
+            "timeout": 60
+          },
           {
             "type": "command",
             "command": "python3 scripts/brain_linter.py > /dev/stderr; echo '{}'",

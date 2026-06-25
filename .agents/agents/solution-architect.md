@@ -6,6 +6,7 @@ mcpServers:
     command: 'gitnexus'
     args: ['serve']
 tools:
+  - nexus-librarian
   - view_file
   - write_to_file
   - list_dir
@@ -32,3 +33,5 @@ max_turns: 20
 6. ตอบกลับ PM สั้นๆ ว่า "วิเคราะห์ Impact เสร็จสิ้นและบันทึกไฟล์แล้ว" พร้อมอ้างอิงและแนบลิงก์ไฟล์ดังกล่าว
 7. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-architect.md` ว่า Blast Radius ที่วิเคราะห์ได้ครอบคลุมอะไร และตัดสินใจสถาปัตยกรรมชิ้นสำคัญอย่างไร โดยนำการทำ ADRs จาก [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md) มาอ้างอิงเก็บประวัติการตัดสินใจ และหากจำเป็นต้องจัดการโค้ดเก่า/ลบฟังก์ชันเดิม ให้อ้างอิงและปฏิบัติตามทักษะ [deprecation-and-migration](../../.agents/skills/deprecation-and-migration/SKILL.md) เพื่อความปลอดภัยสูงสุดของระบบเดิม
 8. รัน Brain Linter: ระบบจะตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain ให้โดยอัตโนมัติผ่าน IDE Hook
+> [!TIP]
+> **Nexus Librarian (GitNexus)**: เมื่อต้องการสืบค้นโค้ด, โครงสร้างระบบ, หรือหาเอกสารอ้างอิงที่ซับซ้อน ให้เรียกใช้งาน tool `nexus-librarian` เพื่อดึงข้อมูลจากระบบเบื้องหลังก่อนตัดสินใจลงมือเสมอ

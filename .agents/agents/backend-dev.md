@@ -2,6 +2,7 @@
 name: backend-dev
 description: พัฒนา API, Database และ Unit Test ฝั่ง Backend — เขียนโค้ด server-side รัน test ให้ผ่าน และเขียน changelog
 tools:
+  - nexus-librarian
   - view_file
   - write_to_file
   - list_dir
@@ -30,7 +31,7 @@ max_turns: 30
 1. **ตรวจสอบและล็อกงาน (Acquire Task Lock)**: ใช้ `view_file` อ่านไฟล์สถานะล็อกที่ `second-brain/30-development/features/<slug>/task_locks.json` และดูข้อมูลคีย์ `"backend-dev"`:
    * หากพบสถานะเป็น `"in-progress"` หรือ `"completed"` ให้ยุติการทำงานของตัวเองทันทีเพื่อหลีกเลี่ยงการทำซ้ำ
    * หากมีสถานะเป็น `"idle"` หรือยังว่างเปล่า ให้ใช้ `write_to_file` อัปเดตคีย์ `"backend-dev"` เป็น `"status": "in-progress"`, `"locked_by": "backend-dev"` และใส่ timestamp ปัจจุบัน ก่อนดำเนินการในขั้นตอนถัดไป
-2. ใช้ `view_file` อ่านและทำความเข้าใจรายละเอียดข้อกำหนดจาก `second-brain/10-requirements-spec/features/<slug>/system_spec.md` และประเด็นผลกระทบจาก `second-brain/20-architecture/features/<slug>/architecture_impact.md`
+2. ใช้ `view_file` อ่านและทำความเข้าใจรายละเอียดข้อกำหนดจาก `second-brain/10-requirements-spec/features/<slug>/system_spec.md`, ประเด็นผลกระทบจาก `second-brain/20-architecture/features/<slug>/architecture_impact.md`, และ **บังคับอ่าน API Contract** จาก `second-brain/10-requirements-spec/features/<slug>/api_contract.yaml` เพื่ออ้างอิงโครงสร้างและ Schema ร่วมกันระหว่าง Frontend และ Backend ตามคำแนะนำจาก Skill [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md)
 3. ใช้ `view_file` อ่านแผนการพัฒนาจาก `second-brain/30-development/features/<slug>/dev-plan.md` (ถ้ามี) เพื่อดู guideline จาก Tech Lead
 4. ใช้ `view_file` อ่านแนวทางปฏิบัติการพัฒนาโค้ดจาก `second-brain/30-development/dev-guidelines.md` เพื่อประยุกต์ใช้มาตรฐานของโปรเจกต์ ร่วมกับแนวปฏิบัติจาก Skill [custom-coding-standard](../../.agents/skills/custom-coding-standard/SKILL.md)
 5. ใช้ `list_dir` และ `grep_search` สำรวจโค้ด codebase ปัจจุบันในส่วนที่จะแก้ไขก่อนลงมือเพื่อไม่ให้ทับงานเดิม
@@ -42,3 +43,5 @@ max_turns: 30
 11. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-backend-dev.md` ว่าโค้ดที่เขียน/แก้ไขครอบคลุมอะไร ผลการ test เป็นอย่างไร (คำเตือน: ห้ามระบุ Absolute Path เด็ดขาด เพื่อป้องกันปัญหา Linter ตรวจไม่ผ่าน)
 12. รัน Brain Linter: ระบบจะตรวจสอบความสมบูรณ์และถูกต้องของเอกสารใน Second Brain ให้โดยอัตโนมัติผ่าน IDE Hook
 13. ตอบกลับ PM พร้อมระบุและแนบไฟล์โค้ดที่แก้ไขสั้นๆ และยืนยัน "Backend ทำงานเสร็จและเทสผ่านแล้ว"
+> [!TIP]
+> **Nexus Librarian (GitNexus)**: เมื่อต้องการสืบค้นโค้ด, โครงสร้างระบบ, หรือหาเอกสารอ้างอิงที่ซับซ้อน ให้เรียกใช้งาน tool `nexus-librarian` เพื่อดึงข้อมูลจากระบบเบื้องหลังก่อนตัดสินใจลงมือเสมอ
