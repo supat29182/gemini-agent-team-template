@@ -15,57 +15,25 @@
 
 ```mermaid
 graph TD
-    User(("User"))
-    PM["pm-po (Blind Orchestrator)"]
-    Librarian["nexus-librarian (On-Demand)"]
-    Inbox["inbox_log.md"]
-    Locks["task_locks.json"]
+    INBOX["inbox_log.md"] -->|"1. PM อ่าน Requirement"| PM(("pm-po"))
+    PM -->|"Phase 1: Design"| SA("sa")
+    SA -->|"Draft Spec & API"| ARCH("solution-architect")
+    ARCH -->|"Impact Analysis"| PM
     
-    User -->|"1. โยน Requirement"| Inbox
-    Inbox -->|"2. อ่าน Requirement ล่าสุด"| PM
+    PM -->|"Phase 2: Sync Point 2"| BACK("backend-dev")
+    PM -->|"Phase 2: Sync Point 2"| QA_P("qa-automate (Test Plan)")
+    BACK -.->|"เสร็จ 2 ตัว"| FRONT("frontend-dev")
+    QA_P -.->|"เสร็จ 2 ตัว"| FRONT
+    FRONT -->|"Phase 2: Sync Point 2.5"| PM
     
-    subgraph Phase 1: DESIGN
-        SA["sa"]
-        Arch["solution-architect"]
-        PM -->|"3. สั่งทำ Spec"| SA
-        SA -->|"4. สั่งวิเคราะห์ Impact"| Arch
-    end
+    PM -->|"Phase 3: Sync Point 3"| SEC("security (Audit)")
+    PM -->|"Phase 3: Sync Point 3"| QA_E("qa-automate (Execution)")
     
-    subgraph Phase 2: IMPLEMENTATION
-        Backend["backend-dev"]
-        QAPlan["qa-automate (Test Plan)"]
-        Frontend["frontend-dev"]
-        
-        PM -->|"5. สั่งเริ่มงาน & รอ"| Locks
-        Locks -.->|"Trigger"| Backend
-        Locks -.->|"Trigger"| QAPlan
-        
-        Backend -->|"6. API เสร็จ"| Locks
-        QAPlan -->|"7. Test Plan เสร็จ"| Locks
-        
-        Locks -->|"8. ปลุก PM (Sync Point 2)"| PM
-        PM -->|"9. สั่งทำหน้าบ้าน"| Frontend
-        Frontend -->|"10. UI เสร็จ"| Locks
-    end
+    SEC -.->|"Failed"| BACK
+    QA_E -.->|"Failed"| FRONT
     
-    subgraph Phase 3: VERIFICATION
-        Sec["security"]
-        QAExec["qa-automate (E2E Test)"]
-        
-        PM -->|"11. สั่งทดสอบ"| Locks
-        Locks -.->|"Trigger"| Sec
-        Locks -.->|"Trigger"| QAExec
-        
-        Sec -->|"12. Audit Report"| Locks
-        QAExec -->|"13. E2E Logs (< 50 lines)"| Locks
-    end
-    
-    Locks -->|"14. ปลุก PM (Sync Point 3)"| PM
-    PM -->|"15. ส่ง Error Log ให้แก้"| Backend
-    
-    Arch -.->|"วิเคราะห์ Blast Radius"| Librarian
-    Backend -.->|"ค้นหา Call Graph"| Librarian
-    Frontend -.->|"ค้นหา Component"| Librarian
+    SEC -.->|"Passed"| DONE["Project Board: DONE"]
+    QA_E -.->|"Passed"| DONE
 ```
 
 ### ⏱️ 2. Sequence Diagram (เจาะลึกเมื่อสั่งงาน)
@@ -143,6 +111,32 @@ sequenceDiagram
 1. เมื่อ Frontend เสร็จ `pm-po` จะสั่งรัน **`@security`** ตรวจสอบช่องโหว่ความปลอดภัย และ **`@qa-automate`** รัน E2E Test บนเบราว์เซอร์จริงด้วย `Playwright MCP`
 2. หากทดสอบไม่ผ่าน (มีบั๊ก) QA จะส่ง Error Log สั้นๆ ตัดมาไม่เกิน 50 บรรทัด (Log Truncation) เพื่อประหยัด Token และให้ `pm-po` ตีกลับไปให้ Dev แก้ไข
 3. เมื่อทุกอย่างผ่านฉลุย `pm-po` จะแจ้งเตือนผู้ใช้ว่าฟีเจอร์เสร็จสมบูรณ์
+
+---
+
+## 🎭 จำลองเหตุการณ์ที่มีโอกาสเกิดขึ้น (Edge Case Simulations)
+
+เพื่อให้เห็นภาพการทำงานจริง นี่คือสถานการณ์จำลองและปฏิกิริยาของระบบ:
+
+### 🚨 1. ลูกค้าให้ Requirement มาแบบคลุมเครือ
+- **สถานการณ์:** ผู้ใช้พิมพ์ใน Inbox แค่ว่า *"อยากได้ปุ่มกดแชร์"*
+- **การตอบสนอง:** `@pm-po` จะใช้สกิลสัมภาษณ์เพื่อหยุดการสั่งงานและถามคำถามกับผู้ใช้ทีละ 1 คำถาม จนกว่าสเปกจะชัดเจน จึงจะส่งต่อให้ `@sa`
+
+### 🚨 2. Frontend จินตนาการ API เอง (Hallucination)
+- **สถานการณ์:** `@backend-dev` ยังพัฒนาไม่เสร็จ แต่ `@frontend-dev` เริ่มมั่วโครงสร้าง Mock Data ขึ้นมาเอง
+- **การตอบสนอง:** กฎ API Contract จะทำงาน บอท Frontend จะถูกบังคับให้อ่าน `api_contract.yaml` ก่อนเขียนโค้ดเสมอ หากไม่มีข้อมูลในนั้น บอทจะหยุดรอ
+
+### 🚨 3. ระบบเทสพังและโดนตีกลับ (The Feedback Loop)
+- **สถานการณ์:** บอท `@qa-automate` รัน E2E แล้วพัง (Error 500)
+- **การตอบสนอง:** QA จะบันทึก Log ลงในไฟล์แบบตัดทอนไม่เกิน 50 บรรทัด (Log Truncation) แล้วส่งให้ `@pm-po` ตีกลับงานให้ `@backend-dev` ซ่อม โดย Dev ต้องรัน `mcp_gitnexus_impact` วิเคราะห์ผลกระทบก่อนแก้โค้ด
+
+### 🚨 4. นักพัฒนาแก้บั๊กไม่สำเร็จจนติดลูป (Deadlock Prevention)
+- **สถานการณ์:** สืบเนื่องจากเหตุการณ์ก่อนหน้า บั๊กแก้ยาก `@backend-dev` พยายามแก้และรันเทสพังซ้ำหลายรอบ
+- **การตอบสนอง:** เมื่อล้มเหลวติดต่อกันครบ 3 ครั้ง บอทจะยอมแพ้ เปลี่ยนสถานะล็อกเป็น `failed` แล้วเรียกให้มนุษย์เข้ามาดู เพื่อป้องกันระบบค้าง (Infinite Wait) และป้องกันกิน Token ฟรี
+
+### 🚨 5. ตรวจพบช่องโหว่ความปลอดภัยร้ายแรง
+- **สถานการณ์:** `@security` ตรวจพบ Hardcoded Secret ในโค้ด Frontend
+- **การตอบสนอง:** บอท Security จะไม่แก้โค้ดเอง (กันตรรกะระบบพัง) แต่มันจะทำรายงานลง `security_audit.md` (สถานะ FAILED) แจ้ง PM ให้ตีกลับงานไปที่ Frontend เพื่อแก้ปัญหา
 
 ---
 

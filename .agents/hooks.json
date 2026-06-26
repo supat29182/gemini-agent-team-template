@@ -12,6 +12,11 @@
             "type": "command",
             "command": "python3 scripts/brain_linter.py > /dev/stderr; echo '{}'",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "command": "python3 scripts/log_rotation.py > /dev/stderr; echo '{}'",
+            "timeout": 15
           }
         ]
       }
