@@ -21,11 +21,13 @@ tags:
 ## Deployment Steps
 
 1. **Build Production Bundle**
+
    ```bash
    npm run build
    ```
 
 2. **Run Final Smoke Test**
+
    ```bash
    npm run test:e2e -- --headed
    ```
@@ -46,6 +48,7 @@ tags:
 - บันทึก Post-Mortem ลงใน `second-brain/60-delivery-ops/postmortem/`
 
 ## อ้างอิง
+
 - Security Audit: `[[security_audit]]`
 - Test Results: `[[test_execution]]`
 - Project Board: `[[project_board]]`

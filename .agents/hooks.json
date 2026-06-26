@@ -5,6 +5,11 @@
         "hooks": [
           {
             "type": "command",
+            "command": "npx prettier --write 'second-brain/**/*.md' '.agents/**/*.md' > /dev/stderr; echo '{}'",
+            "timeout": 30
+          },
+          {
+            "type": "command",
             "command": "npx gitnexus analyze > /dev/stderr; echo '{}'",
             "timeout": 60
           },

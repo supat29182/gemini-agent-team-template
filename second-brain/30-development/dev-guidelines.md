@@ -13,16 +13,19 @@ tags:
 ## Coding Conventions
 
 ### ทั่วไป
+
 - ใช้ **Meaningful Variable Names** — ห้ามตั้งชื่อตัวแปรว่า `x`, `temp`, `data` โดยไม่มีบริบท
 - ใช้ **camelCase** สำหรับ JavaScript/TypeScript, **snake_case** สำหรับ Python
 - ทุกฟังก์ชันที่เป็น Public API ต้องมี JSDoc/Docstring
 - ห้าม commit โค้ดที่มี `console.log` หรือ `print` ที่ใช้ debug ทิ้งไว้
 
 ### Error Handling
+
 - ห้ามใช้ empty catch blocks — ต้อง log error หรือ throw ต่อเสมอ
 - ใช้ custom error types สำหรับ business logic errors
 
 ### Git Commit Messages
+
 - ใช้ format: `type(scope): description` เช่น `feat(api): add line notify endpoint`
 - Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`
 
@@ -45,5 +48,6 @@ tags:
 - ห้ามแก้ไข migration ที่ถูก apply ไปแล้ว — ให้สร้าง migration ใหม่เสมอ
 
 ## อ้างอิง
+
 - ข้อกำหนดระบบ: `[[system_spec]]`
 - ผลกระทบสถาปัตยกรรม: `[[architecture_impact]]`
