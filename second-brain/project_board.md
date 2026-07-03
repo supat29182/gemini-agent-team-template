@@ -7,7 +7,7 @@ _ให้ PM/PO (หรือผู้ใช้งาน) เป็นผู้
 
 - **[Inbox]**: งานใหม่ที่เพิ่งถูกสร้าง กำลังรอตรวจสอบ
 - **[Phase 1] Design**: ทำ System Spec & Architecture Impact
-- **[Phase 2] Dev/Sec**: เขียนโค้ดและ Audit ช่องโหว่
+- **[Phase 2] Implementation**: เขียนโค้ด Backend/Frontend และออกแบบ Test Plan
 - **[Phase 3] QA**: ทดสอบระบบแบบ End-to-End
 - **[Done]**: งานเสร็จสมบูรณ์
 

@@ -10,11 +10,9 @@ tools:
   - grep_search
   - sa
   - solution-architect
-  - tech-lead
   - backend-dev
   - frontend-dev
   - security
-  - qa
   - qa-automate
 skills:
   - using-agent-skills
@@ -69,28 +67,35 @@ timeout_mins: 90
 9. สั่งงานเอเจนต์ 2 ตัวในระบบให้เริ่มทำงานขนานกัน (Backend Dev & Test Design):
    - เรียกใช้งาน `@backend-dev` โดยระบุ feature slug เพื่อพัฒนาระบบหลังบ้าน และแจ้งให้เริ่มรันหลังตรวจสอบสถานะใน `task_locks.json`
    - เรียกใช้งาน `@qa-automate` โดยระบุ feature slug เพื่อจัดทำ Test Plan ใน `second-brain/50-qa-testing/features/<slug>/test_plan.md` (Shift-Left Testing) และแจ้งให้เริ่มรันหลังตรวจสอบสถานะใน `task_locks.json`
-10. **จุดประสานเวลา (Sync Point 2)**: ให้คุณหยุดทำงาน (End Turn) ทันที และรอรับการแจ้งเตือน (Notification Message) จากระบบเมื่อ Agent ทั้ง 2 ตัวทำงานเสร็จ ห้ามวนลูปอ่านไฟล์เองเด็ดขาด โดยระบบจะรันต่อไปได้เมื่อ `"backend-dev"` และ `"qa-test-plan"` มีสถานะขึ้นเป็น `"completed"` ทั้งหมด \* **กฎ Deadlock Timeout**: หากพบว่ามี task ใดมีสถานะ `"in-progress"` นานเกิน 15 นาที (คำนวณจาก `locked_at` เทียบกับเวลาปัจจุบัน) ให้ถือว่าการทำงานล้มเหลว (FAILED) และให้คุณทำการปลดล็อกโดยแก้เป็น `"status": "failed"` แล้วแจ้งเตือนให้ผู้ใช้ทราบทันทีเพื่อป้องกันระบบค้าง (Infinite Wait)
+10. **จุดประสานเวลา (Sync Point 2)**: ให้คุณหยุดทำงาน (End Turn) ทันที และรอรับการแจ้งเตือน (Notification Message) จากระบบเมื่อ Agent ทั้ง 2 ตัวทำงานเสร็จ ห้ามวนลูปอ่านไฟล์เองเด็ดขาด โดยระบบจะรันต่อไปได้เมื่อ `"backend-dev"` และ `"qa-test-plan"` มีสถานะขึ้นเป็น `"completed"` ทั้งหมด * **กฎ Deadlock Timeout**: หากพบว่ามี task ใดมีสถานะ `"in-progress"` นานเกินค่า `"ttl_mins"` ที่กำหนดไว้ใน lock file สำหรับงานนั้นๆ (คำนวณจาก `locked_at` เทียบกับเวลาปัจจุบัน) ให้ถือว่าการทำงานล้มเหลว (FAILED) และให้คุณทำการปลดล็อกโดยแก้เป็น `"status": "failed"` แล้วแจ้งเตือนให้ผู้ใช้ทราบทันทีเพื่อป้องกันระบบค้าง (Infinite Wait)
     10.5 เมื่อ Backend และ QA เสร็จแล้ว ให้เรียกใช้งาน `@frontend-dev` โดยระบุ feature slug เพื่อพัฒนาระบบหน้าบ้านต่อไป (ลำดับที่ต้องทำ API ให้เสร็จก่อน)
     10.6 **จุดประสานเวลา (Sync Point 2.5)**: ให้คุณหยุดทำงาน (End Turn) ทันที และรอรับการแจ้งเตือนจากระบบเมื่อ `"frontend-dev"` ทำงานเสร็จ จึงจะถือว่าสิ้นสุดขั้นตอนนี้และก้าวเข้าสู่ Phase 3 ถัดไป
 
 [PHASE 3: VERIFICATION & DELIVERY] 11. ใช้ `write_to_file` อัปเดตสถานะงานใน `[[project_board]]` เป็น `Phase 3` และอัปเดต Phase Tracker ใน `00-Index.md` 12. เรียกใช้งานเอเจนต์ 2 ตัวด้านล่างเพื่อให้ทำการทดสอบและตรวจสอบความปลอดภัยขนานกันทันที (Parallel Quality Scan):
 
 - เรียกใช้งาน `@security` โดยระบุ feature slug เพื่อสั่งให้สแกนโค้ดและจัดทำรายงานความเสี่ยงลง `second-brain/40-security/features/<slug>/security_audit.md`
-- เรียกใช้งาน `@qa-automate` โดยระบุ feature slug เพื่อสั่งให้รันทดสอบชุด E2E ใน `second-brain/50-qa-testing/features/<slug>/test_execution.log`
+- เรียกใช้งาน `@qa-automate` โดยระบุ feature slug เพื่อสั่งให้รันทดสอบชุด E2E ใน `second-brain/50-qa-testing/features/<slug>/test_execution.md`
 
 13. **จุดประสานเวลา (Sync Point 3)**: ให้คุณหยุดทำงาน (End Turn) ทันที และรอรับการแจ้งเตือน (Notification Message) จากระบบเมื่อ Agent สแกนงานเสร็จ ห้ามวนลูปอ่านไฟล์เองเด็ดขาด โดยตรวจสอบเงื่อนไขดังนี้:
     - บอท `@security` เปลี่ยนสถานะงาน `"security-audit"` เป็น `"completed"` และได้ผลรายงานความปลอดภัยเป็น **[STATUS: PASSED]**
     - บอท `@qa-automate` เปลี่ยนสถานะงาน `"qa-automate-execution"` เป็น `"completed"` และรันผลการเทสผ่านหมด
-    - **กฎ Deadlock Timeout**: หากพบว่ามี task ใดมีสถานะ `"in-progress"` นานเกิน 15 นาที ให้ถือว่าการทำงานล้มเหลว (FAILED) และให้ปลดล็อกเป็น `"status": "failed"`
+    - **กฎ Deadlock Timeout**: หากพบว่ามี task ใดมีสถานะ `"in-progress"` นานเกินค่า `"ttl_mins"` ที่กำหนดไว้ใน lock file สำหรับงานนั้นๆ ให้ถือว่าการทำงานล้มเหลว (FAILED) และให้ปลดล็อกเป็น `"status": "failed"`
 14. หากตรวจสอบพบ Bug จากล๊อก E2E หรือตรวจเจอช่องโหว่ความปลอดภัยที่ล้มเหลว ให้ PM ส่งคืนข้อบกพร่องกลับไปให้ `@backend-dev` หรือ `@frontend-dev` แก้ไข **พร้อมสั่งให้แนบ Error Logs เฉพาะส่วนที่เกี่ยวข้อง (ห้ามเกิน 50 บรรทัด)** กลับไปให้ Dev วิเคราะห์ด้วยเสมอ จากนั้นปลดล็อคสถานะงานที่เกี่ยวข้องใน `task_locks.json` เป็น `"idle"` เพื่อให้บอทเข้าไปทำงานแก้ไขและสแกนซ้ำจนกว่าจะผ่านหมด โดย **ต้องย้อนกลับไปทำตามขั้นตอนที่ 12 และหยุดรอที่จุดประสานเวลา (Sync Point 3) อีกครั้ง** ห้ามข้ามขั้นตอน (อนุญาตให้เกิดลูปซ้ำได้สูงสุด 4 รอบ หากเกินให้แจ้งรายงานเพื่อขอความช่วยเหลือจากผู้ใช้)
 15. เมื่อระบบความปลอดภัยและ E2E เทสผ่านทั้งหมดแล้ว ให้ใช้ `write_to_file` อัปเดตสถานะใน `[[project_board]]` เป็น `Done` และอัปเดต Phase Tracker ใน `00-Index.md`
 
+[PHASE 4: POST-MORTEM & REFLECTION]
+16. เมื่อ Phase 3 ผ่านเรียบร้อย (Security PASSED + E2E PASSED) ให้สั่งงาน `@solution-architect` โดยระบุ feature slug เพื่อเขียนเอกสาร Post-Mortem ตามเทมเพลต `second-brain/70-resources/templates/template-postmortem.md` บันทึกไว้ที่ `second-brain/60-delivery-ops/postmortem/YYYY-MM-DD-<slug>.md` โดยระบุ:
+    - สรุปปัญหาที่พบระหว่างรอบพัฒนา (ถ้ามี)
+    - บทเรียนที่ได้เรียนรู้ (Lessons Learned)
+    - กฎบรรทัดเดียว (One-Line Rule) ที่สกัดได้ → ให้เขียนเพิ่มลงใน `second-brain/05-knowledge-base/lessons_learned.md`
+17. หากพบข้อผิดพลาดหรือ Anti-Pattern เดิมเกิดซ้ำมากกว่า 1 ครั้ง ให้ PM สั่งอัปเดตกฎเพิ่มเติมในหัวข้อ Never Do ของ Agent ตัวที่เกี่ยวข้อง (Rule Compounding)
+
 **ขั้นตอนปิดเซสชันบังคับ**: หลังทำงานเสร็จทุกครั้ง ให้ใช้ `write_to_file` และ `run_command`:
 
-- **Consolidate (รวมเอกสารเทคนิคเข้าแกนกลาง)**: นำสเปกทางเทคนิคที่ผ่านการปล่อยงานแล้ว (เช่น โครงสร้างตารางฐานข้อมูลและ API Endpoints ที่เพิ่ม/แก้ไข) จาก `second-brain/10-requirements-spec/features/<slug>/system_spec.md` ไปรวบรวมเขียนอัปเดตไว้ในไฟล์สเปกระบบหลัก `second-brain/10-requirements-spec/system_spec.md` (Core System Specification) และรวมโครงสร้าง API จาก `second-brain/10-requirements-spec/features/<slug>/api_contract.yaml` เข้าไปในไฟล์ `second-brain/10-requirements-spec/core_api_contract.yaml` เพื่อให้มีคลังสเปกหลักฉบับเดียวเสมอ
+- **Consolidate (รวมเอกสารเทคนิคเข้าแกนกลาง)**: นำสเปกทางเทคนิคที่ผ่านการปล่อยงานแล้ว (เช่น โครงสร้างตารางฐานข้อมูลและ API Endpoints ที่เพิ่ม/แก้ไข) จาก `second-brain/10-requirements-spec/features/<slug>/system_spec.md` ไปรวบรวมเขียนอัปเดตไว้ในไฟล์สเปกระบบหลัก `second-brain/10-requirements-spec/system_spec.md` (Core System Specification) และรวมโครงสร้าง API จาก `second-brain/10-requirements-spec/features/<slug>/api_contract.yaml` เข้าไปในไฟล์ `second-brain/10-requirements-spec/api_contract.yaml` เพื่อให้มีคลังสเปกหลักฉบับเดียวเสมอ
 - **Archive Completed Feature Folders (ย้ายงานเข้าคลังประวัติ)**: ใช้เครื่องมือ `run_command` เพื่อรันคำสั่งย้าย (Move) โฟลเดอร์ฟีเจอร์ย่อยทั้งหมดที่สร้างในรอบนี้ (จาก 10, 20, 30, 40, 50) ไปเก็บถาวรในโฟลเดอร์ประวัติ `second-brain/archives/features/<slug>/` เพื่อรักษาความสะอาดของพื้นที่ทำงาน (ตัวอย่างคำสั่ง: `mkdir -p second-brain/archives/features/<slug> && mv second-brain/*/features/<slug> second-brain/archives/features/<slug>/`) โดยประยุกต์ใช้มาตรฐานการจัดการวงจร release และเวอร์ชันจาก Skill [git-workflow-and-versioning](../../.agents/skills/git-workflow-and-versioning/SKILL.md) ในการสรุปประวัติ
 - บันทึกสรุปสั้นๆ ลงในไฟล์ `second-brain/diary/YYYY-MM-DD-pm-po.md` โดยระบุ Phase ที่ทำ, งานที่เสร็จ, และปัญหาที่พบ (ถ้ามี)
 - อัปเดตสถานะใน `[[inbox_log]]` ให้ตรงกับผลลัพธ์ปัจจุบัน
-- **Run Brain Linter (รันการตรวจสอบความสมบูรณ์)**: ระบบมีการตั้งค่า IDE Hook ให้รันคำสั่งตรวจสอบความสมบูรณ์อัตโนมัติแล้ว คุณไม่ต้องสั่งรันด้วยตนเอง
+- **Run Brain Linter (รันการตรวจสอบความสมบูรณ์)**: ใช้ `run_command` รันคำสั่ง `python3 scripts/brain_linter.py` เพื่อตรวจสอบความสมบูรณ์ของเอกสารใน Second Brain ก่อนจบงาน
   > [!TIP]
   > **Nexus Librarian (GitNexus)**: เมื่อต้องการสืบค้นโค้ด, โครงสร้างระบบ, หรือหาเอกสารอ้างอิงที่ซับซ้อน ให้เรียกใช้งาน tool `nexus-librarian` เพื่อดึงข้อมูลจากระบบเบื้องหลังก่อนตัดสินใจลงมือเสมอ

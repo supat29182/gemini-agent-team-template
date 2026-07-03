@@ -1,11 +1,4 @@
 {
-  "tech-lead-plan": {
-    "status": "idle",
-    "locked_by": "",
-    "locked_at": "",
-    "completed_at": "",
-    "ttl_mins": 30
-  },
   "backend-dev": {
     "status": "idle",
     "locked_by": "",

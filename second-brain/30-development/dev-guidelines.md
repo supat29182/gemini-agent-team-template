@@ -1,6 +1,6 @@
 ---
 date: 2026-06-23
-author: tech-lead
+author: backend-dev
 tags:
   - doc/kb
   - phase/implement

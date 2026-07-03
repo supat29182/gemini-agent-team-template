@@ -30,9 +30,8 @@
 
 ### [💻 30-development](30-development/)
 
-- **เป้าหมาย**: เอกสารวางแผนและแนวทางการเขียนโค้ด ประกอบด้วย:
-  - `features/<feature-id-slug>/dev-plan.md` (Development Plan): จัดทำโดย `@tech-lead` เพื่อระบุความเสี่ยง ลำดับขั้นตอน และการแตก **Tasks & Subtasks** อย่างชัดเจนสำหรับฟีเจอร์นี้
-- **เอกสารหลัก**: โฟลเดอร์ใน `features/`
+- **เป้าหมาย**: แนวทางการเขียนโค้ดและมาตรฐานสถาปัตยกรรมของโครงการ
+- **เอกสารหลัก**: `dev-guidelines.md`
 
 ### [🛡️ 40-security](40-security/)
 
@@ -43,7 +42,7 @@
 ### [🧪 50-qa-testing](50-qa-testing/)
 
 - **เป้าหมาย**: แผนและการทดสอบคุณภาพระบบระดับ E2E:
-  - `features/<feature-id-slug>/test_plan.md`: แผนการทดสอบที่ออกแบบโดย `@qa`
+  - `features/<feature-id-slug>/test_plan.md`: แผนการทดสอบที่ออกแบบโดย `@qa-automate`
   - `features/<feature-id-slug>/test_execution.log`: บันทึกผลการรันทดสอบจริงโดย `@qa-automate`
 - **เอกสารหลัก**: โฟลเดอร์ใน `features/`
 
@@ -64,37 +63,36 @@ graph TD
     User([User Requirement]) -->|เขียนลงบนสุดของ Inbox Log| PM[pm-po]
 
     subgraph "Phase 0: Initiation (Business Align in Feature Folder)"
-        PM -->|1. สร้างเอกสารธุรกิจเฉพาะฟีเจอร์| BRD[features/slug/brd.md]
-        PM -->|2. สร้าง User Stories & AC เฉพาะฟีเจอร์| US[features/slug/epics_user_stories.md]
+        PM -->|1. รัน init_feature.py สร้างโครงสร้าง| Init[Feature Folders + Templates]
     end
 
     subgraph "Phase 1: Design (Technical Specification in Feature Folder)"
-        PM -->|3. มอบหมายวิเคราะห์| SA[sa]
-        BRD -.->|ใช้อ้างอิง| SA
-        US -.->|ใช้อ้างอิง| SA
-        SA -->|4. เขียน Spec ทางเทคนิคเฉพาะฟีเจอร์| Spec[features/slug/system_spec.md]
-        PM -->|5. ส่งต่อ Spec เพื่อหาผลกระทบ| Arch[solution-architect]
-        Arch -->|6. วิเคราะห์ Impact| Impact[features/slug/architecture_impact.md]
+        PM -->|2. มอบหมายวิเคราะห์| SA[sa]
+        Init -.->|templates พร้อมใช้| SA
+        SA -->|3. เขียน BRD & Epics| BRD[features/slug/brd.md]
+        SA -->|4. เขียน User Stories & AC| US[features/slug/epics_user_stories.md]
+        SA -->|5. เขียน Spec ทางเทคนิค| Spec[features/slug/system_spec.md]
+        PM -->|6. ส่งต่อ Spec เพื่อหาผลกระทบ| Arch[solution-architect]
+        Arch -->|7. วิเคราะห์ Impact| Impact[features/slug/architecture_impact.md]
     end
 
-    subgraph "Phase 2: Implementation (Tasks Breakdown)"
-        PM -->|7. ให้วางแผนและแบ่งงาน| TL[tech-lead]
-        Spec -.->|ใช้อ้างอิง| TL
-        Impact -.->|ใช้อ้างอิง| TL
-        TL -->|8. แตกแผนงาน Tasks & Subtasks ในโฟลเดอร์ฟีเจอร์| Plan[features/slug/dev-plan.md]
-        PM -->|9. สั่งเขียน Server/Test ตาม Subtasks| BE[backend-dev]
-        PM -->|10. สั่งเขียน UI ตาม Subtasks| FE[frontend-dev]
-        PM -->|11. สั่งตรวจสอบความปลอดภัย| SE[security]
-        SE -->|12. ตรวจ Code Audit| Audit[features/slug/security_audit.md]
+    subgraph "Phase 2: Implementation (Event-Driven Implementation)"
+        PM -->|7. สั่งเขียน Server APIs| BE[backend-dev]
+        PM -->|8. สั่งจัดทำ Test Plan| QAA[qa-automate]
+        Spec -.->|ใช้อ้างอิง| BE
+        Impact -.->|ใช้อ้างอิง| BE
+        BE -->|9. บันทึกผลและโค้ดหลังบ้าน| BEC[backend code]
+        QAA -->|10. ส่ง Test Plan| TP[features/slug/test_plan.md]
+        
+        BE & QAA -.->|เมื่อเสร็จสิ้นทั้งคู่| FE[frontend-dev]
+        FE -->|11. เขียน UI เชื่อมต่อ API| FEC[frontend code]
     end
 
-    subgraph "Phase 3: Verification & Delivery"
-        PM -->|13. ให้เขียนแผนการทดสอบ| QA[qa]
-        US -.->|ใช้อ้างอิง| QA
-        Spec -.->|ใช้อ้างอิง| QA
-        QA -->|14. ส่ง Test Plan| TP[features/slug/test_plan.md]
-        PM -->|15. สั่งทดสอบระบบ E2E| QAA[qa-automate]
-        QAA -->|16. บันทึกผลการทดสอบ| Exec[features/slug/test_execution.log]
+    subgraph "Phase 3: Verification (Quality & Security Scan)"
+        PM -->|12. สั่งตรวจสอบความปลอดภัย| SE[security]
+        SE -->|13. ตรวจ Code Audit| Audit[features/slug/security_audit.md]
+        PM -->|14. สั่งทดสอบระบบ E2E| QAA
+        QAA -->|15. บันทึกผลการทดสอบ E2E| Exec[features/slug/test_execution.log]
     end
 
     subgraph "Phase 4: Release & Closure"

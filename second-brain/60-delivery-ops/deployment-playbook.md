@@ -16,7 +16,7 @@ tags:
 - [ ] ผ่าน E2E Testing (`[[test_execution]]` = All Passed)
 - [ ] อัปเดต Changelog ล่าสุดใน `second-brain/archives/changelog/`
 - [ ] อัปเดต `[[project_board]]` เป็น `Done`
-- [ ] Review โค้ดโดย Tech Lead เรียบร้อย
+- [ ] ผ่าน Security Audit และโค้ดได้ผ่านการรีวิวเรียบร้อย
 
 ## Deployment Steps
 

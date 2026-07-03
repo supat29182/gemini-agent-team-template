@@ -1,0 +1,11 @@
+# Core API Contract (Consolidated)
+# ไฟล์นี้เป็นที่รวม API Contract หลักของทั้งโปรเจกต์
+# PM จะ consolidate จาก feature-level api_contract.yaml มาที่นี่หลังจบ Phase 3
+#
+# Format: OpenAPI 3.x
+openapi: "3.0.3"
+info:
+  title: "Project API Contract"
+  version: "0.0.1"
+  description: "Consolidated API contract — auto-populated after feature delivery"
+paths: {}

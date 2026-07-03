@@ -35,10 +35,9 @@ def main():
 
     # Copy templates
     templates = [
-        ("second-brain/70-resources/templates/template-brd.md", f"{phases['requirements']}/brd.md", "pm-po"),
-        ("second-brain/70-resources/templates/template-epics-user-stories.md", f"{phases['requirements']}/epics_user_stories.md", "pm-po"),
+        ("second-brain/70-resources/templates/template-brd.md", f"{phases['requirements']}/brd.md", "sa"),
+        ("second-brain/70-resources/templates/template-epics-user-stories.md", f"{phases['requirements']}/epics_user_stories.md", "sa"),
         ("second-brain/70-resources/templates/template-system-spec.md", f"{phases['requirements']}/system_spec.md", "sa"),
-        ("second-brain/70-resources/templates/template-dev-plan.md", f"{phases['development']}/dev-plan.md", "tech-lead"),
         ("second-brain/70-resources/templates/template-task-locks.json", f"{phases['development']}/task_locks.json", "pm-po")
     ]
 
