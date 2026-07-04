@@ -46,6 +46,9 @@ timeout_mins: 90
 
 **ขั้นตอนแรกบังคับ**: ก่อนเริ่มงานทุกครั้ง ให้ใช้ `view_file` อ่านไฟล์ `second-brain/00-Index.md` เพื่อตรวจสอบสถานะโปรเจกต์และ Phase ปัจจุบันก่อนเสมอ และหากต้องการทำความเข้าใจความสามารถเชิงลึกของบอทแต่ละตัวหรือการจัดการบริบทแชท สามารถอ้างอิงและเปิดใช้ Skill [using-agent-skills](../../.agents/skills/using-agent-skills/SKILL.md) และ [context-engineering](../../.agents/skills/context-engineering/SKILL.md) ได้
 
+> [!NOTE]
+> **การระบุเส้นทางไฟล์ (Path Type Note)**: สำหรับงานประเภท CR และ Bug Fix ให้เปลี่ยนโฟลเดอร์ `features/<slug>` ใน path ทั้งหมดของเอกสารสเปกนี้เป็น `cr/<slug>` หรือ `bug/<slug>` ตามประเภทงานที่สั่งรัน
+
 หน้าที่สำคัญ: อัปเดตสถานะงานในกระดาน `second-brain/project_board.md` (`[[project_board]]`) และ Phase Tracker ใน `second-brain/00-Index.md` ทุกครั้งที่มีการเปลี่ยน Phase
 
 เมื่อได้รับแจ้งให้เริ่มทำงาน หรือพบข้อมูล Requirement ใหม่ที่ด้านบนสุดของไฟล์ `second-brain/00-inbox/inbox_log.md` (`[[inbox_log]]`) ให้สั่งการทำงานตามลำดับนี้:
@@ -54,8 +57,8 @@ timeout_mins: 90
 
 1. ใช้ `view_file` อ่าน `[[inbox_log]]` รายการล่าสุด (บนสุด)
    - หากความต้องการหรือสเปกยังไม่ชัดเจนหรือต้องการกลั่นกรองแนวคิด ให้ปฏิบัติตามแนวทางของ Skill [interview-me](../../.agents/skills/interview-me/SKILL.md) เพื่อสัมภาษณ์ผู้ใช้งาน **โดยถามทีละ 1 คำถามและรอการตอบกลับก่อนถามข้อถัดไปเสมอ** หรือใช้ [idea-refine](../../.agents/skills/idea-refine/SKILL.md) เพื่อวิเคราะห์ความสมเหตุสมผลของแผนก่อนตัดสินใจดำเนินการต่อ
-2. เมื่อ Requirement ชัดเจนแล้ว ให้กำหนด Slug หรือโฟลเดอร์สำหรับฟีเจอร์/CR นี้ (เช่น `features/<feature-name-slug>/`) และดำเนินการสร้างโครงสร้างโฟลเดอร์แบบอัตโนมัติ:
-   - ใช้ `run_command` รันคำสั่ง `python3 scripts/init_feature.py --slug <slug> --title "<ชื่องาน>"` เพื่อสร้างโครงสร้างโฟลเดอร์และคัดลอกเทมเพลตเอกสารทั้งหมด
+2. เมื่อ Requirement ชัดเจนแล้ว ให้กำหนดประเภทงาน (feature, cr, bug) และ Slug สำหรับงานนี้ (เช่น features/<slug>, cr/<slug>, bug/<slug>) และดำเนินการสร้างโครงสร้างโฟลเดอร์แบบอัตโนมัติ:
+   - ใช้ `run_command` รันคำสั่ง `python3 scripts/init_feature.py --slug <slug> --title "<ชื่องาน>" --type <type>` เพื่อสร้างโครงสร้างโฟลเดอร์และคัดลอกเทมเพลตเอกสารทั้งหมด
 3. ใช้ `write_to_file` อัปเดตตารางใน `[[project_board]]` โดยเพิ่มรายการใหม่และตั้งสถานะเป็น `Phase 1`
 4. ใช้ `write_to_file` อัปเดต Phase Tracker ใน `second-brain/00-Index.md` ให้ตรงกับ Phase ปัจจุบัน
 
@@ -92,8 +95,8 @@ timeout_mins: 90
 
 **ขั้นตอนปิดเซสชันบังคับ**: หลังทำงานเสร็จทุกครั้ง ให้ใช้ `write_to_file` และ `run_command`:
 
-- **Consolidate (รวมเอกสารเทคนิคเข้าแกนกลาง)**: นำสเปกทางเทคนิคที่ผ่านการปล่อยงานแล้ว (เช่น โครงสร้างตารางฐานข้อมูลและ API Endpoints ที่เพิ่ม/แก้ไข) จาก `second-brain/10-requirements-spec/features/<slug>/system_spec.md` ไปรวบรวมเขียนอัปเดตไว้ในไฟล์สเปกระบบหลัก `second-brain/10-requirements-spec/system_spec.md` (Core System Specification) และรวมโครงสร้าง API จาก `second-brain/10-requirements-spec/features/<slug>/api_contract.yaml` เข้าไปในไฟล์ `second-brain/10-requirements-spec/api_contract.yaml` เพื่อให้มีคลังสเปกหลักฉบับเดียวเสมอ
-- **Archive Completed Feature Folders (ย้ายงานเข้าคลังประวัติ)**: ใช้เครื่องมือ `run_command` เพื่อรันคำสั่งย้าย (Move) โฟลเดอร์ฟีเจอร์ย่อยทั้งหมดที่สร้างในรอบนี้ (จาก 10, 20, 30, 40, 50) ไปเก็บถาวรในโฟลเดอร์ประวัติ `second-brain/archives/features/<slug>/` เพื่อรักษาความสะอาดของพื้นที่ทำงาน (ตัวอย่างคำสั่ง: `mkdir -p second-brain/archives/features/<slug> && mv second-brain/*/features/<slug> second-brain/archives/features/<slug>/`) โดยประยุกต์ใช้มาตรฐานการจัดการวงจร release และเวอร์ชันจาก Skill [git-workflow-and-versioning](../../.agents/skills/git-workflow-and-versioning/SKILL.md) ในการสรุปประวัติ
+- **Consolidate (รวมเอกสารเทคนิคเข้าแกนกลาง)**: นำสเปกทางเทคนิคที่ผ่านการปล่อยงานแล้ว (เช่น โครงสร้างตารางฐานข้อมูลและ API Endpoints ที่เพิ่ม/แก้ไข) จาก `second-brain/10-requirements-spec/<folder_type>/<slug>/system_spec.md` ไปรวบรวมเขียนอัปเดตไว้ในไฟล์สเปกระบบหลัก `second-brain/10-requirements-spec/system_spec.md` (Core System Specification) และรวมโครงสร้าง API จาก `second-brain/10-requirements-spec/<folder_type>/<slug>/api_contract.yaml` เข้าไปในไฟล์ `second-brain/10-requirements-spec/api_contract.yaml` เพื่อให้มีคลังสเปกหลักฉบับเดียวเสมอ (โดยที่ `<folder_type>` คือ features, cr, หรือ bug ตามประเภทของงาน)
+- **Archive Completed Feature Folders (ย้ายงานเข้าคลังประวัติ)**: ใช้เครื่องมือ `run_command` เพื่อรันคำสั่งย้าย (Move) โฟลเดอร์ย่อยทั้งหมดที่สร้างในรอบนี้ (จาก 10, 20, 30, 40, 50) ไปเก็บถาวรในโฟลเดอร์ประวัติ `second-brain/archives/<folder_type>/<slug>/` เพื่อรักษาความสะอาดของพื้นที่ทำงาน (ตัวอย่างคำสั่ง: `mkdir -p second-brain/archives/<folder_type>/<slug> && mv second-brain/*/<folder_type>/<slug> second-brain/archives/<folder_type>/<slug>/`) โดยประยุกต์ใช้มาตรฐานการจัดการวงจร release และเวอร์ชันจาก Skill [git-workflow-and-versioning](../../.agents/skills/git-workflow-and-versioning/SKILL.md) ในการสรุปประวัติ
 - บันทึกสรุปสั้นๆ ลงในไฟล์ `second-brain/diary/YYYY-MM-DD-pm-po.md` โดยระบุ Phase ที่ทำ, งานที่เสร็จ, และปัญหาที่พบ (ถ้ามี)
 - อัปเดตสถานะใน `[[inbox_log]]` ให้ตรงกับผลลัพธ์ปัจจุบัน
 - **Run Brain Linter (รันการตรวจสอบความสมบูรณ์)**: ใช้ `run_command` รันคำสั่ง `python3 scripts/brain_linter.py` เพื่อตรวจสอบความสมบูรณ์ของเอกสารใน Second Brain ก่อนจบงาน

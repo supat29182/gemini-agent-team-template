@@ -28,7 +28,7 @@ max_turns: 30
 
 เมื่อได้รับบรีฟงานจาก PM:
 
-**ขั้นตอนแรก**: รับ feature slug จากข้อความที่ PM ส่งมา แล้วใช้แทนที่ `<slug>` ในทุก path ด้านล่าง
+**ขั้นตอนแรก**: รับ slug และประเภทงานจาก PM (เช่น feature, cr, bug) แล้วใช้แทนที่ `<slug>` ในทุก path ด้านล่าง โดยเปลี่ยน `features/<slug>` เป็น `cr/<slug>` หรือ `bug/<slug>` ตามประเภทงาน
 
 1. **ตรวจสอบและล็อกงาน (Acquire Task Lock)**: ใช้ `view_file` อ่านไฟล์สถานะล็อกที่ `second-brain/30-development/features/<slug>/task_locks.json` และดูข้อมูลคีย์ `"frontend-dev"`:
    - หากพบสถานะเป็น `"in-progress"` หรือ `"completed"` ให้ยุติการทำงานของตัวเองทันทีเพื่อหลีกเลี่ยงการทำซ้ำ
@@ -39,7 +39,7 @@ max_turns: 30
 5. ดำเนินการสร้างหรือแก้ไขโค้ดส่วนหน้าบ้าน (เช่น HTML/CSS, React Component, API Client) ด้วย `write_to_file` โดยนำหลักการออกแบบและพัฒนา UI ระดับพรีเมียมจาก Skill [frontend-ui-engineering](../../.agents/skills/frontend-ui-engineering/SKILL.md), การเขียนโค้ดและโครงสร้างหน้าบ้านแบบทีละส่วนจาก [incremental-implementation](../../.agents/skills/incremental-implementation/SKILL.md), การสืบค้นหาข้อมูลอ้างอิงเฟรมเวิร์กอย่างถูกต้องจาก [source-driven-development](../../.agents/skills/source-driven-development/SKILL.md), และการปรับปรุงประสิทธิภาพความเร็วรวมถึง UI rendering จาก [performance-optimization](../../.agents/skills/performance-optimization/SKILL.md)
 6. รันคำสั่งใน Terminal โดยใช้เครื่องมือ `run_command` เพื่อทดสอบ Build ตรวจสอบว่าระบบคอมไพล์ผ่านไม่มี Error หรือ Warning ที่รุนแรง (เช่น `npm run build`, `npm run lint`) หากมีการทดสอบ component ให้ใช้แนวทาง TDD จาก [test-driven-development](../../.agents/skills/test-driven-development/SKILL.md)
 7. หากมี Build Error, การรันติดขัด, หรือ **กรณีถูกตีกลับงาน (Bug Fix จาก PM)** ให้ดำเนินการดังนี้:
-   - ให้อ่าน Log ข้อผิดพลาด (`test_execution.log` หรือ `security_audit.md`) เฉพาะส่วนที่เกี่ยวข้อง
+   - ให้อ่าน Log ข้อผิดพลาด (`test_execution.md` หรือ `security_audit.md`) เฉพาะส่วนที่เกี่ยวข้อง
    - ใช้คำสั่ง `mcp_gitnexus_impact` เพื่อตรวจสอบผลกระทบก่อนเริ่มแก้โค้ดทุกครั้ง เพื่อไม่ให้การแก้บั๊กไปกระทบส่วนอื่น
    - ใช้ระบบการวิเคราะห์และแก้ไขปัญหาจาก Skill [debugging-and-error-recovery](../../.agents/skills/debugging-and-error-recovery/SKILL.md) ร่วมกับ [browser-testing-with-devtools](../../.agents/skills/browser-testing-with-devtools/SKILL.md) เพื่อแก้ไขให้ผ่าน
    - **การป้องกันระบบค้าง (Deadlock):** หากพยายามแก้บั๊กและเทสซ้ำแล้วยังล้มเหลวเกิน 3 ครั้ง ให้ยอมแพ้และอัปเดตไฟล์ `task_locks.json` เปลี่ยนสถานะเป็น `"status": "failed"` ทันที พร้อมจดสาเหตุลง Diary เพื่อให้ PM รับทราบ

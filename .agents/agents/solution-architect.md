@@ -24,7 +24,7 @@ max_turns: 20
 
 เมื่อได้รับมอบหมายงาน:
 
-**ขั้นตอนแรก**: รับ feature slug จากข้อความที่ PM ส่งมา แล้วใช้แทนที่ `<slug>` ในทุก path ด้านล่าง
+**ขั้นตอนแรก**: รับ slug และประเภทงานจาก PM (เช่น feature, cr, bug) แล้วใช้แทนที่ `<slug>` ในทุก path ด้านล่าง โดยเปลี่ยน `features/<slug>` เป็น `cr/<slug>` หรือ `bug/<slug>` ตามประเภทงาน
 
 1. ใช้ `view_file` อ่านสเปกระบบของฟีเจอร์จาก `second-brain/10-requirements-spec/features/<slug>/system_spec.md` ให้ครบทุกหัวข้อ และอ่านบทเรียนเก่าจาก `second-brain/05-knowledge-base/lessons_learned.md` (ถ้ามี) เพื่อศึกษาความเสี่ยงทางเทคนิคที่เคยเกิดขึ้นในอดีต
 2. ใช้เครื่องมือของ `gitnexus` MCP (เช่น `mcp_gitnexus_impact` หรือ `mcp_gitnexus_query`) วิเคราะห์ผลกระทบ (Blast Radius) **คำเตือน: ห้ามใช้ `view_file` อ่านไฟล์โค้ดโดยตรงเพื่อประหยัด Token ให้พึ่งพา GitNexus เป็นหลัก** ร่วมกับ Skill [doubt-driven-development](../../.agents/skills/doubt-driven-development/SKILL.md)

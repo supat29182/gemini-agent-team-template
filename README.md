@@ -15,25 +15,32 @@
 
 ```mermaid
 graph TD
-    INBOX["inbox_log.md"] -->|"1. PM อ่าน Requirement"| PM(("pm-po"))
-    PM -->|"Phase 1: Design"| SA("sa")
-    SA -->|"Draft Spec & API"| ARCH("solution-architect")
-    ARCH -->|"Impact Analysis"| PM
+    INBOX["inbox_log.md"] -->|"1. PM อ่าน Requirement"| PM[("pm-po")]
+    PM -->|"2. init_feature.py"| Init{ประเภทงาน?}
     
-    PM -->|"Phase 2: Sync Point 2"| BACK("backend-dev")
-    PM -->|"Phase 2: Sync Point 2"| QA_P("qa-automate (Test Plan)")
-    BACK -.->|"เสร็จ 2 ตัว"| FRONT("frontend-dev")
-    QA_P -.->|"เสร็จ 2 ตัว"| FRONT
-    FRONT -->|"Phase 2: Sync Point 2.5"| PM
+    %% Feature & CR Flow
+    Init -->|"Feature / CR"| SA("sa")
+    SA -->|"3. Draft Spec & API"| ARCH("solution-architect")
+    ARCH -->|"4. Impact Analysis"| PM
     
-    PM -->|"Phase 3: Sync Point 3"| SEC("security (Audit)")
-    PM -->|"Phase 3: Sync Point 3"| QA_E("qa-automate (Execution)")
+    PM -->|"Phase 2"| BACK("backend-dev")
+    PM -->|"Phase 2"| QA_P("qa-automate (Test Plan)")
+    BACK & QA_P -.->|"เสร็จคู่"| FRONT("frontend-dev")
+    FRONT --> PM
     
-    SEC -.->|"Failed"| BACK
-    QA_E -.->|"Failed"| FRONT
+    PM -->|"Phase 3"| SEC("security (Audit)")
+    PM -->|"Phase 3"| QA_E("qa-automate (Execution)")
     
-    SEC -.->|"Passed"| DONE["Project Board: DONE"]
-    QA_E -.->|"Passed"| DONE
+    %% Bug Flow
+    Init -->|"Bug Fix"| ARCH_BUG("solution-architect")
+    ARCH_BUG -->|"3. Diagnosis"| PM_BUG[PM สั่งเขียนโค้ด]
+    PM_BUG -->|"Phase 2"| DEV_BUG("backend-dev / frontend-dev")
+    DEV_BUG -->|"เสร็จ"| QA_BUG("qa-automate (Execution)")
+    QA_BUG --> PM
+    
+    %% Verification & DONE
+    SEC & QA_E -.->|"Passed"| DONE["Project Board: DONE"]
+    QA_BUG -.->|"Passed"| DONE
 ```
 
 ### ⏱️ 2. Sequence Diagram (เจาะลึกเมื่อสั่งงาน)
@@ -53,36 +60,43 @@ sequenceDiagram
     Note over PM: PM ห้ามอ่านโค้ดเองเด็ดขาด
     
     rect rgb(240, 248, 255)
-        Note right of PM: PHASE 1: DESIGN
-        PM->>SA: สร้าง System Spec
-        SA-->>PM: เสร็จสิ้น (system_spec.md)
-        PM->>Arch: วิเคราะห์ Impact
+        Note right of PM: PHASE 1: DESIGN (Feature/CR จะผ่าน SA, Bug Fix จะข้าม SA)
+        alt Feature or CR
+            PM->>SA: สร้าง System Spec
+            SA-->>PM: เสร็จสิ้น (system_spec.md)
+            PM->>Arch: วิเคราะห์ Impact
+        else Bug Fix
+            PM->>Arch: สั่งวิเคราะห์ Root Cause
+        end
         Arch->>Nexus: mcp_gitnexus_impact
         Nexus-->>Arch: ส่ง JSON สรุปกลับมา
-        Arch-->>PM: เสร็จสิ้น (architecture_impact.md)
+        Arch-->>PM: เสร็จสิ้น (impact / diagnosis)
     end
 
     rect rgb(240, 255, 240)
         Note right of PM: PHASE 2: IMPLEMENTATION (Event-Driven)
-        PM->>Devs: สั่งรัน backend-dev
-        PM->>QA: สั่งรัน qa-automate (ทำ Test Plan)
+        PM->>Devs: สั่งเขียน/แก้ไขโค้ด
+        opt Feature or CR
+            PM->>QA: สั่งจัดทำ Test Plan
+        end
         Note over PM: PM เข้าโหมด Sleep
         
         Devs->>Nexus: ค้นหาโครงสร้างเก่า
-        Devs-->>PM: ปลุก PM (Backend เสร็จ)
-        QA-->>PM: ปลุก PM (Test Plan เสร็จ)
-        
-        PM->>Devs: สั่งรัน frontend-dev
-        Devs-->>PM: ปลุก PM (Frontend เสร็จ)
+        Devs-->>PM: ปลุก PM (Dev เสร็จ)
+        opt Feature or CR
+            QA-->>PM: ปลุก PM (Test Plan เสร็จ)
+        end
     end
 
     rect rgb(255, 240, 245)
         Note right of PM: PHASE 3: VERIFICATION
         PM->>QA: สั่งรัน qa-automate (รัน E2E Test)
-        PM->>Devs: สั่งรัน security
+        opt Feature or CR
+            PM->>Devs: สั่งรัน security audit
+        end
         Note over PM: PM เข้าโหมด Sleep
         
-        QA-->>PM: ปลุก PM (เจอ Error ตัด log สั้นๆ 50 บรรทัด)
+        QA-->>PM: ปลุก PM (เจอ Error ตัด log 50 บรรทัด)
         Note over PM: Feedback Loop: ตีกลับงานให้ Dev
         PM->>Devs: นำ Log 50 บรรทัดส่งให้แก้
     end
@@ -95,22 +109,21 @@ sequenceDiagram
 ## 📝 กระบวนการทำงานแบบ Step-by-Step
 
 **จุดเริ่มต้น:**
-ผู้ใช้งานโยน Requirement ลงมาในแชท บอทตัวแรกที่ตื่นขึ้นมาคือ **`@pm-po`** (Project Manager) ทำหน้าที่รับ Requirement บันทึกลงใน `inbox_log.md` 
+ผู้ใช้งานโยน Requirement ลงมาในแชท บอทตัวแรกที่ตื่นขึ้นมาคือ **`@pm-po`** (Project Manager) ทำหน้าที่รับ Requirement บันทึกลงใน `inbox_log.md` จากนั้นรัน `init_feature.py --type` เพื่อแยกโฟลเดอร์สำหรับงานแต่ละประเภท (Feature, CR, Bug Fix)
 
 **Phase 1: Design (ขั้นตอนการออกแบบ)**
-1. `pm-po` สั่งงานให้ **`@sa` (System Analyst)** ทำการวิเคราะห์ Requirement และเขียนเอกสาร `system_spec.md` และ `api_contract.yaml`
-2. `pm-po` ส่งไม้ต่อให้ **`@solution-architect`** ตรวจสอบผลกระทบกับโครงสร้างเดิม (Blast Radius) โดยอาศัยเครื่องมือ `GitNexus` เพื่อไม่ต้องดึงโค้ดทั้งหมดมาอ่านให้เปลือง Token
+1. สำหรับ **Feature และ CR**: `pm-po` สั่งงานให้ **`@sa` (System Analyst)** ทำการวิเคราะห์ Requirement และเขียนเอกสาร `system_spec.md` (หรือรุ่นต่อขยาย) จากนั้น `@solution-architect` จะวิเคราะห์ผลกระทบและบันทึกลง `architecture_impact.md`
+2. สำหรับ **Bug Fix**: ข้ามการทำ Spec ของ SA โดย `@solution-architect` จะเขียนวิเคราะห์และระบุแนวทางแก้ไขใน `bug_diagnosis.md` ทันที
 
 **Phase 2: Implementation (ขั้นตอนการสร้าง)**
-1. `pm-po` สั่งรัน **`@backend-dev`** และ **`@qa-automate`** ให้ทำงานพร้อมกัน 
-2. **`@backend-dev`** พัฒนา API และฐานข้อมูล ส่วน **`@qa-automate`** จะสร้าง `test_plan.md` ล่วงหน้า (Shift-Left Testing)
-3. ระหว่างนี้ `pm-po` จะ "หลับ" เพื่อหยุดกิน Token จนกว่าบอททั้ง 2 ตัวจะทำงานเสร็จ (อัปเดตไฟล์ `task_locks.json` สำเร็จ)
-4. เมื่อตื่นขึ้นมา `pm-po` จะสั่งรัน **`@frontend-dev`** ให้นำ API ไปต่อเข้ากับ User Interface
+1. สำหรับ **Feature และ CR**: `pm-po` สั่งรัน **`@backend-dev`** (หรือ frontend) และ **`@qa-automate`** ให้จัดทำ Test Plan ควบคู่กันไป
+2. สำหรับ **Bug Fix**: ข้ามการทำ Test Plan โดย Developer ลงมือแก้ไขโค้ดที่เสียหายทันที
+3. เมื่อ Developer แก้ไขโค้ดเสร็จ จะส่งมอบงานให้ Frontend ต่อจิ๊กซอว์ให้เรียบร้อย
 
 **Phase 3: Verification (ขั้นตอนการตรวจสอบ)**
-1. เมื่อ Frontend เสร็จ `pm-po` จะสั่งรัน **`@security`** ตรวจสอบช่องโหว่ความปลอดภัย และ **`@qa-automate`** รัน E2E Test บนเบราว์เซอร์จริงด้วย `Playwright MCP`
-2. หากทดสอบไม่ผ่าน (มีบั๊ก) QA จะส่ง Error Log สั้นๆ ตัดมาไม่เกิน 50 บรรทัด (Log Truncation) เพื่อประหยัด Token และให้ `pm-po` ตีกลับไปให้ Dev แก้ไข
-3. เมื่อทุกอย่างผ่านฉลุย `pm-po` จะแจ้งเตือนผู้ใช้ว่าฟีเจอร์เสร็จสมบูรณ์
+1. บอท `@qa-automate` รันชุด E2E Test เพื่อตรวจสอบความสมบูรณ์และ Regression
+2. สำหรับ **Feature และ CR**: บอท `@security` จะทำ Security Audit (Diff Scan) ตรวจสอบความปลอดภัย
+3. เมื่อผลลัพธ์ผ่าน (Security PASSED + E2E PASSED) PM จะย้ายประวัติงานลงในโฟลเดอร์ `archives/` และสรุปส่งมอบโครงการ
 
 ---
 

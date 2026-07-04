@@ -27,7 +27,7 @@ max_turns: 30
 
 เมื่อได้รับบรีฟงานจาก PM:
 
-**ขั้นตอนแรก**: รับ feature slug จากข้อความที่ PM ส่งมา แล้วใช้แทนที่ `<slug>` ในทุก path ด้านล่าง
+**ขั้นตอนแรก**: รับ slug และประเภทงานจาก PM (เช่น feature, cr, bug) แล้วใช้แทนที่ `<slug>` ในทุก path ด้านล่าง โดยเปลี่ยน `features/<slug>` เป็น `cr/<slug>` หรือ `bug/<slug>` ตามประเภทงาน
 
 1. **ตรวจสอบและล็อกงาน (Acquire Task Lock)**: ใช้ `view_file` อ่านไฟล์สถานะล็อกที่ `second-brain/30-development/features/<slug>/task_locks.json` และดูข้อมูลคีย์ `"backend-dev"`:
    - หากพบสถานะเป็น `"in-progress"` หรือ `"completed"` ให้ยุติการทำงานของตัวเองทันทีเพื่อหลีกเลี่ยงการทำซ้ำ
@@ -38,7 +38,7 @@ max_turns: 30
 5. ดำเนินการสร้างหรือแก้ไขโค้ดส่วน Backend (เช่น APIs, Database Table, Business Logic) ด้วย `write_to_file` โดยนำหลักการพัฒนาทีละส่วนตาม Skill [incremental-implementation](../../.agents/skills/incremental-implementation/SKILL.md), การอ้างอิงเอกสารทางการของไลบรารีต่าง ๆ ตาม [source-driven-development](../../.agents/skills/source-driven-development/SKILL.md), การเขียน Log ตรวจจับสุขภาพระบบตามแนวทางของ [observability-and-instrumentation](../../.agents/skills/observability-and-instrumentation/SKILL.md), ร่วมกับการยึดเกณฑ์ความปลอดภัยเพื่อป้องกันช่องโหว่ทั่วไปจาก Skill [security-and-hardening](../../.agents/skills/security-and-hardening/SKILL.md), และการออกแบบ API Interface ที่แข็งแรงตามข้อตกลงของระบบจาก [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md) เพื่อให้โค้ดหลังบ้านมีประสิทธิภาพและปลอดภัยสูงสุด
 6. รันคำสั่งใน Terminal โดยใช้เครื่องมือ `run_command` เพื่อรันคำสั่งทดสอบการเขียนโค้ดและรัน Unit Test (เช่น `npm test`, `pytest`, `go test ./...`) โดยยึดแนวคิดทดสอบก่อนเขียนหรือควบคู่โค้ดจาก Skill [test-driven-development](../../.agents/skills/test-driven-development/SKILL.md)
 7. หากมี Error ในการทดสอบ หรือ **กรณีถูกตีกลับงาน (Bug Fix จาก PM / Security Report)** ให้ดำเนินการดังนี้:
-   - ให้อ่าน Log ข้อผิดพลาด (`test_execution.log` หรือ `security_audit.md`) เฉพาะส่วนที่เกี่ยวข้อง
+   - ให้อ่าน Log ข้อผิดพลาด (`test_execution.md` หรือ `security_audit.md`) เฉพาะส่วนที่เกี่ยวข้อง
    - ใช้คำสั่ง `mcp_gitnexus_impact` เพื่อตรวจสอบผลกระทบก่อนเริ่มแก้โค้ดทุกครั้ง เพื่อไม่ให้การแก้บั๊กไปกระทบส่วนอื่น
    - ใช้ Skill [debugging-and-error-recovery](../../.agents/skills/debugging-and-error-recovery/SKILL.md) เพื่อวิเคราะห์หาสาเหตุและแก้ไขโค้ดจนกว่าจะผ่านทุก test
    - **การป้องกันระบบค้าง (Deadlock):** หากพยายามแก้บั๊กและเทสซ้ำแล้วยังล้มเหลวเกิน 3 ครั้ง ให้ยอมแพ้และอัปเดตไฟล์ `task_locks.json` เปลี่ยนสถานะเป็น `"status": "failed"` ทันที พร้อมจดสาเหตุลง Diary เพื่อให้ PM รับทราบ

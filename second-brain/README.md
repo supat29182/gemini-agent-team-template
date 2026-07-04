@@ -43,7 +43,7 @@
 
 - **เป้าหมาย**: แผนและการทดสอบคุณภาพระบบระดับ E2E:
   - `features/<feature-id-slug>/test_plan.md`: แผนการทดสอบที่ออกแบบโดย `@qa-automate`
-  - `features/<feature-id-slug>/test_execution.log`: บันทึกผลการรันทดสอบจริงโดย `@qa-automate`
+  - `features/<feature-id-slug>/test_execution.md`: บันทึกผลการรันทดสอบจริงโดย `@qa-automate`
 - **เอกสารหลัก**: โฟลเดอร์ใน `features/`
 
 ### [🚀 60-delivery-ops](60-delivery-ops/)
@@ -60,49 +60,57 @@
 
 ```mermaid
 graph TD
-    User([User Requirement]) -->|เขียนลงบนสุดของ Inbox Log| PM[pm-po]
+    User([User Requirement]) -->|เขียนลง Inbox Log| PM[pm-po]
 
-    subgraph "Phase 0: Initiation (Business Align in Feature Folder)"
-        PM -->|1. รัน init_feature.py สร้างโครงสร้าง| Init[Feature Folders + Templates]
+    subgraph "Phase 0: Initiation"
+        PM -->|1. รัน init_feature.py --type| Init[Feature/CR/Bug Folders]
     end
 
-    subgraph "Phase 1: Design (Technical Specification in Feature Folder)"
-        PM -->|2. มอบหมายวิเคราะห์| SA[sa]
-        Init -.->|templates พร้อมใช้| SA
-        SA -->|3. เขียน BRD & Epics| BRD[features/slug/brd.md]
-        SA -->|4. เขียน User Stories & AC| US[features/slug/epics_user_stories.md]
-        SA -->|5. เขียน Spec ทางเทคนิค| Spec[features/slug/system_spec.md]
-        PM -->|6. ส่งต่อ Spec เพื่อหาผลกระทบ| Arch[solution-architect]
-        Arch -->|7. วิเคราะห์ Impact| Impact[features/slug/architecture_impact.md]
-    end
-
-    subgraph "Phase 2: Implementation (Event-Driven Implementation)"
-        PM -->|7. สั่งเขียน Server APIs| BE[backend-dev]
-        PM -->|8. สั่งจัดทำ Test Plan| QAA[qa-automate]
-        Spec -.->|ใช้อ้างอิง| BE
-        Impact -.->|ใช้อ้างอิง| BE
-        BE -->|9. บันทึกผลและโค้ดหลังบ้าน| BEC[backend code]
-        QAA -->|10. ส่ง Test Plan| TP[features/slug/test_plan.md]
+    subgraph "Phase 1: Design & Analysis"
+        Init -->|ตรวจสอบ Type| TypeDecision{Type?}
         
-        BE & QAA -.->|เมื่อเสร็จสิ้นทั้งคู่| FE[frontend-dev]
-        FE -->|11. เขียน UI เชื่อมต่อ API| FEC[frontend code]
+        TypeDecision -->|Feature/CR| SA[sa]
+        SA -->|2. เขียน BRD, Epics & Spec| Spec[system_spec.mdย่อย]
+        Spec --> PM_Arch[PM ส่งต่อสเปก]
+        PM_Arch --> Arch[solution-architect]
+        
+        TypeDecision -->|Bug Fix| BugArch[solution-architect]
+        BugArch -->|2. วิเคราะห์ Root Cause| BugDiag[bug_diagnosis.md]
+        
+        Arch -->|3. วิเคราะห์ Impact| Impact[architecture_impact.md]
     end
 
-    subgraph "Phase 3: Verification (Quality & Security Scan)"
-        PM -->|12. สั่งตรวจสอบความปลอดภัย| SE[security]
-        SE -->|13. ตรวจ Code Audit| Audit[features/slug/security_audit.md]
-        PM -->|14. สั่งทดสอบระบบ E2E| QAA
-        QAA -->|15. บันทึกผลการทดสอบ E2E| Exec[features/slug/test_execution.log]
+    subgraph "Phase 2: Implementation"
+        PM -->|4. สั่งเขียนโค้ด Backend/Frontend| Dev[backend-dev / frontend-dev]
+        
+        %% Feature/CR Flow
+        Spec & Impact -.->|ใช้อ้างอิง| Dev
+        PM -->|5. สั่งออกแบบ Test Plan| QAP[qa-automate]
+        QAP -->|6. ออกแบบแผนทดสอบ| TP[test_plan.md]
+        
+        %% Bug Flow
+        BugDiag -.->|ใช้อ้างอิงแก้โค้ด| Dev
+        
+        Dev -->|7. บันทึกโค้ดและ Changelog| Code[Backend/Frontend Code]
+    end
+
+    subgraph "Phase 3: Verification"
+        PM -->|8. สั่งทดสอบ E2E| QAA[qa-automate]
+        QAA -->|9. รันเทส E2E| Exec[test_execution.md]
+        
+        %% Feature/CR Flow Only
+        PM -->|10. สั่งตรวจความปลอดภัย| SE[security]
+        SE -->|11. ตรวจช่องโหว่| Audit[security_audit.md]
     end
 
     subgraph "Phase 4: Release & Closure"
-        PM -->|17. รวมเอกสารเทคนิคฟีเจอร์ เข้าเอกสารหลัก| Master[system_spec.md Core]
-        Spec -.->|ดึงข้อมูล APIs, DB| Master
+        PM -->|12. รวมเอกสารเข้าแกนกลาง| Master[system_spec.md & api_contract.yaml แกนหลัก]
+        PM -->|13. ย้าย Folder เข้า Archives| Archive[archives/ folder]
     end
 
-    PM -.->|อัปเดตสถานะงาน| PB[project_board.md]
-    PM -.->|อัปเดต Phase Tracker| Idx[00-Index.md]
-    PM -->|18. สรุปความสำเร็จโครงการ| User
+    PM -.->|อัปเดตกระดานงาน| PB[project_board.md]
+    PM -.->|อัปเดตดัชนีหลัก| Idx[00-Index.md]
+    PM -->|14. สรุปและแจ้งผลสำเร็จ| User
 ```
 
 ระบบเอกสารนี้เป็น "สมองส่วนที่สอง" ที่ช่วยให้มั่นใจได้ว่า AI Agents ทุกตัวที่ทำงานในลูปสามารถเข้าถึงข้อมูลที่ตรงกัน อัปเดตล่าสุด และส่งมอบงานได้อย่างมีมาตรฐานสูงและปลอดภัย
