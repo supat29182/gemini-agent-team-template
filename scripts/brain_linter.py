@@ -26,7 +26,6 @@ VALID_TAGS = {
     'doc/architecture',
     'phase/inbox', 'phase/design', 'phase/implement',
     'phase/verify', 'phase/ship', 'phase/initiation',
-    'phase/implementation',
 }
 
 # Files/dirs to skip frontmatter check
@@ -50,7 +49,7 @@ def build_index(root_dir, workspace_dir=None):
                 full_path = os.path.join(dirpath, filename)
                 rel_path = os.path.relpath(full_path, root_dir)
                 basename = os.path.splitext(filename)[0].lower()
-                file_map[basename] = rel_path
+                file_map.setdefault(basename, []).append(rel_path)
                 
                 headings = set()
                 try:
@@ -69,7 +68,7 @@ def build_index(root_dir, workspace_dir=None):
         if os.path.exists(agents_md):
             rel_path = '../.agents/AGENTS.md'
             basename = 'agents'
-            file_map[basename] = rel_path
+            file_map.setdefault(basename, []).append(rel_path)
             
             headings = set()
             try:
@@ -139,18 +138,19 @@ def check_orphans(file_map, linked_basenames):
         'inbox_log', 'tagging-policy', 'agents',
     }
     
-    for basename, rel_path in file_map.items():
+    for basename, paths in file_map.items():
         if basename in exempt_basenames:
             continue
-        if 'diary/' in rel_path or 'archives/' in rel_path or 'templates/' in rel_path or 'features/' in rel_path:
-            continue
+        for rel_path in paths:
+            if 'diary/' in rel_path or 'archives/' in rel_path or 'templates/' in rel_path or 'features/' in rel_path:
+                continue
             
-        if basename not in linked_basenames:
-            errors.append({
-                'file': os.path.join('second-brain', rel_path),
-                'type': 'orphan_file',
-                'reason': 'ไฟล์นี้ไม่มีไฟล์อื่นใน Second Brain ชี้ลิงก์มาหาเลย (Orphan File) กรุณาเขียนลิงก์ระบุในดัชนีหรือไฟล์อ้างอิงหลัก'
-            })
+            if basename not in linked_basenames:
+                errors.append({
+                    'file': os.path.join('second-brain', rel_path),
+                    'type': 'orphan_file',
+                    'reason': 'ไฟล์นี้ไม่มีไฟล์อื่นใน Second Brain ชี้ลิงก์มาหาเลย (Orphan File) กรุณาเขียนลิงก์ระบุในดัชนีหรือไฟล์อ้างอิงหลัก'
+                })
             
     return errors
 
@@ -181,8 +181,9 @@ def check_links(root_dir, file_map, headings_map):
     total_links = 0
     linked_basenames = set()
     
-    for basename, rel_path in file_map.items():
-        abs_path = os.path.join(root_dir, rel_path)
+    for basename, paths in file_map.items():
+        for rel_path in paths:
+            abs_path = os.path.join(root_dir, rel_path)
         try:
             with open(abs_path, 'r', encoding='utf-8') as f:
                 content = f.read()
@@ -236,16 +237,21 @@ def check_links(root_dir, file_map, headings_map):
                         'reason': f"Target file '{file_part}' not found in Second Brain"
                     })
                 else:
-                    target_rel_path = file_map[file_part_lower]
+                    target_rel_paths = file_map[file_part_lower]
                     linked_basenames.add(file_part_lower)
                     if heading_part:
                         clean_target_heading = clean_heading(heading_part)
-                        if clean_target_heading not in headings_map[target_rel_path]:
+                        found_heading = False
+                        for target_rel_path in target_rel_paths:
+                            if clean_target_heading in headings_map[target_rel_path]:
+                                found_heading = True
+                                break
+                        if not found_heading:
                             errors.append({
                                 'file': rel_path,
                                 'link': match,
                                 'type': 'broken_link',
-                                'reason': f"Heading '{heading_part}' not found in target file '{target_rel_path}'"
+                                'reason': f"Heading '{heading_part}' not found in target file '{file_part_lower}'"
                             })
         except Exception as e:
             print(f"Error checking links in {rel_path}: {e}")
@@ -257,107 +263,108 @@ def check_frontmatter(root_dir, file_map):
     errors = []
     total_checked = 0
     
-    for basename, rel_path in file_map.items():
-        filename = os.path.basename(rel_path)
-        
-        # ข้ามไฟล์ที่ไม่ต้องการ frontmatter
-        if filename in SKIP_FRONTMATTER:
-            continue
-        
-        # ข้ามไฟล์ใน templates/
-        if 'templates/' in rel_path:
-            continue
+    for basename, paths in file_map.items():
+        for rel_path in paths:
+            filename = os.path.basename(rel_path)
             
-        abs_path = os.path.join(root_dir, rel_path)
-        total_checked += 1
-        
-        try:
-            with open(abs_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-            
-            # Check frontmatter exists
-            fm_match = FRONTMATTER_RE.match(content)
-            if not fm_match:
-                errors.append({
-                    'file': rel_path,
-                    'type': 'missing_frontmatter',
-                    'reason': 'File is missing YAML frontmatter (---)'
-                })
+            # ข้ามไฟล์ที่ไม่ต้องการ frontmatter
+            if filename in SKIP_FRONTMATTER:
                 continue
             
-            # Parse YAML
+            # ข้ามไฟล์ใน templates/
+            if 'templates/' in rel_path:
+                continue
+                
+            abs_path = os.path.join(root_dir, rel_path)
+            total_checked += 1
+            
             try:
-                fm_data = yaml.safe_load(fm_match.group(1))
-            except yaml.YAMLError as e:
-                errors.append({
-                    'file': rel_path,
-                    'type': 'invalid_frontmatter',
-                    'reason': f'Invalid YAML frontmatter: {e}'
-                })
-                continue
-            
-            if not isinstance(fm_data, dict):
-                errors.append({
-                    'file': rel_path,
-                    'type': 'invalid_frontmatter',
-                    'reason': 'Frontmatter is not a valid YAML mapping'
-                })
-                continue
-            
-            # Check tags exist
-            tags = fm_data.get('tags', [])
-            if not tags:
-                errors.append({
-                    'file': rel_path,
-                    'type': 'missing_tags',
-                    'reason': 'Frontmatter has no "tags" field or tags list is empty'
-                })
-                continue
-            
-            if not isinstance(tags, list):
-                errors.append({
-                    'file': rel_path,
-                    'type': 'invalid_tags',
-                    'reason': f'Tags should be a list, got {type(tags).__name__}'
-                })
-                continue
-            
-            # Check at least one doc/* tag
-            has_doc_tag = any(t.startswith('doc/') for t in tags if isinstance(t, str))
-            if not has_doc_tag:
-                errors.append({
-                    'file': rel_path,
-                    'type': 'missing_doc_tag',
-                    'reason': 'Must have at least one "doc/*" tag (e.g. doc/spec, doc/kb)'
-                })
-            
-            # Check all tags are valid
-            for tag in tags:
-                if not isinstance(tag, str):
+                with open(abs_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                # Check frontmatter exists
+                fm_match = FRONTMATTER_RE.match(content)
+                if not fm_match:
                     errors.append({
                         'file': rel_path,
-                        'type': 'invalid_tag',
-                        'reason': f'Tag must be a string, got: {tag}'
+                        'type': 'missing_frontmatter',
+                        'reason': 'File is missing YAML frontmatter (---)'
                     })
                     continue
-                if tag != tag.lower():
+                
+                # Parse YAML
+                try:
+                    fm_data = yaml.safe_load(fm_match.group(1))
+                except yaml.YAMLError as e:
                     errors.append({
                         'file': rel_path,
-                        'type': 'invalid_tag',
-                        'reason': f'Tag "{tag}" must be lowercase'
+                        'type': 'invalid_frontmatter',
+                        'reason': f'Invalid YAML frontmatter: {e}'
                     })
-                if tag not in VALID_TAGS:
-                    has_valid_prefix = any(tag.startswith(p) for p in VALID_TAG_PREFIXES)
-                    if has_valid_prefix:
+                    continue
+                
+                if not isinstance(fm_data, dict):
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'invalid_frontmatter',
+                        'reason': 'Frontmatter is not a valid YAML mapping'
+                    })
+                    continue
+                
+                # Check tags exist
+                tags = fm_data.get('tags', [])
+                if not tags:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'missing_tags',
+                        'reason': 'Frontmatter has no "tags" field or tags list is empty'
+                    })
+                    continue
+                
+                if not isinstance(tags, list):
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'invalid_tags',
+                        'reason': f'Tags should be a list, got {type(tags).__name__}'
+                    })
+                    continue
+                
+                # Check at least one doc/* tag
+                has_doc_tag = any(t.startswith('doc/') for t in tags if isinstance(t, str))
+                if not has_doc_tag:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'missing_doc_tag',
+                        'reason': 'Must have at least one "doc/*" tag (e.g. doc/spec, doc/kb)'
+                    })
+                
+                # Check all tags are valid
+                for tag in tags:
+                    if not isinstance(tag, str):
                         errors.append({
                             'file': rel_path,
-                            'type': 'unknown_tag',
-                            'reason': f'Tag "{tag}" has valid prefix but is not in the allowed tag list. Allowed: {sorted(VALID_TAGS)}'
+                            'type': 'invalid_tag',
+                            'reason': f'Tag must be a string, got: {tag}'
                         })
-                    # Tags without doc/ or phase/ prefix are allowed (custom tags)
-                    
-        except Exception as e:
-            print(f"Error checking frontmatter in {rel_path}: {e}")
+                        continue
+                    if tag != tag.lower():
+                        errors.append({
+                            'file': rel_path,
+                            'type': 'invalid_tag',
+                            'reason': f'Tag "{tag}" must be lowercase'
+                        })
+                    if tag not in VALID_TAGS:
+                        has_valid_prefix = any(tag.startswith(p) for p in VALID_TAG_PREFIXES)
+                        if has_valid_prefix:
+                            errors.append({
+                                'file': rel_path,
+                                'type': 'unknown_tag',
+                                'reason': f'Tag "{tag}" has valid prefix but is not in the allowed tag list. Allowed: {sorted(VALID_TAGS)}'
+                            })
+                        # Tags without doc/ or phase/ prefix are allowed (custom tags)
+                        
+            except Exception as e:
+                print(f"Error checking frontmatter in {rel_path}: {e}")
     
     return total_checked, errors
 
@@ -366,8 +373,9 @@ def check_second_brain_absolute_paths(root_dir, file_map):
     errors = []
     abs_path_re = re.compile(r'(?:file:///Users/|/Users/|file:///home/|/home/)(?!username\b)')
     
-    for basename, rel_path in file_map.items():
-        abs_path = os.path.join(root_dir, rel_path)
+    for basename, paths in file_map.items():
+        for rel_path in paths:
+            abs_path = os.path.join(root_dir, rel_path)
         try:
             with open(abs_path, 'r', encoding='utf-8') as f:
                 content = f.read()

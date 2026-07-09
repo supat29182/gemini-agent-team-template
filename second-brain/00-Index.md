@@ -10,10 +10,10 @@
 
 | สถานะปัจจุบัน (Current Phase)         | ไฟล์ที่เกี่ยวข้องหลัก                                                                                         |
 | :------------------------------------ | :------------------------------------------------------------------------------------------------------------ |
-| [] Inbox/Initiation                   | [[inbox_log]], [[project_board]]                                                                              |
-| [] Phase 1: Design                    | [[system_spec]], [[architecture_impact]]                                                                      |
-| [] Phase 2: Implementation            | Source Code, [[security_audit]]                                                                               |
-| [] Phase 3: Verification              | [[test_plan]], [[test_execution]]                                                                             |
+| [ ] Inbox/Initiation                   | [[inbox_log]], [[project_board]]                                                                              |
+| [ ] Phase 1: Design                    | [[system_spec]], [[architecture_impact]]                                                                      |
+| [ ] Phase 2: Implementation            | Source Code, [[security_audit]]                                                                               |
+| [ ] Phase 3: Verification              | [[test_plan]], [[test_execution]]                                                                             |
 | [ ] Phase 4: Post-Mortem & Reflection | [[lessons_learned]], [[template-postmortem]]                                                                  |
 
 _เมื่อจบแต่ละ Phase, ให้ AI หรือ PM/PO อัปเดตเครื่องหมายถูก `[x]` ที่นี่และเลื่อนสถานะไป Phase ถัดไป_

@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
 import os
 import glob
 
-agent_dir = "/Users/phukit.but.adm/Desktop/gemini-agent/gemini-agent-team-template/.agents/agents"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+agent_dir = os.path.abspath(os.path.join(script_dir, '..', '.agents', 'agents'))
 files = glob.glob(os.path.join(agent_dir, "*.md"))
 
 instruction = "\n> [!TIP]\n> **Nexus Librarian (GitNexus)**: เมื่อต้องการสืบค้นโค้ด, โครงสร้างระบบ, หรือหาเอกสารอ้างอิงที่ซับซ้อน ให้เรียกใช้งาน tool `nexus-librarian` เพื่อดึงข้อมูลจากระบบเบื้องหลังก่อนตัดสินใจลงมือเสมอ\n"
