@@ -59,12 +59,7 @@ def main():
         templates = [
             ("second-brain/70-resources/templates/template-brd.md", f"{phases['requirements']}/brd.md", "sa"),
             ("second-brain/70-resources/templates/template-epics-user-stories.md", f"{phases['requirements']}/epics_user_stories.md", "sa"),
-            ("second-brain/70-resources/templates/template-system-spec.md", f"{phases['requirements']}/system_spec.md", "sa"),
-            ("second-brain/70-resources/templates/template-task-locks.json", f"{phases['development']}/task_locks.json", "pm-po")
-        ]
-    else: # bug
-        templates = [
-            ("second-brain/70-resources/templates/template-task-locks.json", f"{phases['development']}/task_locks.json", "pm-po")
+            ("second-brain/70-resources/templates/template-system-spec.md", f"{phases['requirements']}/system_spec.md", "sa")
         ]
 
     print("\nCopying templates and filling placeholders...")
@@ -87,26 +82,41 @@ def main():
             content = content.replace("[Task Name]", title)
             content = content.replace("[ชื่องาน]", title)
 
-            # Customize task locks for bug type
-            if "template-task-locks.json" in template_rel and args.type == "bug":
-                try:
-                    data = json.loads(content)
-                    if "qa-test-plan" in data:
-                        data["qa-test-plan"]["status"] = "skipped"
-                        data["qa-test-plan"]["reason"] = "Bug fix - No new test plan required"
-                    if "security-audit" in data:
-                        data["security-audit"]["status"] = "skipped"
-                        data["security-audit"]["reason"] = "Bug fix - No new API endpoints, regression check only"
-                    content = json.dumps(data, indent=2, ensure_ascii=False)
-                except Exception as ex:
-                    print(f"  [Warning] Failed to customize task_locks.json: {ex}")
-            
             # Write target file
             with open(target_path, 'w', encoding='utf-8') as f:
                 f.write(content)
             print(f"  [Created File] {target_rel}")
         except Exception as e:
             print(f"  [Error] Failed to create {target_rel}: {e}")
+
+    # Generate decentralized lock files
+    locks_dir = os.path.join(workspace_dir, phases['development'], "locks")
+    os.makedirs(locks_dir, exist_ok=True)
+    print(f"\nInitializing decentralized lock files in '{phases['development']}/locks'...")
+
+    lock_definitions = {
+        "backend-dev": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 45},
+        "frontend-dev": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 45},
+        "qa-test-plan": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 35},
+        "security-audit": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 25},
+        "qa-automate-execution": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 35}
+    }
+
+    # Customize locks for bug fixes
+    if args.type == "bug":
+        lock_definitions["qa-test-plan"]["status"] = "skipped"
+        lock_definitions["qa-test-plan"]["reason"] = "Bug fix - No new test plan required"
+        lock_definitions["security-audit"]["status"] = "skipped"
+        lock_definitions["security-audit"]["reason"] = "Bug fix - No new API endpoints, regression check only"
+
+    for agent_name, init_data in lock_definitions.items():
+        lock_file_path = os.path.join(locks_dir, f"{agent_name}.json")
+        try:
+            with open(lock_file_path, 'w', encoding='utf-8') as f:
+                json.dump(init_data, f, indent=2, ensure_ascii=False)
+            print(f"  [Created Lock File] {phases['development']}/locks/{agent_name}.json")
+        except Exception as e:
+            print(f"  [Error] Failed to create lock file for {agent_name}: {e}")
 
     # For bugs, create a diagnosis document directly
     if args.type == "bug":

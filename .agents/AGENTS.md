@@ -30,11 +30,11 @@ The software development process in this Workspace is divided into 4 main phases
     - If `@security` detects a vulnerability at the FAILED level in `[[security_audit]]`, send a report directly to `@pm-po` so the PM can send the task back to the Dev team to fix until it passes.
     - If `@qa-automate` detects a Bug during testing, send the bug logs and failed test reports back to `@pm-po` to assign a fix.
 4.  **Parallel Coordination Mechanism**:
-    - In Phase 2 and Phase 3, agents are executed in parallel, using the `task_locks.json` file inside the Feature Folder as a state controller.
-    - Agents running in parallel must lock the task (`in-progress`) before starting and unlock (`completed`) when finished.
-    - Downstream agents (`@security`, `@qa-automate`) must verify that upstream tasks are fully completed before starting work.
-    - `@pm-po` uses Sync Points to check the status in the lock file to transition between phases.
-    - **Deadlock Timeout Rule (Deadlock Prevention):** `@pm-po` will check the `ttl_mins` value of each task in the `task_locks.json` file. If any task remains in an `in-progress` state longer than the defined `ttl_mins` (calculated from `locked_at` compared to the current time), it is immediately considered FAILED and unlocked to prevent system freezes (Infinite Wait).
+    - In Phase 2 and Phase 3, agents are executed in parallel, using decentralized lock files under the `locks/` folder inside the Feature/Bug directory as a state controller.
+    - Agents running in parallel must lock their task (`in-progress`) by updating their individual lock file (e.g., `locks/<agent_name>.json`) before starting and unlock (`completed`) when finished.
+    - Downstream agents (`@security`, `@qa-automate`) must verify that the lock file status of upstream tasks is "completed" before starting work.
+    - `@pm-po` uses Sync Points to check the status in each lock file to transition between phases.
+    - **Deadlock Timeout Rule (Deadlock Prevention):** `@pm-po` will check the `ttl_mins` value in each agent's lock file. If any task remains in an `in-progress` state longer than the defined `ttl_mins` (calculated from `locked_at` compared to the current time), it is immediately considered FAILED and unlocked to prevent system freezes (Infinite Wait).
 5.  **Reflection Gate Mechanism**:
     - After successfully passing testing and verification in Phase 3, do not skip the lesson summary. Always proceed to **Phase 4: Post-Mortem & Reflection**.
     - The Specialist (Dev / Solution Architect) must write a Post-Mortem document following `template-postmortem.md` to summarize lessons learned and distill them into a one-line rule in `lessons_learned.md`.
