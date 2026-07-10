@@ -142,11 +142,26 @@ tags:
         except Exception as e:
             print(f"  [Error] Failed to create {diagnosis_rel}: {e}")
 
-    print("\nDone! Please link the new feature on the project board:")
-    if args.type in ["feature", "cr"]:
-        print(f"second-brain/project_board.md -> | {current_date} | [[brd#{title}]] | Inbox | - |")
-    else:
-        print(f"second-brain/project_board.md -> | {current_date} | [[bug_diagnosis#{title}]] | Inbox | - |")
+    # Register to project board automatically
+    print("\nRegistering task on the project board...")
+    try:
+        import subprocess
+        cmd = [
+            sys.executable,
+            os.path.join(script_dir, "project_board_manager.py"),
+            "--action", "add",
+            "--slug", slug,
+            "--title", title,
+            "--type", args.type
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        print(f"  [Board Manager] {result.stdout.strip()}")
+    except subprocess.CalledProcessError as e:
+        print(f"  [Error] Failed to register to project board: {e.stderr.strip()}")
+    except Exception as e:
+        print(f"  [Error] Failed to register to project board: {e}")
+
+    print("\nDone!")
 
 if __name__ == "__main__":
     main()
