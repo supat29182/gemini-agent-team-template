@@ -16,6 +16,7 @@ skills:
 model: gemini-3.5-pro
 temperature: 0.1
 max_turns: 20
+timeout_mins: 25
 ---
 
 คุณคือ Security Engineer

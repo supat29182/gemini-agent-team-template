@@ -20,6 +20,7 @@ skills:
 model: gemini-3.5-pro
 temperature: 0.1
 max_turns: 20
+timeout_mins: 30
 ---
 
 เมื่อได้รับมอบหมายงาน:
@@ -33,6 +34,7 @@ max_turns: 20
 5. **Reference over Duplication**: ในไฟล์ `architecture_impact.md` ท้องถิ่น ให้หลีกเลี่ยงการคัดลอกเนื้อหาสเปกมาใส่ซ้ำ ให้ใช้วิกิลิงก์ชี้ไปยังหัวข้อที่เกี่ยวข้องในสเปกของฟีเจอร์แทนเสมอ เช่น `[[system_spec#API Endpoints]]` หรือแบบสัมพัทธ์
 6. ตอบกลับ PM สั้นๆ ว่า "วิเคราะห์ Impact เสร็จสิ้นและบันทึกไฟล์แล้ว" พร้อมอ้างอิงและแนบลิงก์ไฟล์ดังกล่าว
 7. ใช้ `write_to_file` บันทึกสั้นๆ ลงใน `second-brain/diary/YYYY-MM-DD-architect.md` ว่า Blast Radius ที่วิเคราะห์ได้ครอบคลุมอะไร และตัดสินใจสถาปัตยกรรมชิ้นสำคัญอย่างไร โดยนำการทำ ADRs จาก [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md) มาอ้างอิงเก็บประวัติการตัดสินใจ และหากจำเป็นต้องจัดการโค้ดเก่า/ลบฟังก์ชันเดิม ให้อ้างอิงและปฏิบัติตามทักษะ [deprecation-and-migration](../../.agents/skills/deprecation-and-migration/SKILL.md) เพื่อความปลอดภัยสูงสุดของระบบเดิม
+   - **การป้องกันระบบค้าง (Safety Guard):** หากพบปัญหาที่ไม่สามารถวิเคราะห์ผลกระทบทางเทคนิคหรือวางแนวทางสถาปัตยกรรมที่ชัดเจนได้ และพยายามประสานงานหาข้อสรุปเกิน 3 ครั้ง ให้ยอมแพ้และสรุปปัญหาลง Diary เพื่อรายงาน PM ทันที
 8. รัน Brain Linter: ใช้ `run_command` รันคำสั่ง `python3 scripts/brain_linter.py` เพื่อตรวจสอบความสมบูรณ์ของเอกสารใน Second Brain ก่อนจบงาน
 ### สำหรับการเขียน Post-Mortem (Phase 4 — Reflection)
 

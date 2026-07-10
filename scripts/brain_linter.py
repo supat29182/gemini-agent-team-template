@@ -184,77 +184,77 @@ def check_links(root_dir, file_map, headings_map):
     for basename, paths in file_map.items():
         for rel_path in paths:
             abs_path = os.path.join(root_dir, rel_path)
-        try:
-            with open(abs_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-                
-            # Scan for secrets
-            secret_errors = scan_for_secrets(content, os.path.join('second-brain', rel_path))
-            errors.extend(secret_errors)
-                
-            # ละเว้นข้อความใน Code Block และ Inline Code
-            content = re.sub(r'```.*?```', '', content, flags=re.DOTALL)
-            content = re.sub(r'`[^`\n]+`', '', content)
-                
-            matches = WIKILINK_RE.findall(content)
-            for match in matches:
-                total_links += 1
-                
-                # Split display text if any (e.g. [[LinkTarget|DisplayName]])
-                clean_match = match
-                if '|' in match:
-                    clean_match, _ = match.split('|', 1)
-                
-                if '#' in clean_match:
-                    file_part, heading_part = clean_match.split('#', 1)
-                    file_part = file_part.strip()
-                    heading_part = heading_part.strip()
-                else:
-                    file_part = clean_match.strip()
-                    heading_part = None
-                
-                file_part_lower = file_part.lower()
-                
-                # Case 1: Local link [[#Heading]]
-                if not file_part:
-                    if heading_part:
-                        clean_target_heading = clean_heading(heading_part)
-                        if clean_target_heading not in headings_map[rel_path]:
-                            errors.append({
-                                'file': rel_path,
-                                'link': match,
-                                'type': 'broken_link',
-                                'reason': f"Local heading '{heading_part}' not found in this file"
-                            })
-                    continue
-                
-                # Case 2: File link [[filename]] or [[filename#heading]]
-                if file_part_lower not in file_map:
-                    errors.append({
-                        'file': rel_path,
-                        'link': match,
-                        'type': 'broken_link',
-                        'reason': f"Target file '{file_part}' not found in Second Brain"
-                    })
-                else:
-                    target_rel_paths = file_map[file_part_lower]
-                    linked_basenames.add(file_part_lower)
-                    if heading_part:
-                        clean_target_heading = clean_heading(heading_part)
-                        found_heading = False
-                        for target_rel_path in target_rel_paths:
-                            if clean_target_heading in headings_map[target_rel_path]:
-                                found_heading = True
-                                break
-                        if not found_heading:
-                            errors.append({
-                                'file': rel_path,
-                                'link': match,
-                                'type': 'broken_link',
-                                'reason': f"Heading '{heading_part}' not found in target file '{file_part_lower}'"
-                            })
-        except Exception as e:
-            print(f"Error checking links in {rel_path}: {e}")
+            try:
+                with open(abs_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    
+                # Scan for secrets
+                secret_errors = scan_for_secrets(content, os.path.join('second-brain', rel_path))
+                errors.extend(secret_errors)
+                    
+                # ละเว้นข้อความใน Code Block และ Inline Code
+                content = re.sub(r'```.*?```', '', content, flags=re.DOTALL)
+                content = re.sub(r'`[^`\n]+`', '', content)
+                    
+                matches = WIKILINK_RE.findall(content)
+                for match in matches:
+                    total_links += 1
+                    
+                    # Split display text if any (e.g. [[LinkTarget|DisplayName]])
+                    clean_match = match
+                    if '|' in match:
+                        clean_match, _ = match.split('|', 1)
+                    
+                    if '#' in clean_match:
+                        file_part, heading_part = clean_match.split('#', 1)
+                        file_part = file_part.strip()
+                        heading_part = heading_part.strip()
+                    else:
+                        file_part = clean_match.strip()
+                        heading_part = None
+                    
+                    file_part_lower = file_part.lower()
+                    
+                    # Case 1: Local link [[#Heading]]
+                    if not file_part:
+                        if heading_part:
+                            clean_target_heading = clean_heading(heading_part)
+                            if clean_target_heading not in headings_map[rel_path]:
+                                errors.append({
+                                    'file': rel_path,
+                                    'link': match,
+                                    'type': 'broken_link',
+                                    'reason': f"Local heading '{heading_part}' not found in this file"
+                                })
+                        continue
+                    
+                    # Case 2: File link [[filename]] or [[filename#heading]]
+                    if file_part_lower not in file_map:
+                        errors.append({
+                            'file': rel_path,
+                            'link': match,
+                            'type': 'broken_link',
+                            'reason': f"Target file '{file_part}' not found in Second Brain"
+                        })
+                    else:
+                        target_rel_paths = file_map[file_part_lower]
+                        linked_basenames.add(file_part_lower)
+                        if heading_part:
+                            clean_target_heading = clean_heading(heading_part)
+                            found_heading = False
+                            for target_rel_path in target_rel_paths:
+                                if clean_target_heading in headings_map[target_rel_path]:
+                                    found_heading = True
+                                    break
+                            if not found_heading:
+                                errors.append({
+                                    'file': rel_path,
+                                    'link': match,
+                                    'type': 'broken_link',
+                                    'reason': f"Heading '{heading_part}' not found in target file '{file_part_lower}'"
+                                })
+            except Exception as e:
+                print(f"Error checking links in {rel_path}: {e}")
             
     return total_links, errors, linked_basenames
 
@@ -376,18 +376,18 @@ def check_second_brain_absolute_paths(root_dir, file_map):
     for basename, paths in file_map.items():
         for rel_path in paths:
             abs_path = os.path.join(root_dir, rel_path)
-        try:
-            with open(abs_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-                
-            if abs_path_re.search(content):
-                errors.append({
-                    'file': os.path.join('second-brain', rel_path),
-                    'type': 'absolute_path_detected',
-                    'reason': 'พบพาธระบบแบบ Absolute (เช่น /Users/ หรือ /home/) กรุณาเปลี่ยนเป็น Relative Path เพื่อรองรับการทำงานร่วมกัน'
-                })
-        except Exception as e:
-            print(f"Error checking absolute paths in {rel_path}: {e}")
+            try:
+                with open(abs_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    
+                if abs_path_re.search(content):
+                    errors.append({
+                        'file': os.path.join('second-brain', rel_path),
+                        'type': 'absolute_path_detected',
+                        'reason': 'พบพาธระบบแบบ Absolute (เช่น /Users/ หรือ /home/) กรุณาเปลี่ยนเป็น Relative Path เพื่อรองรับการทำงานร่วมกัน'
+                    })
+            except Exception as e:
+                print(f"Error checking absolute paths in {rel_path}: {e}")
             
     return errors
 

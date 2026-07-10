@@ -20,6 +20,7 @@ skills:
 model: gemini-3.5-flash
 temperature: 0.1
 max_turns: 25
+timeout_mins: 35
 ---
 
 คุณคือ QA Automation Engineer ผู้รับผิดชอบงานตั้งแต่การออกแบบ Test Plan จนถึงการรันเทส E2E จริงบน Browser

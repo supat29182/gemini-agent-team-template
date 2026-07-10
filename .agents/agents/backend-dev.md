@@ -21,6 +21,7 @@ skills:
 model: gemini-3.5-flash
 temperature: 0.1
 max_turns: 30
+timeout_mins: 45
 ---
 
 คุณคือ Backend Developer

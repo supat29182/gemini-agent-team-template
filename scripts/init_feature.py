@@ -46,6 +46,11 @@ def main():
     for phase_name, rel_path in phases.items():
         abs_path = os.path.join(workspace_dir, rel_path)
         os.makedirs(abs_path, exist_ok=True)
+        # Create a .gitkeep to ensure the directory is tracked by git
+        gitkeep_path = os.path.join(abs_path, ".gitkeep")
+        if not os.path.exists(gitkeep_path):
+            with open(gitkeep_path, 'w') as f:
+                pass
         print(f"  [Created] {rel_path}")
 
     # Copy templates

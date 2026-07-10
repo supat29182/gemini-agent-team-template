@@ -8,6 +8,8 @@ INBOX_ARCHIVE = os.path.join(WORKSPACE_DIR, "second-brain", "archives", "inbox_a
 
 TEST_LOG_FILE = os.path.join(WORKSPACE_DIR, "second-brain", "50-qa-testing", "test_execution.log")
 TEST_LOG_ARCHIVE_DIR = os.path.join(WORKSPACE_DIR, "second-brain", "archives", "test_logs")
+DIARY_DIR = os.path.join(WORKSPACE_DIR, "second-brain", "diary")
+DIARY_ARCHIVE_DIR = os.path.join(WORKSPACE_DIR, "second-brain", "archives", "diary")
 
 INBOX_MAX_LINES = 200
 TEST_LOG_MAX_LINES = 1000
@@ -49,6 +51,33 @@ def rotate_test_log():
             f.write("--- New Test Execution Log ---\n")
         print(f"Rotated test_execution.log to {archive_name}")
 
+def rotate_diary():
+    if not os.path.exists(DIARY_DIR):
+        return
+    
+    os.makedirs(DIARY_ARCHIVE_DIR, exist_ok=True)
+    today = datetime.now()
+    
+    for filename in os.listdir(DIARY_DIR):
+        if not filename.endswith(".md") or filename == ".gitkeep":
+            continue
+            
+        # Filename starts with YYYY-MM-DD (length 10)
+        if len(filename) >= 10:
+            date_str = filename[:10]
+            try:
+                file_date = datetime.strptime(date_str, "%Y-%m-%d")
+                age_days = (today - file_date).days
+                if age_days > 30:
+                    src_path = os.path.join(DIARY_DIR, filename)
+                    dest_path = os.path.join(DIARY_ARCHIVE_DIR, filename)
+                    shutil.move(src_path, dest_path)
+                    print(f"Archived old diary file: {filename} to archives/diary/")
+            except ValueError:
+                # Filename does not start with a valid YYYY-MM-DD date
+                continue
+
 if __name__ == "__main__":
     rotate_inbox()
     rotate_test_log()
+    rotate_diary()

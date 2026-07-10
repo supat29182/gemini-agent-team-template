@@ -22,7 +22,7 @@ skills:
   - planning-and-task-breakdown
   - git-workflow-and-versioning
 model: gemini-3.5-pro
-temperature: 0.4
+temperature: 0.3
 max_turns: 100
 timeout_mins: 90
 ---

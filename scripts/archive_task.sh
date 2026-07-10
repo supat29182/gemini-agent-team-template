@@ -49,6 +49,10 @@ for phase in "${PHASES[@]}"; do
     SRC_DIR="second-brain/${phase}/${FOLDER_TYPE}/${SLUG}"
     if [ -d "$SRC_DIR" ]; then
         DEST_DIR="second-brain/archives/${FOLDER_TYPE}/${SLUG}/${phase}"
+        if [ -d "$DEST_DIR" ]; then
+            echo "  [Warning] Destination $DEST_DIR already exists. Cleaning up older archive..."
+            rm -rf "$DEST_DIR"
+        fi
         echo "  Moving $SRC_DIR -> $DEST_DIR"
         mv "$SRC_DIR" "$DEST_DIR"
     else
