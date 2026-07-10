@@ -124,7 +124,7 @@ This system orchestrates the collaboration of 8 Agents, whose configurations are
 - **Role**: Designs and develops UI/UX and connects to Frontend APIs.
 - **Input**: Specifications from `[[system_spec]]`, API agreements from `api_contract.yaml` (as commanded by `@pm-po`).
 - **Output**: Writes Client-side code referencing `api_contract.yaml`, ensures the build passes, writes changelog entries, and logs in the diary.
-- **Skills Used**: `frontend-ui-engineering`, `test-driven-development`, `incremental-implementation`, `source-driven-development`, `code-simplification`, `debugging-and-error-recovery`, `custom-coding-standard`, `performance-optimization`, `browser-testing-with-devtools`, `api-and-interface-design`
+- **Skills Used**: `design-taste-frontend`, `frontend-ui-engineering`, `test-driven-development`, `incremental-implementation`, `source-driven-development`, `code-simplification`, `debugging-and-error-recovery`, `custom-coding-standard`, `performance-optimization`, `browser-testing-with-devtools`, `api-and-interface-design`
 
 ### 6. Security Engineer (`security.md`)
 
