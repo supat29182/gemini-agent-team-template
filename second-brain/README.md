@@ -77,7 +77,7 @@ graph TD
         TypeDecision -->|Bug Fix| BugArch[solution-architect]
         BugArch -->|2. Analyze Root Cause| BugDiag[bug_diagnosis.md]
         
-        Arch -->|3. Analyze Impact| Impact[architecture_impact.md]
+        Arch -->|3. Analyze Impact & Directory Design| Impact[architecture_impact.md]
     end
 
     subgraph "Phase 2: Implementation"

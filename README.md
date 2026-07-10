@@ -21,7 +21,7 @@ graph TD
     %% Feature & CR Flow
     Init -->|"Feature / CR"| SA("sa")
     SA -->|"3. Draft Spec & API"| ARCH("solution-architect")
-    ARCH -->|"4. Impact Analysis"| PM
+    ARCH -->|"4. Impact & Directory Design"| PM
     
     PM -->|"Phase 2"| BACK("backend-dev")
     PM -->|"Phase 2"| QA_P("qa-automate (Test Plan)")
@@ -64,13 +64,13 @@ sequenceDiagram
         alt Feature or CR
             PM->>SA: Create System Spec
             SA-->>PM: Completed (system_spec.md)
-            PM->>Arch: Analyze Impact
+            PM->>Arch: Analyze Impact & Design Directory
         else Bug Fix
             PM->>Arch: Analyze Root Cause
         end
         Arch->>Nexus: mcp_gitnexus_impact
         Nexus-->>Arch: Return summary JSON
-        Arch-->>PM: Completed (impact / diagnosis)
+        Arch-->>PM: Completed (impact & directory design / diagnosis)
     end
 
     rect rgb(240, 255, 240)
@@ -112,7 +112,7 @@ sequenceDiagram
 The user submits a requirement in the chat. The first bot to wake up is **`@pm-po`** (Project Manager). It records the requirement in `inbox_log.md` and runs `init_feature.py --type` to initialize separate folders for each task type (Feature, CR, Bug Fix).
 
 **Phase 1: Design (Design Stage)**
-1. For **Features and CRs**: `pm-po` assigns the task to **`@sa` (System Analyst)** to analyze requirements and write `system_spec.md`. Then `@solution-architect` analyzes the impact and records it in `architecture_impact.md`.
+1. For **Features and CRs**: `pm-po` assigns the task to **`@sa` (System Analyst)** to analyze requirements and write `system_spec.md`. Then `@solution-architect` analyzes the architectural impact, designs the proposed directory/file structure, and records them in `architecture_impact.md`.
 2. For **Bug Fixes**: Bypasses the SA spec. `@solution-architect` directly writes the analysis and remediation steps in `bug_diagnosis.md`.
 
 **Phase 2: Implementation (Build Stage)**
