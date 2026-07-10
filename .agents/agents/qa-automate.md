@@ -6,7 +6,6 @@ mcpServers:
     command: "npx"
     args: ["-y", "@playwright/mcp@latest"]
 tools:
-  - nexus-librarian
   - view_file
   - write_to_file
   - run_command

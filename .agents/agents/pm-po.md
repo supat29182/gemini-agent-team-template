@@ -2,7 +2,6 @@
 name: pm-po
 description: Project Manager and leader of the AISDLC process — A Flat Orchestrator who directly delegates tasks to all specialist agents
 tools:
-  - nexus-librarian
   - view_file
   - write_to_file
   - list_dir

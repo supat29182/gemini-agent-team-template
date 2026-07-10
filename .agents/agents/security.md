@@ -2,7 +2,6 @@
 name: security
 description: Audit security and vulnerabilities — Scan for OWASP Top 10, hardcoded secrets, and write security_audit.md
 tools:
-  - nexus-librarian
   - view_file
   - write_to_file
   - list_dir

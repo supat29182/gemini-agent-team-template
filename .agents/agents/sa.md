@@ -2,7 +2,6 @@
 name: sa
 description: System Analyst & Specification Writer — Reads the inbox and creates a complete system_spec.md, including tagging according to the policy.
 tools:
-  - nexus-librarian
   - view_file
   - write_to_file
   - list_dir

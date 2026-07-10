@@ -2,7 +2,6 @@
 name: frontend-dev
 description: Develop UI/UX and connect APIs — Write frontend components and API clients, ensure successful builds, and write changelogs
 tools:
-  - nexus-librarian
   - view_file
   - write_to_file
   - list_dir

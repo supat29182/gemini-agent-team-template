@@ -2,7 +2,6 @@
 name: backend-dev
 description: Develop APIs, Database, and Backend Unit Tests — Write server-side code, pass tests, and write changelogs
 tools:
-  - nexus-librarian
   - view_file
   - write_to_file
   - list_dir

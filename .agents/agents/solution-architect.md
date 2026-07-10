@@ -6,7 +6,6 @@ mcpServers:
     command: "npx"
     args: ["-y", "gitnexus@latest", "mcp"]
 tools:
-  - nexus-librarian
   - view_file
   - write_to_file
   - list_dir
