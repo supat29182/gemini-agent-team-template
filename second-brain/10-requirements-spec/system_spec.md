@@ -6,20 +6,20 @@ tags:
 
 # 📝 Core System Specification
 
-นี่คือเอกสารสเปกระบบหลักที่เป็นแกนกลางและ Single Source of Truth ของระบบในปัจจุบัน
+This is the core system specification document, serving as the central backbone and Single Source of Truth for the current system.
 
-## 🧭 User Journey
+## 1. User Journey / Business Logic
 
-(สเปกและขั้นตอนการทำงานของฝั่งผู้ใช้)
+(Specifications and workflows from the user's perspective, along with all business rules of the system)
 
-## ⚙️ Business Logic
+## 2. API Endpoints
 
-(กฎเกณฑ์ทางธุรกิจทั้งหมดของระบบ)
+(Details of existing APIs)
 
-## 🔌 API Endpoints
+## 3. Database Schema
 
-(รายละเอียดของ API ที่มีอยู่)
+(Core database table structures)
 
-## 🗄️ Database Schema
+## 4. UI/UX Requirements
 
-(โครงสร้างตารางฐานข้อมูลหลัก)
+(Required elements on the screen)

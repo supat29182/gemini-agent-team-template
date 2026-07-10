@@ -6,22 +6,22 @@ tags:
   - phase/design
 ---
 
-# 📝 System Specification: [ชื่องาน/ฟีเจอร์]
+# 📝 System Specification: [Task/Feature Name]
 
-> **อ้างอิงความต้องการ (Initiation)**: `[[inbox_log#ชื่อ Requirement]]`
+> **Requirement Reference (Initiation)**: `[[inbox_log#Requirement Name]]`
 
 ## 1. User Journey / Business Logic
 
-- (อธิบาย flow การทำงานในมุมมองของผู้ใช้งาน)
+- (Explain the workflow from the user's perspective)
 
 ## 2. API Endpoints
 
-- (อธิบาย HTTP Method, Route, Request/Response payload)
+- (Explain HTTP Method, Route, Request/Response payload)
 
 ## 3. Database Schema
 
-- (ตารางและฟิลด์ที่เกี่ยวข้อง)
+- (Related tables and fields)
 
 ## 4. UI/UX Requirements
 
-- (สิ่งที่ต้องมีบนหน้าจอ)
+- (Required elements on the screen)

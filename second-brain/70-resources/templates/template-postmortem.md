@@ -12,33 +12,33 @@ tags:
 
 ---
 
-## 🛑 What Went Wrong? (อาการข้อผิดพลาด)
+## 🛑 What Went Wrong? (Error Symptoms)
 
-_อธิบายปัญหา บั๊ก หรือการ Looping ของ Agent ที่เกิดขึ้นอย่างละเอียด พร้อมแนบ Error Logs หรือพฤติกรรมที่ไม่ถูกต้อง (ถ้ามี)_
-
--
-
-## 🔍 Root Cause Analysis (สาเหตุหลัก)
-
-_อธิบายเหตุผลทางเทคนิค หรือความเข้าใจที่คลาดเคลื่อนของ Agent ที่ทำให้เกิดปัญหานี้_
+_Describe the problem, bug, or Agent looping in detail, including Error Logs or incorrect behavior (if any)._
 
 -
 
-## 🛠️ How We Fixed It (วิธีการแก้ไขที่ถูกต้อง)
+## 🔍 Root Cause Analysis
 
-_อธิบายวิธีแก้ปัญหา พร้อมโค้ดตัวอย่างที่ทำงานได้ถูกต้อง หรือแนวคิดทางสถาปัตยกรรมที่ใช้แก้_
+_Explain the technical reason or Agent misunderstanding that caused this problem._
 
 -
 
-## 🧠 Distilled Rule for Future Reference (กฎที่สรุปได้สำหรับงานถัดไป)
+## 🛠️ How We Fixed It
+
+_Explain the solution with working code examples or architectural concepts used to fix it._
+
+-
+
+## 🧠 Distilled Rule for Future Reference
 
 > [!IMPORTANT]
-> **Anti-Pattern Rule:** [เขียนกฎ 1 ประโยคสั้นๆ เพื่อนำไปอัปเดตลงใน AGENTS.md หรือ lessons_learned.md เช่น "ห้ามใช้... เมื่อเกิด..."]
+> **Anti-Pattern Rule:** [Write a short 1-sentence rule to update in AGENTS.md or lessons_learned.md, e.g., "Do not use... when..."]
 
 ## 🔄 Rule Compounding Trigger
 
-_(ประเมินว่าข้อผิดพลาดนี้ เป็นปัญหาเรื้อรังที่เกิดซ้ำซากเกิน 1 ครั้งหรือไม่?)_
+_(Assess whether this error is a chronic problem that has recurred more than once.)_
 
-- [ ] **NO:** เป็นปัญหาเฉพาะเคส ให้จบแค่การบันทึกลง `[[lessons_learned]]`
-- [ ] **YES:** เป็นปัญหาซ้ำซาก (Anti-pattern เดิม)
-  - **Action Required:** ต้องนำกฎด้านบนไปอัปเดตเพิ่มในหัวข้อ `Never Do` ของบอทที่เกี่ยวข้องในไฟล์ `AGENTS.md` หรือไฟล์คอนฟิกของบอทนั้นๆ ทันที
+- [ ] **NO:** Isolated case. Simply record it in `[[lessons_learned]]`.
+- [ ] **YES:** Recurring problem (Existing anti-pattern).
+  - **Action Required:** Must immediately append the above rule to the "Never Do" section of the relevant bot in AGENTS.md or its configuration file.

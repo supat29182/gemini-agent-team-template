@@ -6,33 +6,33 @@ tags:
   - phase/initiation
 ---
 
-# 👔 Business Requirement Document (BRD): [ชื่องาน/ฟีเจอร์]
+# 👔 Business Requirement Document (BRD): [Task/Feature Name]
 
-> **อ้างอิงความต้องการดิบ (Raw Requirements)**: `[[inbox_log#ชื่อ Requirement]]`
+> **Raw Requirements Reference**: `[[inbox_log#Requirement Name]]`
 
-## 1. Executive Summary (บทสรุปผู้บริหาร)
+## 1. Executive Summary
 
-- (อธิบายสรุปสั้นๆ เกี่ยวกับฟีเจอร์นี้ว่าทำอะไร และจะช่วยธุรกิจหรือผู้ใช้อย่างไร)
+- (Provide a brief summary of what this feature does and how it helps the business or users)
 
-## 2. Business Goals & Objectives (เป้าหมายและวัตถุประสงค์ทางธุรกิจ)
+## 2. Business Goals & Objectives
 
-- (วัตถุประสงค์ของการพัฒนาฟีเจอร์นี้ เช่น เพิ่มยอดขาย, ลดเวลาทำงาน, เพิ่มความพึงพอใจของลูกค้า)
-- (ตัวชี้วัดความสำเร็จ (KPI) - ถ้ามี)
+- (Objectives of developing this feature, e.g., increase sales, reduce work time, increase customer satisfaction)
+- (Key Performance Indicators (KPIs) - if any)
 
-## 3. Target Users & Personas (ผู้ใช้งานเป้าหมาย)
+## 3. Target Users & Personas
 
-- (ระบุกลุ่มผู้ใช้งานที่จะได้รับประโยชน์จากฟีเจอร์นี้ เช่น ลูกค้าทั่วไป, เจ้าของร้าน, แอดมินระบบ)
+- (Specify the target users who will benefit from this feature, e.g., general customers, shop owners, system admins)
 
-## 4. Key Features & Scope (ขอบเขตของฟีเจอร์หลัก)
+## 4. Key Features & Scope
 
-- **ฟีเจอร์ที่อยู่ในขอบเขต (In-Scope)**:
-  - [ ] ฟีเจอร์ย่อย 1...
-  - [ ] ฟีเจอร์ย่อย 2...
-- **ฟีเจอร์ที่อยู่นอกขอบเขต (Out-of-Scope)**:
-  - [ ] ฟีเจอร์ที่จะยังไม่ทำในเฟสนี้...
+- **In-Scope Features**:
+  - [ ] Sub-feature 1...
+  - [ ] Sub-feature 2...
+- **Out-of-Scope Features**:
+  - [ ] Features that will not be implemented in this phase...
 
-## 5. Non-Functional Requirements (ความต้องการที่ไม่ใช่ฟังก์ชัน)
+## 5. Non-Functional Requirements
 
-- **ความปลอดภัย (Security)**: (เช่น การระบุตัวตน, สิทธิ์การเข้าถึงข้อมูล)
-- **ประสิทธิภาพ (Performance & Scalability)**: (เช่น ความเร็วในการโหลดหน้าจอ, การรองรับผู้ใช้พร้อมกัน)
-- **ความง่ายในการใช้งาน (Usability)**: (เช่น การออกแบบที่รองรับ Responsive, การรองรับผู้ใช้กลุ่มเฉพาะ)
+- **Security**: (e.g., authentication, data access rights)
+- **Performance & Scalability**: (e.g., page load speed, concurrent users support)
+- **Usability**: (e.g., responsive design, support for specific user groups)

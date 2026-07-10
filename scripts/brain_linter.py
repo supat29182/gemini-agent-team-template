@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Brain Linter — ตรวจสอบความสมบูรณ์ของ Second Brain
+Brain Linter — Check the integrity of the Second Brain
 - Wikilinks (broken file links, broken heading references)
 - YAML Frontmatter (missing frontmatter, missing tags, invalid tags)
 - Orphan files (files not linked from anywhere)
@@ -84,7 +84,7 @@ def build_index(root_dir, workspace_dir=None):
     return file_map, headings_map
 
 def scan_for_secrets(content, rel_file_path):
-    """สแกนหา API Keys หรือความลับ (Secrets) ที่อาจรั่วไหลในไฟล์"""
+    """Scan for API Keys or secrets that might leak in the file"""
     errors = []
     
     # Pattern 1: OpenAI API Key
@@ -107,14 +107,14 @@ def scan_for_secrets(content, rel_file_path):
         errors.append({
             'file': rel_file_path,
             'type': 'secret_leak_detected',
-            'reason': f'พบ OpenAI API Key หรือร่องรอยคีย์ที่คล้ายกัน ({match[:6]}...) กรุณาลบออกเพื่อความปลอดภัย'
+            'reason': f'Found OpenAI API Key or similar trace ({match[:6]}...) Please remove it for security.'
         })
         
     for match in google_key_re.findall(content):
         errors.append({
             'file': rel_file_path,
             'type': 'secret_leak_detected',
-            'reason': f'พบ Google API Key หรือคีย์ Gemini ({match[:6]}...) กรุณาลบออกเพื่อความปลอดภัย'
+            'reason': f'Found Google API Key or Gemini key ({match[:6]}...) Please remove it for security.'
         })
         
     for match in generic_secret_re.findall(content):
@@ -123,16 +123,16 @@ def scan_for_secrets(content, rel_file_path):
             errors.append({
                 'file': rel_file_path,
                 'type': 'secret_leak_detected',
-                'reason': f'พบข้อมูลที่น่าจะเป็นความลับ (เช่น รหัสผ่าน หรือ API Key) ถูก Hardcoded: "...{match[-6:]}"'
+                'reason': f'Found possible hardcoded secret (e.g., password or API Key): "...{match[-6:]}"'
             })
             
     return errors
 
 def check_orphans(file_map, linked_basenames):
-    """ตรวจสอบไฟล์ที่ไม่มีการเชื่อมโยงจากไฟล์อื่น (Orphan Files)"""
+    """Check for files that are not linked from any other file (Orphan Files)"""
     errors = []
     
-    # ไฟล์/ไดเรกทอรีที่ไม่จำเป็นต้องถูก Link ถึง
+    # Files/directories that do not need to be linked
     exempt_basenames = {
         '00-index', 'readme', 'project_board', 
         'inbox_log', 'tagging-policy', 'agents',
@@ -149,13 +149,13 @@ def check_orphans(file_map, linked_basenames):
                 errors.append({
                     'file': os.path.join('second-brain', rel_path),
                     'type': 'orphan_file',
-                    'reason': 'ไฟล์นี้ไม่มีไฟล์อื่นใน Second Brain ชี้ลิงก์มาหาเลย (Orphan File) กรุณาเขียนลิงก์ระบุในดัชนีหรือไฟล์อ้างอิงหลัก'
+                    'reason': 'No other file in the Second Brain links to this file (Orphan File). Please link it in the index or a main reference file.'
                 })
             
     return errors
 
 def check_critical_files(workspace_dir):
-    """ตรวจสอบการมีอยู่ของไฟล์และเทมเพลตสำคัญที่บอทจำเป็นต้องใช้"""
+    """Check the existence of critical files and templates required by bots"""
     errors = []
     critical_files = [
         'second-brain/00-Index.md',
@@ -171,7 +171,7 @@ def check_critical_files(workspace_dir):
             errors.append({
                 'file': rel_path,
                 'type': 'missing_critical_file',
-                'reason': f'ไฟล์หรือเทมเพลตสำคัญไม่มีอยู่จริง บอทอาจไม่สามารถเริ่มทำงานหรือทำตามแผนได้'
+                'reason': f'Critical file or template is missing. Bots might not be able to start or follow plans.'
             })
             
     return errors
@@ -192,7 +192,7 @@ def check_links(root_dir, file_map, headings_map):
                 secret_errors = scan_for_secrets(content, os.path.join('second-brain', rel_path))
                 errors.extend(secret_errors)
                     
-                # ละเว้นข้อความใน Code Block และ Inline Code
+                # Ignore text in Code Blocks and Inline Code
                 content = re.sub(r'```.*?```', '', content, flags=re.DOTALL)
                 content = re.sub(r'`[^`\n]+`', '', content)
                     
@@ -259,7 +259,7 @@ def check_links(root_dir, file_map, headings_map):
     return total_links, errors, linked_basenames
 
 def check_frontmatter(root_dir, file_map):
-    """ตรวจสอบ YAML Frontmatter ของทุกไฟล์ .md"""
+    """Check YAML Frontmatter of all .md files"""
     errors = []
     total_checked = 0
     
@@ -267,11 +267,11 @@ def check_frontmatter(root_dir, file_map):
         for rel_path in paths:
             filename = os.path.basename(rel_path)
             
-            # ข้ามไฟล์ที่ไม่ต้องการ frontmatter
+            # Skip files that do not require frontmatter
             if filename in SKIP_FRONTMATTER:
                 continue
             
-            # ข้ามไฟล์ใน templates/
+            # Skip files in templates/
             if 'templates/' in rel_path:
                 continue
                 
@@ -369,7 +369,7 @@ def check_frontmatter(root_dir, file_map):
     return total_checked, errors
 
 def check_second_brain_absolute_paths(root_dir, file_map):
-    """ตรวจสอบไฟล์ใน Second Brain เพื่อป้องกันการใช้ Absolute Path"""
+    """Check files in Second Brain to prevent using Absolute Paths"""
     errors = []
     abs_path_re = re.compile(r'(?:file:///Users/|/Users/|file:///home/|/home/)(?!username\b)')
     
@@ -384,15 +384,51 @@ def check_second_brain_absolute_paths(root_dir, file_map):
                     errors.append({
                         'file': os.path.join('second-brain', rel_path),
                         'type': 'absolute_path_detected',
-                        'reason': 'พบพาธระบบแบบ Absolute (เช่น /Users/ หรือ /home/) กรุณาเปลี่ยนเป็น Relative Path เพื่อรองรับการทำงานร่วมกัน'
+                        'reason': 'Found absolute system path (e.g. /Users/ or /home/). Please change to Relative Path to support collaboration.'
                     })
             except Exception as e:
                 print(f"Error checking absolute paths in {rel_path}: {e}")
             
     return errors
 
+def check_spec_structures(root_dir, file_map):
+    """Check if system_spec.md has all required headers"""
+    errors = []
+    required_headers = [
+        "1. User Journey",
+        "2. API Endpoints",
+        "3. Database Schema",
+        "4. UI/UX Requirements"
+    ]
+    
+    for basename, paths in file_map.items():
+        if basename == "system_spec":
+            for rel_path in paths:
+                # Skip templates folder so linter doesn't warn in templates themselves
+                if "templates/" in rel_path:
+                    continue
+                    
+                abs_path = os.path.join(root_dir, rel_path)
+                try:
+                    with open(abs_path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                        
+                    for header in required_headers:
+                        # Use case-insensitive check for flexibility, but all keywords must exist
+                        # Headings might be written slightly differently (e.g. 1. User Journey / Business Logic)
+                        if header.lower() not in content.lower():
+                            errors.append({
+                                'file': os.path.join('second-brain', rel_path),
+                                'type': 'missing_spec_header',
+                                'reason': f"Spec file is missing a required header: '{header}' Please include all headers according to the template."
+                            })
+                except Exception as e:
+                    print(f"Error checking spec structure in {rel_path}: {e}")
+                    
+    return errors
+
 def check_agent_configurations(workspace_dir):
-    """ตรวจสอบไฟล์ตั้งค่าบอทใน .agents/agents/ เพื่อหา absolute path และเช็คลิงก์เสีย"""
+    """Check bot configuration files in .agents/agents/ for absolute paths and broken links"""
     errors = []
     agents_dir = os.path.join(workspace_dir, '.agents', 'agents')
     if not os.path.exists(agents_dir):
@@ -416,7 +452,7 @@ def check_agent_configurations(workspace_dir):
                     errors.append({
                         'file': rel_file_path,
                         'type': 'absolute_path_detected',
-                        'reason': 'พบพาธระบบแบบ Absolute (เช่น /Users/ หรือ /home/) กรุณาเปลี่ยนเป็น Relative Path เพื่อรองรับการทำงานร่วมกัน'
+                        'reason': 'Found absolute system path (e.g. /Users/ or /home/). Please change to Relative Path to support collaboration.'
                     })
                 
                 # Check for secrets
@@ -441,18 +477,18 @@ def check_agent_configurations(workspace_dir):
                             errors.append({
                                 'file': rel_file_path,
                                 'type': 'broken_relative_link',
-                                'reason': f'ลิงก์สัมพัทธ์ชี้ไปยังเป้าหมายที่ไม่มีจริง: {link} (พาธจริงที่หา: {os.path.relpath(target_abs_path, workspace_dir)})'
+                                'reason': f'Relative link points to a non-existent target: {link} (actual path searched: {os.path.relpath(target_abs_path, workspace_dir)})'
                             })
             except Exception as e:
                 errors.append({
                     'file': rel_file_path,
                     'type': 'read_error',
-                    'reason': f'ไม่สามารถอ่านไฟล์เพื่อตรวจสอบได้: {e}'
+                    'reason': f'Cannot read file for checking: {e}'
                 })
     return total_checked, errors
 
 def check_workspace_rules(workspace_dir):
-    """ตรวจสอบไฟล์กฎของโปรเจกต์ .agents/AGENTS.md"""
+    """Check project rules file .agents/AGENTS.md"""
     errors = []
     agents_md = os.path.join(workspace_dir, '.agents', 'AGENTS.md')
     if not os.path.exists(agents_md):
@@ -469,7 +505,7 @@ def check_workspace_rules(workspace_dir):
             errors.append({
                 'file': rel_file_path,
                 'type': 'absolute_path_detected',
-                'reason': 'พบพาธระบบแบบ Absolute (เช่น /Users/ หรือ /home/) กรุณาเปลี่ยนเป็น Relative Path เพื่อรองรับการทำงานร่วมกัน'
+                'reason': 'Found absolute system path (e.g. /Users/ or /home/). Please change to Relative Path to support collaboration.'
             })
             
         # Check for secrets
@@ -479,13 +515,13 @@ def check_workspace_rules(workspace_dir):
         errors.append({
             'file': rel_file_path,
             'type': 'read_error',
-            'reason': f'ไม่สามารถอ่านไฟล์ตรวจสอบ AGENTS.md ได้: {e}'
+            'reason': f'Cannot read AGENTS.md for checking: {e}'
         })
         
     return errors
 
 def check_strategy_b_folders(workspace_dir):
-    """ตรวจสอบความสมบูรณ์ของโฟลเดอร์ฟีเจอร์ตาม Strategy B"""
+    """Check the completeness of feature folders according to Strategy B"""
     errors = []
     features_dir = os.path.join(workspace_dir, 'second-brain', '10-requirements-spec', 'features')
     if not os.path.exists(features_dir):
@@ -503,12 +539,12 @@ def check_strategy_b_folders(workspace_dir):
                     errors.append({
                         'file': rel_path,
                         'type': 'missing_feature_artifact',
-                        'reason': f"ฟีเจอร์ '{slug}' ขาดไฟล์สเปกที่จำเป็น: {req_file} (กลยุทธ์ B บังคับให้มี BRD, Epics & User Stories, และ System Spec ในทุกๆ ฟีเจอร์)"
+                        'reason': f"Feature '{slug}' is missing required spec file: {req_file} (Strategy B requires BRD, Epics & User Stories, and System Spec in every feature)"
                     })
     return errors
 
 def sync_gitnexus_agents(workspace_dir):
-    """ซิงค์ข้อมูล GitNexus จาก AGENTS.md (Root) ไปยัง .agents/AGENTS.md แบบอัตโนมัติ"""
+    """Automatically sync GitNexus data from AGENTS.md (Root) to .agents/AGENTS.md"""
     root_agents = os.path.join(workspace_dir, 'AGENTS.md')
     target_agents = os.path.join(workspace_dir, '.agents', 'AGENTS.md')
     
@@ -595,6 +631,11 @@ def main():
     print(f"Checked Strategy B active feature folders.")
     all_errors.extend(strategy_b_errors)
 
+    # Check 2.7: Spec Structures
+    spec_errors = check_spec_structures(root_dir, file_map)
+    print(f"Checked Spec Structures (Headers).")
+    all_errors.extend(spec_errors)
+
     # Check 3: Agent configurations
     total_agents, agent_errors = check_agent_configurations(workspace_dir)
     print(f"Checked {total_agents} agent configurations in .agents/agents/.")
@@ -623,6 +664,7 @@ def main():
         print("   - Critical Files & Templates: OK")
         print("   - Secrets & Credentials Leak Scan: OK")
         print("   - Strategy B Feature Folders: OK")
+        print("   - Spec Structures (Headers): OK")
         print("   - Agent Configs (No absolute paths & links valid): OK")
         print("   - AGENTS.md Workspace Rules (No absolute paths): OK")
         sys.exit(0)

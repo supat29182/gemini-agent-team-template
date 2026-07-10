@@ -82,7 +82,9 @@ def main():
 
             # Replace placeholders
             content = content.replace("YYYY-MM-DD", current_date)
+            content = content.replace("[Task/Feature Name]", title)
             content = content.replace("[ชื่องาน/ฟีเจอร์]", title)
+            content = content.replace("[Task Name]", title)
             content = content.replace("[ชื่องาน]", title)
 
             # Customize task locks for bug type
@@ -125,13 +127,13 @@ tags:
 - **Status:** Investigating
 
 ## 1. Steps to Reproduce
-(อธิบายขั้นตอนการเกิดบั๊ก)
+(Explain steps to reproduce)
 
 ## 2. Root Cause Analysis
-(วิเคราะห์สาเหตุและผลกระทบของบั๊กต่อระบบเดิม)
+(Analyze root cause and impact on the existing system)
 
 ## 3. Proposed Fix
-(แนวทางการแก้ไขโค้ด)
+(Proposed code fix)
 """
         try:
             with open(diagnosis_path, 'w', encoding='utf-8') as f:

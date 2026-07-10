@@ -1,19 +1,19 @@
 # 📊 Project Kanban Board
 
-กระดานแสดงสถานะภาพรวมของงาน (Task Status Tracking) สำหรับโครงการ AISDLC
-_ให้ PM/PO (หรือผู้ใช้งาน) เป็นผู้อัปเดตสถานะของงานโดยย้ายบรรทัดงานไปยังเฟสที่ถูกต้อง_
+A board displaying the overall task status (Task Status Tracking) for the AISDLC project
+_The PM/PO (or user) should update the task status by moving the task row to the correct phase_
 
-## 🚦 ลำดับเฟส (Phase Workflow)
+## 🚦 Phase Workflow
 
-- **[Inbox]**: งานใหม่ที่เพิ่งถูกสร้าง กำลังรอตรวจสอบ
-- **[Phase 1] Design**: ทำ System Spec & Architecture Impact
-- **[Phase 2] Implementation**: เขียนโค้ด Backend/Frontend และออกแบบ Test Plan
-- **[Phase 3] QA**: ทดสอบระบบแบบ End-to-End
-- **[Done]**: งานเสร็จสมบูรณ์
+- **[Inbox]**: Newly created tasks, awaiting review
+- **[Phase 1] Design**: Create System Spec & Architecture Impact
+- **[Phase 2] Implementation**: Write Backend/Frontend code and design Test Plan
+- **[Phase 3] QA**: End-to-End system testing
+- **[Done]**: Task completed successfully
 
 ---
 
 ## 📋 Board
 
-| วันที่ | ชื่องาน (Requirement) | สถานะปัจจุบัน | อัปเดตล่าสุด |
-| :----- | :-------------------- | :------------ | :----------- |
+| Date | Task Name (Requirement) | Current Status | Last Updated |
+| :--- | :---------------------- | :------------- | :----------- |

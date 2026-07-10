@@ -1,19 +1,19 @@
 # 📥 Inbox Log (Append-and-Review)
 
-หน้านี้เปรียบเสมือนจุดรับข้อมูลดิบ (Raw Requirements, Ideas, Bug Reports) เข้าสู่โครงการตามแนวคิด **Append-and-Review** ของ Andrej Karpathy
+This page acts as the receiving point for raw data (Raw Requirements, Ideas, Bug Reports) entering the project, following Andrej Karpathy's **Append-and-Review** concept.
 
 ---
 
-## 📖 วิธีการใช้งาน (How to use)
+## 📖 How to use
 
-1.  **Append Only at the Top**: เมื่อมีความต้องการใหม่ ไอเดีย หรือรายงานบั๊ก ให้ทำการเขียนต่อที่ด้านบนสุดของส่วน **[LOGS]** เสมอ (ข้อมูลเก่าจะจมลงล่างโดยอัตโนมัติ)
-2.  **Gravity Review**: PM หรือ SA จะหมั่นเข้ามาตรวจสอบหัวข้อที่จมอยู่ด้านล่าง:
-    - หากหัวข้อยังมีความสำคัญอยู่ ให้ดึงกลับไปวางด้านบนสุด หรือแตกแขนงเป็นเอกสารระบบ เช่น `[[system_spec]]`
-    - หากไม่มีความเกี่ยวข้องหรือเสร็จสิ้นแล้ว ให้ปล่อยจมลงไป หรือย้ายเข้าส่วนประวัติ
-3.  **ลิงก์กลับเพื่อติดตามผล**: เมื่อบันทึกหัวข้อใดถูกนำไปทำต่อ ให้ใส่ Wikilink ชี้ไปยังไฟล์สเปก เช่น `[[system_spec#หัวข้อฟีเจอร์]]` เพื่อให้ง่ายต่อการย้อนกลับมาดูสถานะ
+1.  **Append Only at the Top**: When there are new requirements, ideas, or bug reports, always append them at the very top of the **[LOGS]** section (older entries will naturally sink to the bottom).
+2.  **Gravity Review**: The PM or SA should regularly check the items that have sunk to the bottom:
+    - If an item is still important, pull it back to the top or branch it out into a system document, such as `[[system_spec]]`.
+    - If it's no longer relevant or has been completed, let it sink or move it to the archives.
+3.  **Link back for tracking**: When any logged item is picked up for work, add a Wikilink pointing to the specification file, e.g., `[[system_spec#feature-heading]]`, to make it easy to track its status later.
 
 ---
 
 ## LOGS
 
-<!-- รายการถัดไปจะเขียนต่อด้านบนของรายการนี้เสมอ -->
+<!-- The next item will always be appended above this list -->

@@ -1,14 +1,14 @@
 # 🧠 00-Index (Master Hub)
 
 > [!IMPORTANT]
-> หน้านี้คือจุดเริ่มต้นและ **Single Source of Truth** สำหรับ AI Assistants ทุกตัวในโปรเจกต์นี้
-> **AI ทุกตัวต้องตรวจสอบไฟล์นี้ก่อนเริ่มทำงานเสมอ** เพื่อเช็คสถานะปัจจุบันของโปรเจกต์และติดตาม AISDLC Phase
+> This page is the starting point and **Single Source of Truth** for all AI Assistants in this project.
+> **Every AI must check this file before starting work** to check the current project status and track the AISDLC Phase.
 
 ---
 
 ## 🎯 AISDLC Phase Tracker
 
-| สถานะปัจจุบัน (Current Phase)         | ไฟล์ที่เกี่ยวข้องหลัก                                                                                         |
+| Current Phase                         | Main Related Files                                                                                            |
 | :------------------------------------ | :------------------------------------------------------------------------------------------------------------ |
 | [ ] Inbox/Initiation                   | [[inbox_log]], [[project_board]]                                                                              |
 | [ ] Phase 1: Design                    | [[system_spec]], [[architecture_impact]]                                                                      |
@@ -16,33 +16,33 @@
 | [ ] Phase 3: Verification              | [[test_plan]], [[test_execution]]                                                                             |
 | [ ] Phase 4: Post-Mortem & Reflection | [[lessons_learned]], [[template-postmortem]]                                                                  |
 
-_เมื่อจบแต่ละ Phase, ให้ AI หรือ PM/PO อัปเดตเครื่องหมายถูก `[x]` ที่นี่และเลื่อนสถานะไป Phase ถัดไป_
+_At the end of each Phase, AI or PM/PO should update the checkbox `[x]` here and advance the status to the next Phase._
 
 ---
 
-## 📂 สารบัญโครงการ (Project Directory)
+## 📂 Project Directory
 
-- **📥 00-Inbox**: กล่องรับงานดิบและการประเมินเริ่มต้น ➔ [[inbox_log]]
-- **📊 01-Project Board**: กระดานสถานะงาน (Kanban) ➔ [[project_board]]
-- **🧠 05-Knowledge Base**: คลังความรู้สะสมและบทเรียน ➔ [[lessons_learned]]
-- **📝 10-Requirements**: เอกสารระบบและ User Journey ➔ [[system_spec]]
-- **📐 20-Architecture**: การออกแบบและประเมินผลกระทบ ➔ [[architecture_impact]]
-- **💻 30-Development**: พื้นที่ของนักพัฒนาและกฎการเขียนโค้ด ➔ [[dev-guidelines]]
-- **🛡️ 40-Security**: รายงานการออดิตและ OWASP ➔ [[security_audit]]
-- **🧪 50-QA**: แผนการทดสอบและผลลัพธ์ ➔ [[test_plan]], [[test_execution]]
-- **🚀 60-Delivery**: การเตรียมปล่อยสู่ Production ➔ [[deployment-playbook]]
-- **📚 70-Resources**: คู่มือ, Templates, และนโยบาย ➔ [[tagging-policy]]
-- **📓 Diary**: บันทึกย่อการทำงานของ AI ➔ `second-brain/diary/`
-- **🗄️ Archives**: เก็บประวัติและ Changelog เก่า ➔ `second-brain/archives/changelog/`
+- **📥 00-Inbox**: Raw task inbox and initial assessment ➔ [[inbox_log]]
+- **📊 01-Project Board**: Task status board (Kanban) ➔ [[project_board]]
+- **🧠 05-Knowledge Base**: Accumulated knowledge base and lessons learned ➔ [[lessons_learned]]
+- **📝 10-Requirements**: System documentation and User Journey ➔ [[system_spec]]
+- **📐 20-Architecture**: Design and impact assessment ➔ [[architecture_impact]]
+- **💻 30-Development**: Developer workspace and coding guidelines ➔ [[dev-guidelines]]
+- **🛡️ 40-Security**: Audit reports and OWASP ➔ [[security_audit]]
+- **🧪 50-QA**: Test plans and results ➔ [[test_plan]], [[test_execution]]
+- **🚀 60-Delivery**: Preparation for Production release ➔ [[deployment-playbook]]
+- **📚 70-Resources**: Manuals, Templates, and policies ➔ [[tagging-policy]]
+- **📓 Diary**: AI work logs ➔ `second-brain/diary/`
+- **🗄️ Archives**: History and old Changelogs ➔ `second-brain/archives/changelog/`
 
 ---
 
-## ⚙️ กฎเหล็กประจำโปรเจกต์ (Quick Rules)
+## ⚙️ Quick Rules
 
-1. **อ่าน 00-Index เสมอ**
-2. **ใช้ `[[wikilinks]]` ในการอ้างอิงทุกครั้ง**
-3. **ห้ามแก้ไขโค้ดโดยพลการ หากยังไม่ได้อัปเดต Spec**
-4. **บันทึกประวัติการสะท้อนคิดลงใน Post-Mortem เมื่อมีข้อผิดพลาดหรือเมื่อสิ้นสุดงาน**
-5. **บันทึก Diary ทุกท้ายเซสชันการทำงาน** (ถ้ามีการแก้ไขสำคัญ)
+1. **Always read 00-Index**
+2. **Use `[[wikilinks]]` for referencing every time**
+3. **Do not modify code arbitrarily without updating the Spec first**
+4. **Log reflections in Post-Mortem when errors occur or upon task completion**
+5. **Log a Diary at the end of every work session** (if there are significant changes)
 
-ดูรายละเอียดกฎทั้งหมดได้ที่ [[AGENTS]] หรือไฟล์ `.agents/AGENTS.md`
+See all detailed rules at [[AGENTS]] or the `.agents/AGENTS.md` file
