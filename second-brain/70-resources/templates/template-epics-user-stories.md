@@ -6,34 +6,34 @@ tags:
   - phase/design
 ---
 
-# 📖 Epics & User Stories: [ชื่องาน/ฟีเจอร์]
+# 📖 Epics & User Stories: [Task/Feature Name]
 
-> **อ้างอิงความต้องการธุรกิจ**: `[[brd#ชื่องาน/ฟีเจอร์]]`
+> **Business Requirement Reference**: `[[brd#Task/Feature Name]]`
 
-## 1. Epic Overview (ภาพรวมของ Epic)
+## 1. Epic Overview
 
-- **Epic Title**: [ชื่อมหากาพย์/หัวข้อหลัก]
-- **Description**: (คำอธิบายภาพรวมของ Epic นี้เพื่อตอบโจทย์ทางธุรกิจ)
+- **Epic Title**: [Epic Title / Main Topic]
+- **Description**: (Overview description of this Epic to meet business goals)
 
 ## 2. User Stories & Acceptance Criteria (AC)
 
-### 📌 US-001: [ชื่อ User Story 1]
+### 📌 US-001: [User Story 1 Title]
 
 - **User Story**:
-  - **As a** [ประเภทของผู้ใช้งาน]
-  - **I want to** [สิ่งที่ต้องการทำ/ระบบควรทำ]
-  - **So that** [ประโยชน์หรือคุณค่าที่ได้รับ]
+  - **As a** [User Role/Type]
+  - **I want to** [Action/System behavior]
+  - **So that** [Value/Benefit obtained]
 - **Acceptance Criteria (AC)**:
-  - **Scenario**: [กรณีการใช้งาน]
-    - **Given** [สถานะเริ่มต้น/เงื่อนไขก่อนหน้า]
-    - **When** [การกระทำของผู้ใช้/เหตุการณ์]
-    - **Then** [ผลลัพธ์ที่เกิดขึ้น/การแสดงผล]
-  - **Scenario**: [กรณีอื่น/Alternative Flow]
+  - **Scenario**: [Usage Scenario/Flow]
+    - **Given** [Initial state/Pre-conditions]
+    - **When** [User action/Event]
+    - **Then** [Expected outcome/Display]
+  - **Scenario**: [Alternative Flow/Other scenario]
     - **Given** ...
     - **When** ...
     - **Then** ...
 
-### 📌 US-002: [ชื่อ User Story 2]
+### 📌 US-002: [User Story 2 Title]
 
 - **User Story**:
   - **As a** ...
@@ -44,3 +44,4 @@ tags:
     - **Given** ...
     - **When** ...
     - **Then** ...
+

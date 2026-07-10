@@ -8,30 +8,30 @@ tags:
 
 # 💻 Development Guidelines
 
-> คู่มือและข้อตกลงสำหรับทีมพัฒนาในโปรเจกต์ AISDLC
+> Manual and agreements for the development team in the AISDLC project
 
 ## Coding Conventions
 
-### ทั่วไป
+### General
 
-- ใช้ **Meaningful Variable Names** — ห้ามตั้งชื่อตัวแปรว่า `x`, `temp`, `data` โดยไม่มีบริบท
-- ใช้ **camelCase** สำหรับ JavaScript/TypeScript, **snake_case** สำหรับ Python
-- ทุกฟังก์ชันที่เป็น Public API ต้องมี JSDoc/Docstring
-- ห้าม commit โค้ดที่มี `console.log` หรือ `print` ที่ใช้ debug ทิ้งไว้
+- Use **Meaningful Variable Names** — Do not name variables `x`, `temp`, `data` without proper context.
+- Use **camelCase** for JavaScript/TypeScript, and **snake_case** for Python.
+- All public API functions must include JSDoc/Docstring.
+- Do not commit code containing debug statements like `console.log` or `print`.
 
 ### Error Handling
 
-- ห้ามใช้ empty catch blocks — ต้อง log error หรือ throw ต่อเสมอ
-- ใช้ custom error types สำหรับ business logic errors
+- Do not use empty catch blocks — always log the error or rethrow it.
+- Use custom error types for business logic errors.
 
 ### Git Commit Messages
 
-- ใช้ format: `type(scope): description` เช่น `feat(api): add line notify endpoint`
+- Use format: `type(scope): description` e.g., `feat(api): add line notify endpoint`
 - Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`
 
 ## API Contracts
 
-- ทุก endpoint ต้องตอบกลับในรูปแบบ JSON มาตรฐาน:
+- All endpoints must respond with the standard JSON format:
   ```json
   {
     "success": true,
@@ -40,14 +40,14 @@ tags:
   }
   ```
 - HTTP Status Codes: `200` OK, `201` Created, `400` Bad Request, `401` Unauthorized, `404` Not Found, `500` Server Error
-- ทุก request ที่รับ user input ต้องมี input validation
+- All requests receiving user input must have input validation.
 
 ## Database Migration
 
-- ทุกครั้งที่แก้ไข Schema ต้องสร้าง migration file
-- ห้ามแก้ไข migration ที่ถูก apply ไปแล้ว — ให้สร้าง migration ใหม่เสมอ
+- A migration file must be created every time the Database Schema is modified.
+- Never edit already-applied migrations — always create a new migration.
 
-## อ้างอิง
+## References
 
-- ข้อกำหนดระบบ: `[[system_spec]]`
-- ผลกระทบสถาปัตยกรรม: `[[architecture_impact]]`
+- System Specification: `[[system_spec]]`
+- Architecture Impact: `[[architecture_impact]]`

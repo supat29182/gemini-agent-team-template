@@ -6,16 +6,17 @@ tags:
   - phase/implement
 ---
 
-# 🔄 Changelog: [ชื่อการเปลี่ยนแปลง]
+# 🔄 Changelog: [Change Name]
 
-## สิ่งที่แก้ไข (What Changed)
+## What Changed
 
-- (อธิบายโค้ด ไฟล์ หรือระบบที่ถูกแก้ไข)
+- (Describe the code, files, or systems that were modified)
 
-## เหตุผลที่แก้ไข (Why)
+## Why
 
-- (เหตุผลของการแก้ไข เช่น แก้บั๊ก, เพิ่มฟีเจอร์ใหม่)
+- (Reason for the modification, e.g., bug fix, new feature)
 
-## ไฟล์ที่ได้รับผลกระทบ (Affected Files)
+## Affected Files
 
-- (รายชื่อไฟล์ที่มีการแก้ไข)
+- (List of modified files)
+

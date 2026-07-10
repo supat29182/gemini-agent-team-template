@@ -6,8 +6,9 @@ tags:
 
 # 🤖 Core Test Execution Log
 
-บันทึกประวัติการรันทดสอบระบบจริงแบบ End-to-End
+Record of End-to-End test execution history in the real system.
 
 ## 📊 Summary of Last Run
 
-(ผลการรันทดสอบล่าสุดของระบบ)
+(Latest system test execution results)
+

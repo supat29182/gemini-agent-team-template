@@ -6,12 +6,18 @@ tags:
 
 # 📐 Core Architecture Impact Analysis
 
-นี่คือเอกสารวิเคราะห์ผลกระทบด้านสถาปัตยกรรม (Blast Radius Analysis) ของระบบหลัก
+This is the architectural impact analysis document (Blast Radius Analysis) for the core system.
 
 ## 🌐 System Topology
 
-(รายละเอียดโครงสร้างระบบภาพรวม)
+(Details of the overall system structure/topology)
 
 ## ⚡ Integration Points
 
-(จุดเชื่อมต่อระบบที่สำคัญ)
+(Key system integration points)
+
+## 📂 Proposed Directory & File Structure
+
+(Specify the folder and file structure to be created or reorganized for this feature in the form of a directory tree)
+
+

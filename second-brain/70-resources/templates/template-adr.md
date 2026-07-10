@@ -6,22 +6,23 @@ tags:
   - phase/design
 ---
 
-# 🏗️ ADR: [ชื่อหัวข้อการตัดสินใจ]
+# 🏗️ ADR: [Decision Title]
 
-## บริบทและปัญหา (Context & Problem Statement)
+## Context & Problem Statement
 
-- (อธิบายสั้นๆ ว่าปัญหาก่อนหน้านี้คืออะไร และทำไมถึงต้องมีการตัดสินใจเลือกสถาปัตยกรรมนี้)
+- (Briefly describe the context and problem, and why this decision needs to be made)
 
-## ทางเลือกพิจารณา (Considered Options)
+## Considered Options
 
 - Option 1: ...
 - Option 2: ...
 
-## การตัดสินใจ (Decision)
+## Decision Outcome
 
-- (เลือก Option ไหน เพราะอะไร)
+- (State the chosen option and the rationale behind the choice)
 
-## ผลที่ตามมา (Consequences)
+## Consequences
 
-- **ข้อดี**:
-- **ข้อเสีย/ความเสี่ยง**:
+- **Pros**:
+- **Cons/Risks**:
+

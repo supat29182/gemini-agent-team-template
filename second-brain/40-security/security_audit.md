@@ -6,12 +6,13 @@ tags:
 
 # 🛡️ Core Security Audit
 
-เอกสารสรุปผลการประเมินความปลอดภัยและสแกนช่องโหว่ (OWASP Top 10) ในระบบหลัก
+Summary document of security assessment and vulnerability scan (OWASP Top 10) in the core system.
 
 ## 📊 Security Status
 
-- **STATUS**: [STATUS: PASSED] (สถานะระบบหลักเริ่มต้น)
+- **STATUS**: [STATUS: PASSED] (Initial core system status)
 
 ## 🔍 Audit Summary
 
-(ผลการตรวจสอบโค้ดและความปลอดภัยโดยรวม)
+(Overall code quality and security audit findings)
+

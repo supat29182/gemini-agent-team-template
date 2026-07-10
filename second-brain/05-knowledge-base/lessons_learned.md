@@ -6,44 +6,45 @@ tags:
 
 # 🧠 Lessons Learned & Anti-Patterns
 
-นี่คือคลังความรู้สะสมของทีม AI Agents โดยจะกลั่นกรองข้อผิดพลาด แนวปฏิบัติที่ดีที่สุด (Best Practices) และรูปแบบที่พึงหลีกเลี่ยง (Anti-Patterns) เพื่อนำมาเป็นบริบทการเรียนรู้ (Learning Context) ป้องกันการทำงานผิดพลาดซ้ำในโปรเจกต์ถัดไป
+This is the accumulated knowledge base of the AI Agents team, summarizing errors, Best Practices, and Anti-Patterns to serve as a learning context and prevent repeating mistakes in subsequent projects.
 
 ---
 
-## 🚫 Anti-Patterns (รูปแบบที่พึงหลีกเลี่ยง)
+## 🚫 Anti-Patterns
 
-_หมวดหมู่ความผิดพลาดที่ Agent ห้ามทำหรือห้ามนำเสนอ_
+_Categories of mistakes that agents must not commit or propose._
 
-### #category/architecture (โครงสร้างและการออกแบบระบบ)
+### #category/architecture (System Structure & Design)
 
-- _ยังไม่มีบันทึก_
+- _No records yet_
 
-### #category/database (ระบบฐานข้อมูล)
+### #category/database (Database Systems)
 
-- _ยังไม่มีบันทึก_
+- _No records yet_
 
-### #category/frontend (การพัฒนาส่วนหน้า)
+### #category/frontend (Frontend Development)
 
-- _ยังไม่มีบันทึก_
+- _No records yet_
 
-### #category/backend (การพัฒนาส่วนหลัง)
+### #category/backend (Backend Development)
 
-- _ยังไม่มีบันทึก_
+- _No records yet_
 
 ---
 
-## ✨ Best Practices & Snippets (แนวปฏิบัติที่เป็นเลิศ)
+## ✨ Best Practices & Snippets
 
-_แนวทางและเทคนิคทางเทคนิคที่ช่วยให้การทำงานผ่านฉลุย_
+_Guidelines and technical techniques to ensure smooth execution._
 
-### #category/validation (การทดสอบและความปลอดภัย)
+### #category/validation (Testing & Security)
 
-- _ยังไม่มีบันทึก_
+- _No records yet_
 
 ---
 
 > [!TIP]
-> **การเพิ่มบทเรียนใหม่:** เมื่อวิเคราะห์ Post-Mortem เสร็จสิ้น ให้สรุปคำเตือนหรือเทคนิคเป็นข้อความบรรทัดเดียว (One-Line Rule) แล้วนำมาต่อท้ายหมวดหมู่ที่เหมาะสมในเอกสารฉบับนี้ เพื่อประหยัด Token ของระบบ
+> **Adding New Lessons:** Once a Post-Mortem analysis is complete, summarize the warning or technique as a one-line rule (One-Line Rule) and append it to the appropriate category in this document to optimize token usage.
 
 > [!IMPORTANT]
-> **การรับมือกับปัญหาซ้ำซาก (Rule Compounding):** หากพบว่ามีข้อผิดพลาดเรื่องเดิมเกิดขึ้นซ้ำอีก (ปัญหาซ้ำซาก) ให้ดำเนินการ Rule Compounding ทันที โดยคัดลอก One-Line Rule ของปัญหานั้น ไปใส่ในไฟล์ `AGENTS.md` ภายใต้หัวข้อ **Never Do** ของบอทตัวที่ทำผิดพลาด เพื่อบังคับเป็นพฤติกรรมถาวร
+> **Handling Recurring Errors (Rule Compounding):** If a mistake in the same category recurs, perform Rule Compounding immediately by copying the corresponding One-Line Rule into `AGENTS.md` under the **Never Do** section of the agent responsible for the error to enforce it as a permanent rule.
+

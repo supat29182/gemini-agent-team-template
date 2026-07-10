@@ -8,15 +8,15 @@ tags:
 
 # 🚀 Deployment & Delivery Playbook
 
-> คู่มือการเตรียมระบบสำหรับการนำส่ง (Deployment) และ Release
+> Manual for deployment preparation and releases
 
 ## Pre-Deploy Checklist
 
-- [ ] ผ่าน Security Audit (`[[security_audit]]` = `[STATUS: PASSED]`)
-- [ ] ผ่าน E2E Testing (`[[test_execution]]` = All Passed)
-- [ ] อัปเดต Changelog ล่าสุดใน `second-brain/archives/changelog/`
-- [ ] อัปเดต `[[project_board]]` เป็น `Done`
-- [ ] ผ่าน Security Audit และโค้ดได้ผ่านการรีวิวเรียบร้อย
+- [ ] Security Audit passed (`[[security_audit]]` = `[STATUS: PASSED]`)
+- [ ] E2E Testing passed (`[[test_execution]]` = All Passed)
+- [ ] Latest Changelog updated in `second-brain/archives/changelog/`
+- [ ] `[[project_board]]` updated to `Done`
+- [ ] Security Audit passed and code reviewed successfully
 
 ## Deployment Steps
 
@@ -33,21 +33,21 @@ tags:
    ```
 
 3. **Deploy to Staging**
-   - (ระบุขั้นตอนการ deploy ตาม infrastructure ของโปรเจกต์)
+   - (Specify the deploy steps based on the project's infrastructure)
 
 4. **Verify on Staging**
-   - ตรวจสอบ core features ทำงานถูกต้อง
-   - ตรวจสอบ logs ไม่มี error
+   - Verify that core features work correctly
+   - Verify that logs have no errors
 
 5. **Deploy to Production**
-   - (ระบุขั้นตอนการ deploy production)
+   - (Specify the production deploy steps)
 
 ## Rollback Plan
 
-- หากพบปัญหาหลัง deploy ให้ revert ไปยัง version ก่อนหน้า
-- บันทึก Post-Mortem ลงใน `second-brain/60-delivery-ops/postmortem/`
+- If issues are found after deploy, revert to the previous version immediately.
+- Record the Post-Mortem in `second-brain/60-delivery-ops/postmortem/`
 
-## อ้างอิง
+## References
 
 - Security Audit: `[[security_audit]]`
 - Test Results: `[[test_execution]]`

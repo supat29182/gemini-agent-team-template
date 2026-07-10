@@ -6,8 +6,9 @@ tags:
 
 # 🧪 Core Test Plan
 
-แผนการทดสอบระบบหลัก (Happy Path, Edge Cases, Error Cases)
+Core system test plan (Happy Path, Edge Cases, Error Cases).
 
 ## 📋 Test Suites & Cases
 
-(ชุดทดสอบหลักสำหรับระบบ)
+(Core test suites for the system)
+

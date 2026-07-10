@@ -1,22 +1,22 @@
 # 🚀 Gemini Agent Team Template
 
-ยินดีต้อนรับสู่โปรเจกต์ **Gemini Agent Team Template**! 
-โปรเจกต์นี้คือแม่แบบสำหรับทีมพัฒนาซอฟต์แวร์เสมือนจริง (AI Agent Team) ที่ขับเคลื่อนด้วยสถาปัตยกรรม **Event-Driven Orchestration** ควบคู่ไปกับการออกแบบ **Token Optimization** ผ่านเครื่องมือวิเคราะห์โค้ดอัจฉริยะอย่าง `GitNexus`
+Welcome to the **Gemini Agent Team Template**! 
+This project is a template for a virtual software development team (AI Agent Team) powered by an **Event-Driven Orchestration** architecture, coupled with **Token Optimization** design via the intelligent code analysis tool `GitNexus`.
 
-ทีม Agent ของเราประกอบไปด้วยบทบาทต่างๆ ที่ครอบคลุมตั้งแต่การเก็บ Requirement, การออกแบบระบบ (System Design), การเขียนโค้ดทั้งหน้าบ้านและหลังบ้าน, ไปจนถึงการเขียนสคริปต์ทดสอบระบบอัตโนมัติ (Automated E2E Testing)
+Our Agent team consists of various roles covering the entire development cycle, from requirements gathering, system design, frontend/backend coding, to automated E2E testing.
 
 ---
 
-## 🏗️ สถาปัตยกรรมของ AgentFlow
+## 🏗️ AgentFlow Architecture
 
-ระบบได้ถูกออกแบบให้ทำงานแบบผสมผสานทั้ง **Sequential (ทำทีละขั้น)** และ **Parallel (ทำคู่ขนาน)** เพื่อความรวดเร็วและประหยัด Token
+The system is designed to work in a hybrid **Sequential** and **Parallel** manner to maximize development speed and optimize token usage.
 
-### 📊 1. Flowchart ภาพรวมของระบบ
+### 📊 1. System Overview Flowchart
 
 ```mermaid
 graph TD
-    INBOX["inbox_log.md"] -->|"1. PM อ่าน Requirement"| PM[("pm-po")]
-    PM -->|"2. init_feature.py"| Init{ประเภทงาน?}
+    INBOX["inbox_log.md"] -->|"1. PM reads requirements"| PM[("pm-po")]
+    PM -->|"2. init_feature.py"| Init{Task Type?}
     
     %% Feature & CR Flow
     Init -->|"Feature / CR"| SA("sa")
@@ -25,7 +25,7 @@ graph TD
     
     PM -->|"Phase 2"| BACK("backend-dev")
     PM -->|"Phase 2"| QA_P("qa-automate (Test Plan)")
-    BACK & QA_P -.->|"เสร็จคู่"| FRONT("frontend-dev")
+    BACK & QA_P -.->|"Both Done"| FRONT("frontend-dev")
     FRONT --> PM
     
     PM -->|"Phase 3"| SEC("security (Audit)")
@@ -33,9 +33,9 @@ graph TD
     
     %% Bug Flow
     Init -->|"Bug Fix"| ARCH_BUG("solution-architect")
-    ARCH_BUG -->|"3. Diagnosis"| PM_BUG[PM สั่งเขียนโค้ด]
+    ARCH_BUG -->|"3. Diagnosis"| PM_BUG[PM directs coding]
     PM_BUG -->|"Phase 2"| DEV_BUG("backend-dev / frontend-dev")
-    DEV_BUG -->|"เสร็จ"| QA_BUG("qa-automate (Execution)")
+    DEV_BUG -->|"Done"| QA_BUG("qa-automate (Execution)")
     QA_BUG --> PM
     
     %% Verification & DONE
@@ -43,7 +43,7 @@ graph TD
     QA_BUG -.->|"Passed"| DONE
 ```
 
-### ⏱️ 2. Sequence Diagram (เจาะลึกเมื่อสั่งงาน)
+### ⏱️ 2. Sequence Diagram (Detailed Invocation)
 
 ```mermaid
 sequenceDiagram
@@ -56,120 +56,120 @@ sequenceDiagram
     participant QA as qa-automate
     participant Nexus as GitNexus
     
-    User->>PM: โยน Requirement (ลง Inbox)
-    Note over PM: PM ห้ามอ่านโค้ดเองเด็ดขาด
+    User->>PM: Submits requirement (to Inbox)
+    Note over PM: PM is strictly forbidden from reading code directly
     
     rect rgb(240, 248, 255)
-        Note right of PM: PHASE 1: DESIGN (Feature/CR จะผ่าน SA, Bug Fix จะข้าม SA)
+        Note right of PM: PHASE 1: DESIGN (Feature/CR goes through SA, Bug Fix bypasses SA)
         alt Feature or CR
-            PM->>SA: สร้าง System Spec
-            SA-->>PM: เสร็จสิ้น (system_spec.md)
-            PM->>Arch: วิเคราะห์ Impact
+            PM->>SA: Create System Spec
+            SA-->>PM: Completed (system_spec.md)
+            PM->>Arch: Analyze Impact
         else Bug Fix
-            PM->>Arch: สั่งวิเคราะห์ Root Cause
+            PM->>Arch: Analyze Root Cause
         end
         Arch->>Nexus: mcp_gitnexus_impact
-        Nexus-->>Arch: ส่ง JSON สรุปกลับมา
-        Arch-->>PM: เสร็จสิ้น (impact / diagnosis)
+        Nexus-->>Arch: Return summary JSON
+        Arch-->>PM: Completed (impact / diagnosis)
     end
 
     rect rgb(240, 255, 240)
         Note right of PM: PHASE 2: IMPLEMENTATION (Event-Driven)
-        PM->>Devs: สั่งเขียน/แก้ไขโค้ด
+        PM->>Devs: Direct coding/fixing
         opt Feature or CR
-            PM->>QA: สั่งจัดทำ Test Plan
+            PM->>QA: Direct Test Plan creation
         end
-        Note over PM: PM เข้าโหมด Sleep
+        Note over PM: PM enters Sleep mode
         
-        Devs->>Nexus: ค้นหาโครงสร้างเก่า
-        Devs-->>PM: ปลุก PM (Dev เสร็จ)
+        Devs->>Nexus: Search existing structure
+        Devs-->>PM: Wake PM (Dev completed)
         opt Feature or CR
-            QA-->>PM: ปลุก PM (Test Plan เสร็จ)
+            QA-->>PM: Wake PM (Test Plan completed)
         end
     end
 
     rect rgb(255, 240, 245)
         Note right of PM: PHASE 3: VERIFICATION
-        PM->>QA: สั่งรัน qa-automate (รัน E2E Test)
+        PM->>QA: Run qa-automate (run E2E Test)
         opt Feature or CR
-            PM->>Devs: สั่งรัน security audit
+            PM->>Devs: Run security audit
         end
-        Note over PM: PM เข้าโหมด Sleep
+        Note over PM: PM enters Sleep mode
         
-        QA-->>PM: ปลุก PM (เจอ Error ตัด log 50 บรรทัด)
-        Note over PM: Feedback Loop: ตีกลับงานให้ Dev
-        PM->>Devs: นำ Log 50 บรรทัดส่งให้แก้
+        QA-->>PM: Wake PM (Error found, logs truncated to 50 lines)
+        Note over PM: Feedback Loop: Return task to Dev
+        PM->>Devs: Send 50-line logs for fixing
     end
     
-    PM->>User: อัปเดตบอร์ด สรุปงานส่งมอบ
+    PM->>User: Update board, summarize delivery
 ```
 
 ---
 
-## 📝 กระบวนการทำงานแบบ Step-by-Step
+## 📝 Step-by-Step Process
 
-**จุดเริ่มต้น:**
-ผู้ใช้งานโยน Requirement ลงมาในแชท บอทตัวแรกที่ตื่นขึ้นมาคือ **`@pm-po`** (Project Manager) ทำหน้าที่รับ Requirement บันทึกลงใน `inbox_log.md` จากนั้นรัน `init_feature.py --type` เพื่อแยกโฟลเดอร์สำหรับงานแต่ละประเภท (Feature, CR, Bug Fix)
+**Initiation:**
+The user submits a requirement in the chat. The first bot to wake up is **`@pm-po`** (Project Manager). It records the requirement in `inbox_log.md` and runs `init_feature.py --type` to initialize separate folders for each task type (Feature, CR, Bug Fix).
 
-**Phase 1: Design (ขั้นตอนการออกแบบ)**
-1. สำหรับ **Feature และ CR**: `pm-po` สั่งงานให้ **`@sa` (System Analyst)** ทำการวิเคราะห์ Requirement และเขียนเอกสาร `system_spec.md` (หรือรุ่นต่อขยาย) จากนั้น `@solution-architect` จะวิเคราะห์ผลกระทบและบันทึกลง `architecture_impact.md`
-2. สำหรับ **Bug Fix**: ข้ามการทำ Spec ของ SA โดย `@solution-architect` จะเขียนวิเคราะห์และระบุแนวทางแก้ไขใน `bug_diagnosis.md` ทันที
+**Phase 1: Design (Design Stage)**
+1. For **Features and CRs**: `pm-po` assigns the task to **`@sa` (System Analyst)** to analyze requirements and write `system_spec.md`. Then `@solution-architect` analyzes the impact and records it in `architecture_impact.md`.
+2. For **Bug Fixes**: Bypasses the SA spec. `@solution-architect` directly writes the analysis and remediation steps in `bug_diagnosis.md`.
 
-**Phase 2: Implementation (ขั้นตอนการสร้าง)**
-1. สำหรับ **Feature และ CR**: `pm-po` สั่งรัน **`@backend-dev`** (หรือ frontend) และ **`@qa-automate`** ให้จัดทำ Test Plan ควบคู่กันไป
-2. สำหรับ **Bug Fix**: ข้ามการทำ Test Plan โดย Developer ลงมือแก้ไขโค้ดที่เสียหายทันที
-3. เมื่อ Developer แก้ไขโค้ดเสร็จ จะส่งมอบงานให้ Frontend ต่อจิ๊กซอว์ให้เรียบร้อย
+**Phase 2: Implementation (Build Stage)**
+1. For **Features and CRs**: `pm-po` triggers **`@backend-dev`** (or frontend) and **`@qa-automate`** in parallel (Developer writes code, QA designs the Test Plan).
+2. For **Bug Fixes**: Bypasses the Test Plan. Developers immediately start fixing the code.
+3. Once the Backend Developer finishes, the task is handed over to the Frontend Developer to integrate components.
 
-**Phase 3: Verification (ขั้นตอนการตรวจสอบ)**
-1. บอท `@qa-automate` รันชุด E2E Test เพื่อตรวจสอบความสมบูรณ์และ Regression
-2. สำหรับ **Feature และ CR**: บอท `@security` จะทำ Security Audit (Diff Scan) ตรวจสอบความปลอดภัย
-3. เมื่อผลลัพธ์ผ่าน (Security PASSED + E2E PASSED) PM จะย้ายประวัติงานลงในโฟลเดอร์ `archives/` และสรุปส่งมอบโครงการ
-
----
-
-## 🎭 จำลองเหตุการณ์ที่มีโอกาสเกิดขึ้น (Edge Case Simulations)
-
-เพื่อให้เห็นภาพการทำงานจริง นี่คือสถานการณ์จำลองและปฏิกิริยาของระบบ:
-
-### 🚨 1. ลูกค้าให้ Requirement มาแบบคลุมเครือ
-- **สถานการณ์:** ผู้ใช้พิมพ์ใน Inbox แค่ว่า *"อยากได้ปุ่มกดแชร์"*
-- **การตอบสนอง:** `@pm-po` จะใช้สกิลสัมภาษณ์เพื่อหยุดการสั่งงานและถามคำถามกับผู้ใช้ทีละ 1 คำถาม จนกว่าสเปกจะชัดเจน จึงจะส่งต่อให้ `@sa`
-
-### 🚨 2. Frontend จินตนาการ API เอง (Hallucination)
-- **สถานการณ์:** `@backend-dev` ยังพัฒนาไม่เสร็จ แต่ `@frontend-dev` เริ่มมั่วโครงสร้าง Mock Data ขึ้นมาเอง
-- **การตอบสนอง:** กฎ API Contract จะทำงาน บอท Frontend จะถูกบังคับให้อ่าน `api_contract.yaml` ก่อนเขียนโค้ดเสมอ หากไม่มีข้อมูลในนั้น บอทจะหยุดรอ
-
-### 🚨 3. ระบบเทสพังและโดนตีกลับ (The Feedback Loop)
-- **สถานการณ์:** บอท `@qa-automate` รัน E2E แล้วพัง (Error 500)
-- **การตอบสนอง:** QA จะบันทึก Log ลงในไฟล์แบบตัดทอนไม่เกิน 50 บรรทัด (Log Truncation) แล้วส่งให้ `@pm-po` ตีกลับงานให้ `@backend-dev` ซ่อม โดย Dev ต้องรัน `mcp_gitnexus_impact` วิเคราะห์ผลกระทบก่อนแก้โค้ด
-
-### 🚨 4. นักพัฒนาแก้บั๊กไม่สำเร็จจนติดลูป (Deadlock Prevention)
-- **สถานการณ์:** สืบเนื่องจากเหตุการณ์ก่อนหน้า บั๊กแก้ยาก `@backend-dev` พยายามแก้และรันเทสพังซ้ำหลายรอบ
-- **การตอบสนอง:** เมื่อล้มเหลวติดต่อกันครบ 3 ครั้ง บอทจะยอมแพ้ เปลี่ยนสถานะล็อกเป็น `failed` แล้วเรียกให้มนุษย์เข้ามาดู เพื่อป้องกันระบบค้าง (Infinite Wait) และป้องกันกิน Token ฟรี
-
-### 🚨 5. ตรวจพบช่องโหว่ความปลอดภัยร้ายแรง
-- **สถานการณ์:** `@security` ตรวจพบ Hardcoded Secret ในโค้ด Frontend
-- **การตอบสนอง:** บอท Security จะไม่แก้โค้ดเอง (กันตรรกะระบบพัง) แต่มันจะทำรายงานลง `security_audit.md` (สถานะ FAILED) แจ้ง PM ให้ตีกลับงานไปที่ Frontend เพื่อแก้ปัญหา
+**Phase 3: Verification (Validation Stage)**
+1. The `@qa-automate` bot executes the E2E Test suite to check functionality and prevent regression.
+2. For **Features and CRs**: `@security` runs a Security Audit (Diff Scan) to check for vulnerabilities.
+3. Once both checks pass (Security PASSED + E2E PASSED), the PM archives the feature folder and summarizes the project delivery.
 
 ---
 
-## 🛠️ วิธีการใช้งาน Repository นี้ (How to use)
+## 🎭 Edge Case Simulations
 
-### 1. โครงสร้างของ Project 
-โปรเจกต์นี้ทำงานร่วมกับโครงสร้าง Agent ที่ฝังอยู่ในโฟลเดอร์ `.agents/`:
-- `.agents/AGENTS.md` - รัฐธรรมนูญของ AI กำหนดกฎกติกาการทำงานทั้งหมด (เช่น การใช้ GitNexus, กฎของ PM)
-- `.agents/agents/` - ไฟล์บุคลิกภาพ (System Prompt) ของบอทแต่ละตัว
-- `second-brain/` - โฟลเดอร์สมองที่ 2 สำหรับเก็บเอกสาร สเปก โค้ด และบันทึกสถานะโปรเจกต์ (เก็บล็อกแยกไฟล์รายบอทที่โฟลเดอร์ `locks/` ด้วยตรรกะแบบเขียนไฟล์อะตอมมิกเพื่อความปลอดภัยสูงสุดในการรันขนานและป้องกันความขัดแย้งของโค้ด)
+To illustrate real operations, here are mock scenarios and system reactions:
 
-### 2. การเรียกใช้งานฟีเจอร์ใหม่
-เมื่อคุณมีไอเดียหรือฟีเจอร์ที่อยากให้ AI ทีมนี้พัฒนา คุณไม่จำเป็นต้องไปคุยกับ Dev หรือ QA ด้วยตัวเอง! ให้คุณพิมพ์คำสั่งในแชทถึง **PM** ได้เลย เช่น:
-> *"ช่วยทำระบบ Login Authentication ด้วย JWT ให้หน่อย"*
+### 🚨 1. Vague User Requirements
+- **Scenario:** The user types in the Inbox: *"I want a share button."*
+- **Response:** `@pm-po` will trigger its interview skills, pausing execution to ask the user exactly one question at a time. Once the specifications are clear, it forwards them to `@sa`.
 
-**PM (`@pm-po`)** จะตื่นขึ้นมา สร้างโฟลเดอร์ใน `second-brain` แจกแจงงานลง `project_board.md` และปลุกบอทตัวอื่นๆ ให้ทำงานตาม Flow ด้านบนให้คุณโดยอัตโนมัติ 
+### 🚨 2. Frontend Developer Hallucination of APIs
+- **Scenario:** `@backend-dev` has not finished implementing the endpoint, but `@frontend-dev` begins writing mock data structure arbitrarily.
+- **Response:** The API Contract rule triggers. Frontend bots are forced to read `api_contract.yaml` before writing code. If the contract does not exist yet, the bot waits.
 
-### 3. ส่วนเสริมที่จำเป็น (MCP Servers)
-เพื่อให้ Agent ทำงานได้อย่างเต็มประสิทธิภาพ โปรเจกต์นี้จะพึ่งพาเครื่องมือ (Tools) เบื้องหลัง:
-- **`GitNexus`**: สำหรับให้ Librarian, Dev, และ Architect สร้าง Call Graph ของโปรเจกต์ ช่วยประหยัด Token การอ่านไฟล์โค้ด
-- **`Playwright`**: สำหรับให้ QA Automate เปิดเบราว์เซอร์แล้วคลิกทดสอบหน้าเว็บจริงๆ 
+### 🚨 3. Test Failure and Feedback Loop
+- **Scenario:** `@qa-automate` runs E2E tests and encounters a 500 error.
+- **Response:** The QA bot saves the error log (truncated to 50 lines max) and sends it to `@pm-po`. The PM returns the task to `@backend-dev`. Before editing, the developer must run `mcp_gitnexus_impact` to analyze the blast radius.
 
-*(ระบบจะรัน MCP พวกนี้ผ่าน `npx` อัตโนมัติในเบื้องหลังตามคิวที่เรียกใช้งาน)*
+### 🚨 4. Endless Bug Fixing Loop (Deadlock Prevention)
+- **Scenario:** `@backend-dev` fails to fix a bug and repeatedly runs failing tests.
+- **Response:** If the fix fails 3 times consecutively, the bot gives up, marks the lock file status as `failed`, and notifies the human developer to step in. This prevents infinite wait time and token waste.
+
+### 🚨 5. Security Vulnerability Detected
+- **Scenario:** `@security` detects a hardcoded secret in the frontend code.
+- **Response:** The security bot is prohibited from modifying the code directly (to prevent breaking business logic). Instead, it logs a FAILED report in `security_audit.md` and notifies the PM to return the task to the frontend developer.
+
+---
+
+## 🛠️ How to Use This Repository
+
+### 1. Project Structure
+This project coordinates with agent files defined under `.agents/`:
+- `.agents/AGENTS.md` - The AI constitution defining rules and constraints (e.g., GitNexus workflow, PM rules).
+- `.agents/agents/` - The system prompt profiles for each agent bot.
+- `second-brain/` - The Second Brain directory containing specs, code, logs, and lock files. Lock files are placed in `locks/` using atomic file writing to handle parallel task locking securely and avoid merge conflicts.
+
+### 2. Requesting New Features
+When you want the AI team to develop a new feature, you don't need to communicate with Devs or QA individually. Simply command the **PM** in the chat:
+> *"Please create a JWT Login Authentication system."*
+
+**PM (`@pm-po`)** will automatically wake up, create the second-brain directory structure, update `project_board.md`, and delegate tasks to the appropriate specialist agents.
+
+### 3. Required Integrations (MCP Servers)
+To unlock full capabilities, the agents rely on these backend integrations:
+- **`GitNexus`**: Used by Librarian, Devs, and Architects to build call graphs and inspect structures while saving tokens.
+- **`Playwright`**: Used by QA Automation to test real UI flows in Chromium.
+
+*(These MCP services run automatically via `npx` in the background as requested.)*
