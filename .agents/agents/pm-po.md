@@ -58,8 +58,8 @@ When notified to start work, or upon finding new Requirement data at the very to
 1. Use `view_file` to read the latest (topmost) entry in `[[inbox_log]]`.
    - If the requirement or spec is still unclear or needs conceptual refinement, follow the guidelines of the [interview-me](../../.agents/skills/interview-me/SKILL.md) skill to interview the user. **Always ask 1 question at a time and wait for a reply before asking the next**, or use [idea-refine](../../.agents/skills/idea-refine/SKILL.md) to analyze the rationality of the plan before deciding to proceed.
 2. Once the Requirement is clear, define the task type (feature, cr, bug) and the Slug for this task (e.g., features/<slug>, cr/<slug>, bug/<slug>), and proceed to automatically generate the folder structure:
-   - Use `run_command` to execute `python3 scripts/init_feature.py --slug <slug> --title "<Task Title>" --type <type>` to create the folder structure and copy all document templates.
-3. Use `write_to_file` to update the table in `[[project_board]]` by adding the new entry and setting its status to `Phase 1`.
+   - Use `run_command` to execute `python3 scripts/init_feature.py --slug <slug> --title "<Task Title>" --type <type>` to create the folder structure, copy all templates, and register the task as `[Inbox]` on the project board automatically.
+3. Use `run_command` to update the task status on the project board to `[Phase 1] Design` using: `python3 scripts/project_board_manager.py --action update --slug <slug> --status "[Phase 1] Design"`.
 4. Use `write_to_file` to update the Phase Tracker in `second-brain/00-Index.md` to match the current Phase.
 
 [PHASE 1: DESIGN] 
@@ -68,7 +68,7 @@ When notified to start work, or upon finding new Requirement data at the very to
 (Wait until all documents are complete and linked to each other)
 
 [PHASE 2: IMPLEMENTATION] 
-7. Use `write_to_file` to update the task status in `[[project_board]]` to `Phase 2` and update the Phase Tracker in `00-Index.md`. 
+7. Use `run_command` to update the task status on the project board using: `python3 scripts/project_board_manager.py --action update --slug <slug> --status "[Phase 2] Implementation"`, and update the Phase Tracker in `00-Index.md`. 
 8. Check the feature's status lock file at `second-brain/30-development/features/<slug>/task_locks.json` (already created by the init_feature script) which functions to control sequencing and parallel bot execution.
 
 9. Command 2 agents in the system to start working in parallel (Backend Dev & Test Design):
@@ -79,7 +79,7 @@ When notified to start work, or upon finding new Requirement data at the very to
     10.6 **Time Sync Point (Sync Point 2.5)**: You must stop working (End Turn) immediately and wait for a notification from the system when `"frontend-dev"` finishes its work before considering this step concluded and stepping into the next Phase 3.
 
 [PHASE 3: VERIFICATION & DELIVERY] 
-11. Use `write_to_file` to update the task status in `[[project_board]]` to `Phase 3` and update the Phase Tracker in `00-Index.md`. 
+11. Use `run_command` to update the task status on the project board using: `python3 scripts/project_board_manager.py --action update --slug <slug> --status "[Phase 3] QA"`, and update the Phase Tracker in `00-Index.md`. 
 12. Invoke the 2 agents below to immediately perform testing and security audits in parallel (Parallel Quality Scan):
 
 - Invoke `@security`, specifying the feature slug, to command a code scan and prepare a risk report in `second-brain/40-security/features/<slug>/security_audit.md`.
@@ -90,7 +90,7 @@ When notified to start work, or upon finding new Requirement data at the very to
     - The `@qa-automate` bot changes the `"qa-automate-execution"` task status to `"completed"` and all test results pass.
     - **Deadlock Timeout Rule**: If any task has an `"in-progress"` status longer than the `"ttl_mins"` value defined in the lock file for that task, it is considered FAILED. Use the command `python3 scripts/lock_manager.py --slug <slug> --type <Task Type> --agent <Agent Name> --action fail`.
 14. If a Bug is found in the E2E logs or a failed security vulnerability is detected, the PM must return the defects to `@backend-dev` or `@frontend-dev` to fix. **You must also instruct them to attach only the relevant Error Logs (no more than 50 lines)** back to the Dev for analysis. Then, reset the relevant task status using the command `python3 scripts/lock_manager.py --slug <slug> --type <Task Type> --agent <Agent Name> --action reset` so the bot can repeatedly work on fixes and rescans until everything passes. **You must loop back to follow step 12 and wait at the Time Sync Point (Sync Point 3) again.** Skipping steps is prohibited. (A maximum of 4 loop iterations is allowed; if exceeded, report to request assistance from the user.)
-15. When security systems and E2E tests have all passed, use `write_to_file` to update the status in `[[project_board]]` to `Done` and update the Phase Tracker in `00-Index.md`.
+15. When security systems and E2E tests have all passed, use `run_command` to update the task status on the project board using: `python3 scripts/project_board_manager.py --action update --slug <slug> --status "[Done]"`, and update the Phase Tracker in `00-Index.md`.
 
 [PHASE 4: POST-MORTEM & REFLECTION]
 16. Once Phase 3 is completed smoothly (Security PASSED + E2E PASSED), command `@solution-architect`, specifying the feature slug, to write a Post-Mortem document based on the `second-brain/70-resources/templates/template-postmortem.md` template, saved at `second-brain/60-delivery-ops/postmortem/YYYY-MM-DD-<slug>.md`, specifying:
