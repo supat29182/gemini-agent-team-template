@@ -82,12 +82,15 @@ def main():
     parser = argparse.ArgumentParser(description="Deterministic and Race-Condition Safe Task Lock Manager")
     parser.add_argument("--slug", required=True, help="Feature/Bug slug")
     parser.add_argument("--type", choices=["feature", "cr", "bug"], default="feature")
-    parser.add_argument("--agent", required=True, help="Agent name (e.g. backend-dev, frontend-dev, qa-test-plan, security-audit, qa-automate-execution)")
-    parser.add_argument("--action", choices=["acquire", "release", "fail", "reset"], required=True)
+    parser.add_argument("--agent", required=False, help="Agent name (e.g. backend-dev, frontend-dev, qa-test-plan, security-audit, qa-automate-execution)")
+    parser.add_argument("--action", choices=["acquire", "release", "fail", "reset", "status-all"], required=True)
     parser.add_argument("--reason", default="", help="Reason for failure (used with fail action)")
     
     args = parser.parse_args()
     
+    if args.action != "status-all" and not args.agent:
+        parser.error("--agent is required for actions other than status-all")
+        
     script_dir = os.path.dirname(os.path.abspath(__file__))
     workspace_dir = os.path.abspath(os.path.join(script_dir, ".."))
     
@@ -102,6 +105,39 @@ def main():
         
     current_time = datetime.now().isoformat()
     
+    if args.action == "status-all":
+        agents_list = ["backend-dev", "frontend-dev", "qa-test-plan", "security-audit", "qa-automate-execution"]
+        summary = {}
+        for ag in agents_list:
+            ag_data = read_lock_status(locks_dir, legacy_file, ag, is_decentralized)
+            if not ag_data:
+                default_ttls = {
+                    "backend-dev": 45,
+                    "frontend-dev": 45,
+                    "qa-test-plan": 35,
+                    "security-audit": 25,
+                    "qa-automate-execution": 35
+                }
+                ag_data = {
+                    "status": "idle",
+                    "locked_by": "",
+                    "locked_at": "",
+                    "completed_at": "",
+                    "ttl_mins": default_ttls.get(ag, 30)
+                }
+            if ag_data.get("status") == "in-progress" and ag_data.get("locked_at"):
+                try:
+                    locked_at_dt = datetime.fromisoformat(ag_data["locked_at"])
+                    elapsed_mins = (datetime.now() - locked_at_dt).total_seconds() / 60.0
+                    if elapsed_mins > ag_data.get("ttl_mins", 30):
+                        ag_data["ttl_exceeded"] = True
+                        ag_data["elapsed_mins"] = round(elapsed_mins, 1)
+                except Exception:
+                    pass
+            summary[ag] = ag_data
+        print(json.dumps(summary, indent=2, ensure_ascii=False))
+        sys.exit(0)
+        
     agent_data = read_lock_status(locks_dir, legacy_file, args.agent, is_decentralized)
     
     if not agent_data:

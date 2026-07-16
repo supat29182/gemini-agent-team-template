@@ -16,7 +16,7 @@ skills:
   - documentation-and-adrs
   - doubt-driven-development
   - deprecation-and-migration
-model: gemini-3.5-pro
+model: gemini-3.5-flash
 temperature: 0.1
 max_turns: 20
 timeout_mins: 30

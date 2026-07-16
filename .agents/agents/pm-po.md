@@ -20,7 +20,7 @@ skills:
   - interview-me
   - planning-and-task-breakdown
   - git-workflow-and-versioning
-model: gemini-3.5-pro
+model: gemini-3.5-flash
 temperature: 0.3
 max_turns: 100
 timeout_mins: 90

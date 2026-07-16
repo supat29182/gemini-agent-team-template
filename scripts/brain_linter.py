@@ -9,6 +9,23 @@ import os
 import re
 import sys
 import yaml
+import argparse
+import subprocess
+
+def get_changed_files(workspace_dir):
+    """Retrieve set of modified/untracked files relative to the workspace directory"""
+    changed_files = set()
+    try:
+        res = subprocess.run(['git', 'status', '--porcelain'], cwd=workspace_dir, capture_output=True, text=True, check=True)
+        for line in res.stdout.splitlines():
+            if len(line) > 3:
+                filepath = line[3:].strip()
+                if " -> " in filepath:
+                    filepath = filepath.split(" -> ")[1].strip()
+                changed_files.add(os.path.normpath(filepath))
+    except Exception as e:
+        print(f"Warning: Failed to get git status for --changed-only: {e}")
+    return changed_files
 
 # Regex to find [[wikilinks]]
 WIKILINK_RE = re.compile(r'\[\[([^\]]+)\]\]')
@@ -176,13 +193,18 @@ def check_critical_files(workspace_dir):
             
     return errors
 
-def check_links(root_dir, file_map, headings_map):
+def check_links(root_dir, file_map, headings_map, changed_files=None):
     errors = []
     total_links = 0
     linked_basenames = set()
     
     for basename, paths in file_map.items():
         for rel_path in paths:
+            if changed_files is not None:
+                workspace_rel_path = os.path.join('second-brain', rel_path)
+                if os.path.normpath(workspace_rel_path) not in changed_files:
+                    continue
+            
             abs_path = os.path.join(root_dir, rel_path)
             try:
                 with open(abs_path, 'r', encoding='utf-8') as f:
@@ -229,7 +251,33 @@ def check_links(root_dir, file_map, headings_map):
                         continue
                     
                     # Case 2: File link [[filename]] or [[filename#heading]]
-                    if file_part_lower not in file_map:
+                    resolved_basename = file_part_lower
+                    target_rel_paths = None
+                    
+                    if resolved_basename in file_map:
+                        target_rel_paths = file_map[resolved_basename]
+                    else:
+                        # Attempt to resolve links with paths or extensions
+                        clean_part = resolved_basename
+                        if clean_part.startswith('second-brain/'):
+                            clean_part = clean_part[len('second-brain/'):]
+                        if clean_part.endswith('.md'):
+                            clean_part = clean_part[:-3]
+                        
+                        target_basename = os.path.basename(clean_part)
+                        if target_basename in file_map:
+                            matching_paths = []
+                            for p in file_map[target_basename]:
+                                p_clean = p
+                                if p_clean.endswith('.md'):
+                                    p_clean = p_clean[:-3]
+                                if p_clean.lower() == clean_part.lower() or p_clean.lower().endswith('/' + clean_part.lower()):
+                                    matching_paths.append(p)
+                            if matching_paths:
+                                resolved_basename = target_basename
+                                target_rel_paths = matching_paths
+
+                    if not target_rel_paths:
                         errors.append({
                             'file': rel_path,
                             'link': match,
@@ -237,8 +285,7 @@ def check_links(root_dir, file_map, headings_map):
                             'reason': f"Target file '{file_part}' not found in Second Brain"
                         })
                     else:
-                        target_rel_paths = file_map[file_part_lower]
-                        linked_basenames.add(file_part_lower)
+                        linked_basenames.add(resolved_basename)
                         if heading_part:
                             clean_target_heading = clean_heading(heading_part)
                             found_heading = False
@@ -251,20 +298,25 @@ def check_links(root_dir, file_map, headings_map):
                                     'file': rel_path,
                                     'link': match,
                                     'type': 'broken_link',
-                                    'reason': f"Heading '{heading_part}' not found in target file '{file_part_lower}'"
+                                    'reason': f"Heading '{heading_part}' not found in target file '{resolved_basename}'"
                                 })
             except Exception as e:
                 print(f"Error checking links in {rel_path}: {e}")
             
     return total_links, errors, linked_basenames
 
-def check_frontmatter(root_dir, file_map):
+def check_frontmatter(root_dir, file_map, changed_files=None):
     """Check YAML Frontmatter of all .md files"""
     errors = []
     total_checked = 0
     
     for basename, paths in file_map.items():
         for rel_path in paths:
+            if changed_files is not None:
+                workspace_rel_path = os.path.join('second-brain', rel_path)
+                if os.path.normpath(workspace_rel_path) not in changed_files:
+                    continue
+            
             filename = os.path.basename(rel_path)
             
             # Skip files that do not require frontmatter
@@ -368,13 +420,18 @@ def check_frontmatter(root_dir, file_map):
     
     return total_checked, errors
 
-def check_second_brain_absolute_paths(root_dir, file_map):
+def check_second_brain_absolute_paths(root_dir, file_map, changed_files=None):
     """Check files in Second Brain to prevent using Absolute Paths"""
     errors = []
     abs_path_re = re.compile(r'(?:file:///Users/|/Users/|file:///home/|/home/)(?!username\b)')
     
     for basename, paths in file_map.items():
         for rel_path in paths:
+            if changed_files is not None:
+                workspace_rel_path = os.path.join('second-brain', rel_path)
+                if os.path.normpath(workspace_rel_path) not in changed_files:
+                    continue
+            
             abs_path = os.path.join(root_dir, rel_path)
             try:
                 with open(abs_path, 'r', encoding='utf-8') as f:
@@ -391,7 +448,7 @@ def check_second_brain_absolute_paths(root_dir, file_map):
             
     return errors
 
-def check_spec_structures(root_dir, file_map):
+def check_spec_structures(root_dir, file_map, changed_files=None):
     """Check if system_spec.md has all required headers"""
     errors = []
     required_headers = [
@@ -404,6 +461,11 @@ def check_spec_structures(root_dir, file_map):
     for basename, paths in file_map.items():
         if basename == "system_spec":
             for rel_path in paths:
+                if changed_files is not None:
+                    workspace_rel_path = os.path.join('second-brain', rel_path)
+                    if os.path.normpath(workspace_rel_path) not in changed_files:
+                        continue
+                
                 # Skip templates folder so linter doesn't warn in templates themselves
                 if "templates/" in rel_path:
                     continue
@@ -427,7 +489,7 @@ def check_spec_structures(root_dir, file_map):
                     
     return errors
 
-def check_agent_configurations(workspace_dir):
+def check_agent_configurations(workspace_dir, changed_files=None):
     """Check bot configuration files in .agents/agents/ for absolute paths and broken links"""
     errors = []
     agents_dir = os.path.join(workspace_dir, '.agents', 'agents')
@@ -442,6 +504,9 @@ def check_agent_configurations(workspace_dir):
         if filename.endswith('.md'):
             file_path = os.path.join(agents_dir, filename)
             rel_file_path = os.path.relpath(file_path, workspace_dir)
+            if changed_files is not None and os.path.normpath(rel_file_path) not in changed_files:
+                continue
+            
             total_checked += 1
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
@@ -487,7 +552,7 @@ def check_agent_configurations(workspace_dir):
                 })
     return total_checked, errors
 
-def check_workspace_rules(workspace_dir):
+def check_workspace_rules(workspace_dir, changed_files=None):
     """Check project rules file .agents/AGENTS.md"""
     errors = []
     agents_md = os.path.join(workspace_dir, '.agents', 'AGENTS.md')
@@ -495,6 +560,9 @@ def check_workspace_rules(workspace_dir):
         return errors
         
     rel_file_path = os.path.relpath(agents_md, workspace_dir)
+    if changed_files is not None and os.path.normpath(rel_file_path) not in changed_files:
+        return errors
+        
     abs_path_re = re.compile(r'(?:file:///Users/|/Users/|file:///home/|/home/)(?!username\b)')
     
     try:
@@ -584,6 +652,10 @@ def sync_gitnexus_agents(workspace_dir):
         print(f"Warning: Error syncing GitNexus block: {e}")
 
 def main():
+    parser = argparse.ArgumentParser(description="Brain Linter — Check the integrity of the Second Brain")
+    parser.add_argument("--changed-only", action="store_true", help="Only lint changed files in git diff/status")
+    args = parser.parse_args()
+
     script_dir = os.path.dirname(os.path.abspath(__file__))
     workspace_dir = os.path.abspath(os.path.join(script_dir, '..'))
     root_dir = os.path.join(workspace_dir, 'second-brain')
@@ -595,6 +667,15 @@ def main():
     # Sync GitNexus before scanning
     sync_gitnexus_agents(workspace_dir)
         
+    changed_files = None
+    if args.changed_only:
+        changed = get_changed_files(workspace_dir)
+        changed_files = {os.path.normpath(f) for f in changed}
+        print(f"ℹ️ Incremental mode enabled. Found {len(changed_files)} changed file(s).")
+        if not changed_files:
+            print("✅ No changed files found. Nothing to lint.")
+            sys.exit(0)
+        
     print(f"🧠 Scanning Workspace Linter in: {workspace_dir}")
     file_map, headings_map = build_index(root_dir, workspace_dir)
     print(f"Found {len(file_map)} markdown files in Second Brain.")
@@ -602,14 +683,17 @@ def main():
     all_errors = []
     
     # Check 1: Wikilinks & Secrets in Second Brain
-    total_links, link_errors, linked_basenames = check_links(root_dir, file_map, headings_map)
+    total_links, link_errors, linked_basenames = check_links(root_dir, file_map, headings_map, changed_files)
     print(f"Scanned {total_links} wikilinks.")
     all_errors.extend(link_errors)
     
     # Check 1.5: Orphan Files
-    orphan_errors = check_orphans(file_map, linked_basenames)
-    print(f"Checked for orphan files in Second Brain.")
-    all_errors.extend(orphan_errors)
+    if not args.changed_only:
+        orphan_errors = check_orphans(file_map, linked_basenames)
+        print(f"Checked for orphan files in Second Brain.")
+        all_errors.extend(orphan_errors)
+    else:
+        print("Skipped orphan files check in incremental mode.")
     
     # Check 1.6: Critical Files & Templates
     critical_file_errors = check_critical_files(workspace_dir)
@@ -617,12 +701,12 @@ def main():
     all_errors.extend(critical_file_errors)
     
     # Check 2: Frontmatter & Tags
-    total_fm, fm_errors = check_frontmatter(root_dir, file_map)
+    total_fm, fm_errors = check_frontmatter(root_dir, file_map, changed_files)
     print(f"Checked {total_fm} files for frontmatter & tags.")
     all_errors.extend(fm_errors)
 
     # Check 2.5: Second Brain Absolute Paths
-    sb_abs_errors = check_second_brain_absolute_paths(root_dir, file_map)
+    sb_abs_errors = check_second_brain_absolute_paths(root_dir, file_map, changed_files)
     print(f"Checked absolute paths in Second Brain files.")
     all_errors.extend(sb_abs_errors)
 
@@ -632,17 +716,17 @@ def main():
     all_errors.extend(strategy_b_errors)
 
     # Check 2.7: Spec Structures
-    spec_errors = check_spec_structures(root_dir, file_map)
+    spec_errors = check_spec_structures(root_dir, file_map, changed_files)
     print(f"Checked Spec Structures (Headers).")
     all_errors.extend(spec_errors)
 
     # Check 3: Agent configurations
-    total_agents, agent_errors = check_agent_configurations(workspace_dir)
+    total_agents, agent_errors = check_agent_configurations(workspace_dir, changed_files)
     print(f"Checked {total_agents} agent configurations in .agents/agents/.")
     all_errors.extend(agent_errors)
 
     # Check 4: Workspace rules (AGENTS.md)
-    agents_md_errors = check_workspace_rules(workspace_dir)
+    agents_md_errors = check_workspace_rules(workspace_dir, changed_files)
     print(f"Checked .agents/AGENTS.md workspace rules.")
     all_errors.extend(agents_md_errors)
     

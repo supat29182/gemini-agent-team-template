@@ -12,7 +12,7 @@ skills:
   - doubt-driven-development
   - code-review-and-quality
   - api-and-interface-design
-model: gemini-3.5-pro
+model: gemini-3.5-flash
 temperature: 0.1
 max_turns: 20
 timeout_mins: 25

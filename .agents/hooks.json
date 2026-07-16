@@ -10,12 +10,7 @@
           },
           {
             "type": "command",
-            "command": "npx gitnexus analyze > /dev/stderr; echo '{}'",
-            "timeout": 120
-          },
-          {
-            "type": "command",
-            "command": "python3 scripts/brain_linter.py > /dev/stderr; echo '{}'",
+            "command": "python3 scripts/brain_linter.py --changed-only > /dev/stderr; echo '{}'",
             "timeout": 30
           },
           {

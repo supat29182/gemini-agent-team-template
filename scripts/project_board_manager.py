@@ -139,9 +139,18 @@ def main():
         lines[row_found_idx] = updated_row
         print(f"Updated status of task '{args.slug}' to '{args.status}' on project board.")
 
-    # Write back
-    with open(board_path, 'w', encoding='utf-8') as f:
-        f.write("\n".join(lines) + "\n")
+    # Write back atomically
+    tmp_path = f"{board_path}.tmp"
+    try:
+        with open(tmp_path, 'w', encoding='utf-8') as f:
+            f.write("\n".join(lines) + "\n")
+        os.replace(tmp_path, board_path)
+    except Exception as e:
+        if os.path.exists(tmp_path):
+            try: os.remove(tmp_path)
+            except: pass
+        print(f"Error writing project board: {e}", file=sys.stderr)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
