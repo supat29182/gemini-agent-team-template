@@ -9,6 +9,7 @@ tools:
   - grep_search
   - sa
   - solution-architect
+  - ux-ui
   - backend-dev
   - frontend-dev
   - security
@@ -69,18 +70,19 @@ When notified to start work, or upon finding new Requirement data at the very to
 ### 2. Implement and Validate
 
 1. **[PHASE 1: DESIGN]**: Send the Requirement brief with the slug to `@sa` to draft business docs (`brd.md`, `epics_user_stories.md`), the `system_spec.md` spec, and `api_contract.yaml`.
-2. Once `@sa` finishes, send the spec file to `@solution-architect` to analyze impact and record it in `second-brain/20-architecture/features/<slug>/architecture_impact.md`. Wait until all documents are complete.
-3. **[PHASE 2: IMPLEMENTATION]**: Update the task status to `[Phase 2] Implementation` on the project board and `00-Index.md` using `project_board_manager.py`.
-4. Command `@backend-dev` and `@qa-automate` (for Test Plan) to work in parallel:
+2. Once `@sa` finishes, send the spec file to `@ux-ui` to create `design_spec.md` with wireframe descriptions, component specifications, design tokens, and user flow diagrams in `second-brain/10-requirements-spec/features/<slug>/design_spec.md`.
+3. Once `@ux-ui` finishes, send the spec file to `@solution-architect` to analyze impact and record it in `second-brain/20-architecture/features/<slug>/architecture_impact.md`. Wait until all documents are complete.
+4. **[PHASE 2: IMPLEMENTATION]**: Update the task status to `[Phase 2] Implementation` on the project board and `00-Index.md` using `project_board_manager.py`.
+5. Command `@backend-dev` and `@qa-automate` (for Test Plan) to work in parallel:
    - Check the locks status under `second-brain/30-development/features/<slug>/locks/`.
    - Invoke `@backend-dev` to write the backend code.
    - Invoke `@qa-automate` to prepare the Test Plan in `second-brain/50-qa-testing/features/<slug>/test_plan.md`.
-5. **Sync Point 2**: Stop working (End Turn) and wait for both to finish. The status in `locks/backend-dev.json` and `locks/qa-test-plan.json` must be `"completed"`.
-6. Once Backend and QA are done, invoke `@frontend-dev` to develop the frontend code.
-7. **Sync Point 2.5**: Stop working (End Turn) and wait until `"frontend-dev"` lock status is `"completed"`.
-8. **[PHASE 3: VERIFICATION]**: Update the task status to `[Phase 3] QA` on the project board and `00-Index.md`.
-9. Invoke `@security` and `@qa-automate` (for E2E Test execution) in parallel.
-10. **Sync Point 3**: Stop working (End Turn) and wait for the scans to finish:
+6. **Sync Point 2**: Stop working (End Turn) and wait for both to finish. The status in `locks/backend-dev.json` and `locks/qa-test-plan.json` must be `"completed"`.
+7. Once Backend and QA are done, invoke `@frontend-dev` to develop the frontend code.
+8. **Sync Point 2.5**: Stop working (End Turn) and wait until `"frontend-dev"` lock status is `"completed"`.
+9. **[PHASE 3: VERIFICATION]**: Update the task status to `[Phase 3] QA` on the project board and `00-Index.md`.
+10. Invoke `@security` and `@qa-automate` (for E2E Test execution) in parallel.
+11. **Sync Point 3**: Stop working (End Turn) and wait for the scans to finish:
     - `@security` lock is `"completed"` and the result is **[STATUS: PASSED]**.
     - `@qa-automate-execution` lock is `"completed"` and E2E tests pass.
 

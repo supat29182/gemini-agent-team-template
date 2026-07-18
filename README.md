@@ -20,8 +20,9 @@ graph TD
     
     %% Feature & CR Flow
     Init -->|"Feature / CR"| SA("sa")
-    SA -->|"3. Draft Spec & API"| ARCH("solution-architect")
-    ARCH -->|"4. Impact & Directory Design"| PM
+    SA -->|"3. Draft Spec & API"| UXUI("ux-ui")
+    UXUI -->|"4. Design Spec & Tokens"| ARCH("solution-architect")
+    ARCH -->|"5. Impact & Directory Design"| PM
     
     PM -->|"Phase 2"| BACK("backend-dev")
     PM -->|"Phase 2"| QA_P("qa-automate (Test Plan)")
@@ -51,6 +52,7 @@ sequenceDiagram
     actor User
     participant PM as pm-po
     participant SA as sa
+    participant UX as ux-ui
     participant Arch as solution-architect
     participant Devs as backend and frontend
     participant QA as qa-automate
@@ -60,10 +62,12 @@ sequenceDiagram
     Note over PM: PM is strictly forbidden from reading code directly
     
     rect rgb(240, 248, 255)
-        Note right of PM: PHASE 1: DESIGN (Feature/CR goes through SA, Bug Fix bypasses SA)
+        Note right of PM: PHASE 1: DESIGN (Feature/CR goes through SA & UX/UI, Bug Fix bypasses them)
         alt Feature or CR
-            PM->>SA: Create System Spec
-            SA-->>PM: Completed (system_spec.md)
+            PM->>SA: Create System Spec & API Contract
+            SA-->>PM: Completed (system_spec.md & api_contract.yaml)
+            PM->>UX: Create Design Spec
+            UX-->>PM: Completed (design_spec.md)
             PM->>Arch: Analyze Impact & Design Directory
         else Bug Fix
             PM->>Arch: Analyze Root Cause
@@ -112,11 +116,11 @@ sequenceDiagram
 The user submits a requirement in the chat. The first bot to wake up is **`@pm-po`** (Project Manager). It records the requirement in `inbox_log.md` and runs `init_feature.py --type` to initialize separate folders for each task type (Feature, CR, Bug Fix).
 
 **Phase 1: Design (Design Stage)**
-1. For **Features and CRs**: `pm-po` assigns the task to **`@sa` (System Analyst)** to analyze requirements and write `system_spec.md`. Then `@solution-architect` analyzes the architectural impact, designs the proposed directory/file structure, and records them in `architecture_impact.md`.
-2. For **Bug Fixes**: Bypasses the SA spec. `@solution-architect` directly writes the analysis and remediation steps in `bug_diagnosis.md`.
+1. For **Features and CRs**: `pm-po` assigns the task to **`@sa` (System Analyst)** to analyze requirements and write `system_spec.md` and `api_contract.yaml`. Next, **`@ux-ui` (UX/UI Designer)** creates `design_spec.md` covering wireframe descriptions, UI component specifications, design tokens, and user flow diagrams. Then **`@solution-architect`** analyzes the architectural impact, designs the proposed directory/file structure, and records them in `architecture_impact.md`.
+2. For **Bug Fixes**: Bypasses SA and UX/UI specs. `@solution-architect` directly writes the analysis and remediation steps in `bug_diagnosis.md`.
 
 **Phase 2: Implementation (Build Stage)**
-1. For **Features and CRs**: `pm-po` triggers **`@backend-dev`** (or frontend) and **`@qa-automate`** in parallel (Developer writes code, QA designs the Test Plan).
+1. For **Features and CRs**: `pm-po` triggers **`@backend-dev`** (or frontend) and **`@qa-automate`** in parallel (Developer writes code, QA designs the Test Plan). `@frontend-dev` reads both `api_contract.yaml` and `design_spec.md` to implement the UI according to the design tokens and component specs.
 2. For **Bug Fixes**: Bypasses the Test Plan. Developers immediately start fixing the code.
 3. Once the Backend Developer finishes, the task is handed over to the Frontend Developer to integrate components.
 

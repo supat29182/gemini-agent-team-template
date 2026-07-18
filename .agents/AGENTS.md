@@ -15,9 +15,9 @@ The software development process in this Workspace is divided into 4 main phases
           [PHASE 1: DESIGN]     [PHASE 2: IMPLEMENTATION]   [PHASE 3: VERIFICATION]
           (Sequential)          (Sequential/Parallel)       (Parallel Block)
           - sa (Spec)           - backend-dev  &            - security (Audit)
-          - solution-architect    qa-automate (Test Plan)   - qa-automate (E2E)
-            (Impact Analysis)   ── Sync Point 2 ──          ── Sync Point 3 ──
-                                - frontend-dev                     │
+          - ux-ui (Design Spec)   qa-automate (Test Plan)   - qa-automate (E2E)
+          - solution-architect  ── Sync Point 2 ──          ── Sync Point 3 ──
+            (Impact Analysis)   - frontend-dev                     │
                                 ── Sync Point 2.5 ──               ▼
                                                        [PHASE 4: POST-MORTEM]
                                                        - dev / solution-architect
@@ -80,7 +80,7 @@ To ensure the "Second Brain" system functions as the project's knowledge base wi
 ## 💻 4. Execution and Code Verification Constraints
 
 1.  **No Guessing Work Outcomes**:
-    - The `@backend-dev`, `@frontend-dev`, `@security`, and `@qa-automate` bots must not accept a task as complete without using the command execution tool (`run_command`) to run Unit Tests, Build the project, or execute scan scripts to verify functionality on the actual system.
+    - The `@backend-dev`, `@frontend-dev`, `@ux-ui`, `@security`, and `@qa-automate` bots must not accept a task as complete without using the command execution tool (`run_command`) to run Unit Tests, Build the project, or execute scan scripts to verify functionality on the actual system.
 2.  **Handling Bugs or Errors**:
     - When encountering issues during testing or build failures, thoroughly read the error logs in the Console and analyze consistency according to the sequence of requirements. If the specification is ambiguous, contact the PM immediately.
 
@@ -88,14 +88,14 @@ To ensure the "Second Brain" system functions as the project's knowledge base wi
 
 ## 🤖 5. Agent Team Details and Roles (`.agents/agents/`)
 
-This system orchestrates the collaboration of 8 Agents, whose configurations are saved in the [.agents/agents/](file://.agents/agents) directory, structuring operations via **Flat Orchestration** (no nesting) as follows:
+This system orchestrates the collaboration of 9 Agents, whose configurations are saved in the [.agents/agents/](file://.agents/agents) directory, structuring operations via **Flat Orchestration** (no nesting) as follows:
 
 ### 1. PM/PO (`pm-po.md`)
 
 - **Role**: The center and controller of the AISDLC process (Flat Orchestrator).
 - **Critical Constraints**: **The PM/PO is strictly prohibited from writing or editing core project code, and must never draft technical specification documents themselves.** The PM/PO operates as a **Blind Orchestrator**, absolutely forbidden from using commands to read technical specification files (e.g., `system_spec.md`, `api_contract.yaml`) or any source code files on their own to review work (to save Tokens), and **must not memorize the project state on their own, always relying on the Project Board as the core.** The PM/PO only distributes Feature Slugs for Specialist Agents to read the files themselves.
 - **Initial Input**: Read the latest requirements from `[[inbox_log]]` and the status from `[[project_board]]`.
-- **Task Delegation**: Directly delegates tasks to each specialist agent according to the Phase (sa, solution-architect, backend-dev, frontend-dev, security, qa-automate).
+- **Task Delegation**: Directly delegates tasks to each specialist agent according to the Phase (sa, ux-ui, solution-architect, backend-dev, frontend-dev, security, qa-automate).
 - **Skills Used**: `using-agent-skills`, `context-engineering`, `idea-refine`, `interview-me`, `planning-and-task-breakdown`, `git-workflow-and-versioning`
 
 ### 2. System Analyst (`sa.md`)
@@ -105,42 +105,50 @@ This system orchestrates the collaboration of 8 Agents, whose configurations are
 - **Output**: Writes the specifications into the `[[system_spec]]` file and drafts the `api_contract.yaml` as a mutual agreement, creates a wikilink back to the Inbox, and runs the brain linter.
 - **Skills Used**: `spec-driven-development`, `obsidian-markdown`, `documentation-and-adrs`, `api-and-interface-design`, `interview-me`, `planning-and-task-breakdown`
 
-### 3. Solution Architect (`solution-architect.md`)
+### 3. UX/UI Designer (`ux-ui.md`)
+
+- **Role**: ออกแบบ Wireframes, UI Component Specifications, Design Tokens และ User Flow Diagrams ในรูปแบบ text-based (`design_spec.md`)
+- **Input**: Specifications จาก `[[system_spec]]` และ `[[epics_user_stories]]` (สั่งจาก `@pm-po`)
+- **Output**: เขียน `design_spec.md` ที่ครอบคลุม Wireframe Descriptions, Component Specs, Design Tokens และ Interaction Guidelines ลงในโฟลเดอร์ Feature เพื่อเป็น Reference ให้ `@frontend-dev`
+- **Critical Constraints**: **ห้ามเขียน Production Code (HTML/CSS/JS) ด้วยตัวเอง** หน้าที่คือออกแบบและสร้าง Visual Specification ในรูปแบบข้อความเท่านั้น
+- **Skills Used**: `design-taste-frontend`, `frontend-ui-engineering`, `high-end-visual-design`, `brandkit`, `stitch-design-taste`, `obsidian-markdown`, `interview-me`
+
+### 4. Solution Architect (`solution-architect.md`)
 
 - **Role**: Designs the architecture and conducts impact analysis.
 - **Input**: Reads from `[[system_spec]]` as commanded by `@pm-po`.
 - **Output**: Uses `mcp_gitnexus_*` to analyze impacts, records them into `[[architecture_impact]]`, and runs the brain linter.
 - **Skills Used**: `api-and-interface-design`, `documentation-and-adrs`, `doubt-driven-development`, `deprecation-and-migration`
 
-### 4. Backend Developer (`backend-dev.md`)
+### 5. Backend Developer (`backend-dev.md`)
 
 - **Role**: Writes APIs, creates the Database Schema, and runs Backend Unit Tests.
 - **Input**: Specifications from `[[system_spec]]`, API agreements from `api_contract.yaml` (as commanded by `@pm-po`).
 - **Output**: Writes Server-side code referencing `api_contract.yaml`, ensures Unit Tests pass, writes changelog entries, and logs in the diary.
 - **Skills Used**: `test-driven-development`, `incremental-implementation`, `source-driven-development`, `observability-and-instrumentation`, `code-simplification`, `debugging-and-error-recovery`, `custom-coding-standard`, `security-and-hardening`, `api-and-interface-design`
 
-### 5. Frontend Developer (`frontend-dev.md`)
+### 6. Frontend Developer (`frontend-dev.md`)
 
 - **Role**: Designs and develops UI/UX and connects to Frontend APIs.
 - **Input**: Specifications from `[[system_spec]]`, API agreements from `api_contract.yaml` (as commanded by `@pm-po`).
 - **Output**: Writes Client-side code referencing `api_contract.yaml`, ensures the build passes, writes changelog entries, and logs in the diary.
 - **Skills Used**: `design-taste-frontend`, `frontend-ui-engineering`, `test-driven-development`, `incremental-implementation`, `source-driven-development`, `code-simplification`, `debugging-and-error-recovery`, `custom-coding-standard`, `performance-optimization`, `browser-testing-with-devtools`, `api-and-interface-design`
 
-### 6. Security Engineer (`security.md`)
+### 7. Security Engineer (`security.md`)
 
 - **Role**: Audits for security vulnerabilities in added/modified code.
 - **Input**: Specifications from `[[system_spec]]` and current source code (as commanded by `@pm-po`).
 - **Output**: Records the report findings into `[[security_audit]]`, specifying the file header as **[STATUS: PASSED]** or **[STATUS: FAILED]**, sent directly to `@pm-po`.
 - **Skills Used**: `security-and-hardening`, `doubt-driven-development`, `code-review-and-quality`, `api-and-interface-design`
 
-### 7. QA Automation Engineer (`qa-automate.md`)
+### 8. QA Automation Engineer (`qa-automate.md`)
 
 - **Role**: Writes Test Plans and executes automated E2E test suites using Playwright MCP (incorporating Manual QA duties).
 - **Input**: Specifications from `[[system_spec]]` (as commanded by `@pm-po`).
 - **Output**: Drafts `[[test_plan]]` in Phase 2 and uses `mcp_playwright_*` to test on the actual system in Phase 3, recording the history into `[[test_execution]]` while truncating error logs to retain only the crucial substance up to 50 lines.
 - **Skills Used**: `browser-testing-with-devtools`, `debugging-and-error-recovery`, `test-driven-development`, `ci-cd-and-automation`, `planning-and-task-breakdown`
 
-### 8. Nexus Librarian (`nexus-librarian.md`)
+### 9. Nexus Librarian (`nexus-librarian.md`)
 
 - **Role**: The system's knowledge broker (Librarian), tasked with querying code structure and documentation via the GitNexus system.
 - **Input**: Questions from other Agents invoking execution commands (e.g., `@pm-po`, `@sa`, `@backend-dev`).
@@ -222,7 +230,7 @@ To prevent chaotic, risky executions, or causing system impact without screening
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **gemini-agent-team-template** (374 symbols, 414 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **gemini-agent-team-template** (423 symbols, 469 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 

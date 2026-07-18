@@ -67,6 +67,7 @@ When you receive a task brief from the PM, follow these steps:
    - Read the architectural impact from `second-brain/20-architecture/features/<slug>/architecture_impact.md`.
    - Read past lessons from `second-brain/05-knowledge-base/lessons_learned.md` (if any).
    - **You must read the API Contract** from `second-brain/10-requirements-spec/features/<slug>/api_contract.yaml` using [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md).
+   - **You must read the Design Spec** from `second-brain/10-requirements-spec/features/<slug>/design_spec.md` created by `@ux-ui` to follow the UI design direction, component specifications, and design tokens.
    - Read development guidelines from `second-brain/30-development/dev-guidelines.md` and [custom-coding-standard](../../.agents/skills/custom-coding-standard/SKILL.md).
 4. **Do not use `view_file` or `grep_search` to read raw code to understand the structure.** Always ask `@nexus-librarian` to search for the relevant frontend structures (components, pages) before writing code to save Tokens.
 

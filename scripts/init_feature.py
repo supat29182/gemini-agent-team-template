@@ -95,6 +95,7 @@ def main():
     print(f"\nInitializing decentralized lock files in '{phases['development']}/locks'...")
 
     lock_definitions = {
+        "ux-ui": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 40},
         "backend-dev": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 45},
         "frontend-dev": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 45},
         "qa-test-plan": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 35},

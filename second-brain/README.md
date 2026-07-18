@@ -20,6 +20,7 @@ This folder is designed to support structured and systematic document storage as
     - `brd.md` (Business Requirement Document): Created by `@pm-po` to define the goals, scope, and target users.
     - `epics_user_stories.md` (Epics, User Stories & Acceptance Criteria): Created by `@pm-po` to break down features into user stories with AC (Given-When-Then format).
     - `system_spec.md` (Feature System Specification): Created by `@sa` to describe technical specs specific to this feature.
+    - `design_spec.md` (Design Specification): Created by `@ux-ui` to define wireframe descriptions, UI component specs, design tokens, and user flows.
 - **Key Documents**: Core `system_spec.md` and feature-specific folders under `features/`.
 
 ### [📐 20-architecture](20-architecture/)
@@ -71,13 +72,15 @@ graph TD
         
         TypeDecision -->|Feature/CR| SA[sa]
         SA -->|2. Write BRD, Epics & Spec| Spec[Feature system_spec.md]
-        Spec --> PM_Arch[PM Forwards Spec]
+        Spec --> UXUI[ux-ui]
+        UXUI -->|3. Design Spec & Tokens| DesignSpec[design_spec.md]
+        DesignSpec --> PM_Arch[PM Forwards Specs]
         PM_Arch --> Arch[solution-architect]
         
         TypeDecision -->|Bug Fix| BugArch[solution-architect]
         BugArch -->|2. Analyze Root Cause| BugDiag[bug_diagnosis.md]
         
-        Arch -->|3. Analyze Impact & Directory Design| Impact[architecture_impact.md]
+        Arch -->|4. Analyze Impact & Directory Design| Impact[architecture_impact.md]
     end
 
     subgraph "Phase 2: Implementation"
