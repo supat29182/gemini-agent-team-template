@@ -22,18 +22,17 @@ _At the end of each Phase, AI or PM/PO should update the checkbox `[x]` here and
 
 ## 📂 Project Directory
 
-- **📥 00-Inbox**: Raw task inbox and initial assessment ➔ [[inbox_log]]
-- **📊 01-Project Board**: Task status board (Kanban) ➔ [[project_board]]
-- **🧠 05-Knowledge Base**: Accumulated knowledge base and lessons learned ➔ [[lessons_learned]]
-- **📝 10-Requirements**: System documentation and User Journey ➔ [[system_spec]]
-- **📐 20-Architecture**: Design and impact assessment ➔ [[architecture_impact]]
-- **💻 30-Development**: Developer workspace and coding guidelines ➔ [[dev-guidelines]]
-- **🛡️ 40-Security**: Audit reports and OWASP ➔ [[security_audit]]
-- **🧪 50-QA**: Test plans and results ➔ [[test_plan]], [[test_execution]]
-- **🚀 60-Delivery**: Preparation for Production release ➔ [[deployment-playbook]]
-- **📚 70-Resources**: Manuals, Templates, and policies ➔ [[tagging-policy]]
-- **📓 Diary**: AI work logs ➔ `second-brain/diary/`
-- **🗄️ Archives**: History and old Changelogs ➔ `second-brain/archives/changelog/`
+- **📥 01-Inbox**: Raw task inbox and initial assessment ➔ [[inbox_log]]
+- **🧠 02-Knowledge Base**: Accumulated knowledge base and lessons learned ➔ [[lessons_learned]]
+- **📝 03-Requirements**: System documentation and User Journey ➔ [[system_spec]]
+- **📐 04-Architecture**: Design and impact assessment ➔ [[architecture_impact]]
+- **💻 05-Development**: Developer workspace and coding guidelines ➔ [[dev-guidelines]]
+- **🛡️ 06-Security**: Audit reports and OWASP ➔ [[security_audit]]
+- **🧪 07-QA**: Test plans and results ➔ [[test_plan]], [[test_execution]]
+- **🚀 08-Delivery**: Preparation for Production release ➔ [[deployment-playbook]]
+- **📚 09-Resources**: Manuals, Templates, and policies ➔ [[tagging-policy]]
+- **🗄️ 10-Archives**: History and old Changelogs ➔ `second-brain/10-archives/changelog/`
+- **📓 11-Diary**: AI work logs ➔ `second-brain/11-diary/`
 
 ---
 

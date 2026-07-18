@@ -35,20 +35,20 @@ fi
 echo "Archiving task '$SLUG' of type '$TYPE'..."
 
 # Ensure archives parent folder exists
-mkdir -p "second-brain/archives/${FOLDER_TYPE}/${SLUG}"
+mkdir -p "second-brain/10-archives/${FOLDER_TYPE}/${SLUG}"
 
 PHASES=(
-    "10-requirements-spec"
-    "20-architecture"
-    "30-development"
-    "40-security"
-    "50-qa-testing"
+    "03-requirements-spec"
+    "04-architecture"
+    "05-development"
+    "06-security"
+    "07-qa-testing"
 )
 
 for phase in "${PHASES[@]}"; do
     SRC_DIR="second-brain/${phase}/${FOLDER_TYPE}/${SLUG}"
     if [ -d "$SRC_DIR" ]; then
-        DEST_DIR="second-brain/archives/${FOLDER_TYPE}/${SLUG}/${phase}"
+        DEST_DIR="second-brain/10-archives/${FOLDER_TYPE}/${SLUG}/${phase}"
         if [ -d "$DEST_DIR" ]; then
             echo "  [Warning] Destination $DEST_DIR already exists. Cleaning up older archive..."
             rm -rf "$DEST_DIR"

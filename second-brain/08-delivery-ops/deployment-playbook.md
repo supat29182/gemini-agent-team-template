@@ -14,7 +14,7 @@ tags:
 
 - [ ] Security Audit passed (`[[security_audit]]` = `[STATUS: PASSED]`)
 - [ ] E2E Testing passed (`[[test_execution]]` = All Passed)
-- [ ] Latest Changelog updated in `second-brain/archives/changelog/`
+- [ ] Latest Changelog updated in `second-brain/10-archives/changelog/`
 - [ ] `[[project_board]]` updated to `Done`
 - [ ] Security Audit passed and code reviewed successfully
 
@@ -45,7 +45,7 @@ tags:
 ## Rollback Plan
 
 - If issues are found after deploy, revert to the previous version immediately.
-- Record the Post-Mortem in `second-brain/60-delivery-ops/postmortem/`
+- Record the Post-Mortem in `second-brain/08-delivery-ops/postmortem/`
 
 ## References
 

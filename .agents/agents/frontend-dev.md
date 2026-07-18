@@ -63,12 +63,12 @@ When you receive a task brief from the PM, follow these steps:
    - If successful (status becomes in-progress), proceed to the next step.
    - If an error occurs (e.g., backend dependencies not ready, or lock already exists), terminate work immediately and report to the PM.
 3. Read specifications:
-   - Use `view_file` to read the requirements from `second-brain/10-requirements-spec/features/<slug>/system_spec.md`.
-   - Read the architectural impact from `second-brain/20-architecture/features/<slug>/architecture_impact.md`.
-   - Read past lessons from `second-brain/05-knowledge-base/lessons_learned.md` (if any).
-   - **You must read the API Contract** from `second-brain/10-requirements-spec/features/<slug>/api_contract.yaml` using [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md).
-   - **You must read the Design Spec** from `second-brain/10-requirements-spec/features/<slug>/design_spec.md` created by `@ux-ui` to follow the UI design direction, component specifications, and design tokens.
-   - Read development guidelines from `second-brain/30-development/dev-guidelines.md` and [custom-coding-standard](../../.agents/skills/custom-coding-standard/SKILL.md).
+   - Use `view_file` to read the requirements from `second-brain/03-requirements-spec/features/<slug>/system_spec.md`.
+   - Read the architectural impact from `second-brain/04-architecture/features/<slug>/architecture_impact.md`.
+   - Read past lessons from `second-brain/02-knowledge-base/lessons_learned.md` (if any).
+   - **You must read the API Contract** from `second-brain/03-requirements-spec/features/<slug>/api_contract.yaml` using [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md).
+   - **You must read the Design Spec** from `second-brain/03-requirements-spec/features/<slug>/design_spec.md` created by `@ux-ui` to follow the UI design direction, component specifications, and design tokens.
+   - Read development guidelines from `second-brain/05-development/dev-guidelines.md` and [custom-coding-standard](../../.agents/skills/custom-coding-standard/SKILL.md).
 4. **Do not use `view_file` or `grep_search` to read raw code to understand the structure.** Always ask `@nexus-librarian` to search for the relevant frontend structures (components, pages) before writing code to save Tokens.
 
 ### 2. Implement and Validate
@@ -92,9 +92,9 @@ When you receive a task brief from the PM, follow these steps:
 ### 4. Close and Handoff
 
 1. **Review and Simplify**: Check code cleanliness per [code-simplification](../../.agents/skills/code-simplification/SKILL.md).
-2. **Write Changelog**: View the template in `second-brain/70-resources/templates/template-changelog.md` and write a changelog in `second-brain/archives/changelog/YYYY-MM-DD-frontend-dev.md` (no absolute paths).
+2. **Write Changelog**: View the template in `second-brain/09-resources/templates/template-changelog.md` and write a changelog in `second-brain/10-archives/changelog/YYYY-MM-DD-frontend-dev.md` (no absolute paths).
 3. **Release Task Lock**: Use `run_command` to run the script:
    `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent frontend-dev --action release`
-4. **Log Diary**: Write a note in `second-brain/diary/YYYY-MM-DD-frontend-dev.md` detailing the UI changes and build status.
+4. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-frontend-dev.md` detailing the UI changes and build status.
 5. **Run Brain Linter**: Run `python3 scripts/brain_linter.py` to check Second Brain integrity.
 6. Notify the PM with a list of modified files, build evidence, and confirmation of completion.

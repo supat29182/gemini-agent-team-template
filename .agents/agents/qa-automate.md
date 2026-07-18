@@ -61,21 +61,21 @@ When you receive a task brief from the PM, follow these steps:
    - For Phase 3: Run `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent qa-automate-execution --action acquire`.
    - If successful, proceed. If an error occurs, terminate and report to PM.
 4. Read specifications:
-   - Use `view_file` to read the specifications from `second-brain/10-requirements-spec/features/<slug>/system_spec.md`.
-   - Read past testing issues/lessons from `second-brain/05-knowledge-base/lessons_learned.md` (if any).
+   - Use `view_file` to read the specifications from `second-brain/03-requirements-spec/features/<slug>/system_spec.md`.
+   - Read past testing issues/lessons from `second-brain/02-knowledge-base/lessons_learned.md` (if any).
 
 ### 2. Implement and Validate
 
 #### [If Phase 2: Test Plan Creation]
 
 1. **Design Test Cases**: Draft a comprehensive Test Plan covering all positive flows and Edge Cases. Detail the manual/automated validation steps.
-2. **Save Test Plan**: Write the plan to `second-brain/50-qa-testing/features/<slug>/test_plan.md` using `write_to_file`.
+2. **Save Test Plan**: Write the plan to `second-brain/07-qa-testing/features/<slug>/test_plan.md` using `write_to_file`.
 
 #### [If Phase 3: Automated Test Execution]
 
-1. Read the Test Plan at `second-brain/50-qa-testing/features/<slug>/test_plan.md`.
+1. Read the Test Plan at `second-brain/07-qa-testing/features/<slug>/test_plan.md`.
 2. **Execute E2E Tests**: Use `playwright` MCP tools (e.g., `mcp_playwright_navigate`, `mcp_playwright_click`) to run browser tests interactively, or run test scripts via CLI using `run_command` (e.g., `npx playwright test`).
-3. **Save Results**: Write results to `second-brain/50-qa-testing/features/<slug>/test_execution.md` using `write_to_file`.
+3. **Save Results**: Write results to `second-brain/07-qa-testing/features/<slug>/test_execution.md` using `write_to_file`.
 
 ### 3. Repair Returned or Failed Work
 
@@ -90,6 +90,6 @@ When you receive a task brief from the PM, follow these steps:
 1. **Release Task Lock**:
    - For Phase 2: Run `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent qa-test-plan --action release`.
    - For Phase 3: Run `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent qa-automate-execution --action release`.
-2. **Log Diary**: Write a note in `second-brain/diary/YYYY-MM-DD-qa-automate.md`.
+2. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-qa-automate.md`.
 3. **Run Brain Linter**: Run `python3 scripts/brain_linter.py` to check Second Brain integrity.
 4. Notify the PM with a link to the output file and a brief summary of test cases and outcomes.

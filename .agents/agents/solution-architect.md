@@ -55,8 +55,8 @@ When receiving a task from the PM, follow these steps:
 ### 1. Initialize
 
 1. Identify the task type: **Design Impact Analysis** (Phase 1) or **Post-Mortem Reflection** (Phase 4).
-2. For Phase 1: Use `view_file` to read the feature's system specification from `second-brain/10-requirements-spec/features/<slug>/system_spec.md`.
-3. For Phase 4: Use `view_file` to read the template from `second-brain/70-resources/templates/template-postmortem.md` and read past lessons from `second-brain/05-knowledge-base/lessons_learned.md`.
+2. For Phase 1: Use `view_file` to read the feature's system specification from `second-brain/03-requirements-spec/features/<slug>/system_spec.md`.
+3. For Phase 4: Use `view_file` to read the template from `second-brain/09-resources/templates/template-postmortem.md` and read past lessons from `second-brain/02-knowledge-base/lessons_learned.md`.
 
 ### 2. Implement and Validate
 
@@ -64,13 +64,13 @@ When receiving a task from the PM, follow these steps:
 
 1. **Analyze Blast Radius**: Use `gitnexus` MCP tools (such as `mcp_gitnexus_impact` or `mcp_gitnexus_query`) to analyze the system impact of the proposed changes.
 2. **Design Directory Layout**: Use `list_dir` to explore the codebase structure and design the directory tree layout for new/modified files.
-3. **Write Architecture Impact**: Summarize the architectural approach, proposed structure, files to modify, and boundaries/contracts per [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md), and write them to `second-brain/20-architecture/features/<slug>/architecture_impact.md`.
+3. **Write Architecture Impact**: Summarize the architectural approach, proposed structure, files to modify, and boundaries/contracts per [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md), and write them to `second-brain/04-architecture/features/<slug>/architecture_impact.md`.
 4. **Reference over Duplication**: Use Wikilinks pointing to spec topics (e.g., `[[system_spec#API Endpoints]]`) rather than duplicating text.
 
 #### [If Phase 4: Post-Mortem Reflection]
 
-1. **Write Post-Mortem**: Summarize issues found, Root Cause, Timeline, and key lessons. Record it in `second-brain/60-delivery-ops/postmortem/YYYY-MM-DD-<slug>.md`.
-2. **Extract One-Line Rule**: Extract a One-Line Rule from the lessons and append it to the appropriate category in `second-brain/05-knowledge-base/lessons_learned.md`.
+1. **Write Post-Mortem**: Summarize issues found, Root Cause, Timeline, and key lessons. Record it in `second-brain/08-delivery-ops/postmortem/YYYY-MM-DD-<slug>.md`.
+2. **Extract One-Line Rule**: Extract a One-Line Rule from the lessons and append it to the appropriate category in `second-brain/02-knowledge-base/lessons_learned.md`.
 
 ### 3. Repair Returned or Failed Work
 
@@ -79,6 +79,6 @@ When receiving a task from the PM, follow these steps:
 
 ### 4. Close and Handoff
 
-1. Use `write_to_file` to make a brief note in `second-brain/diary/YYYY-MM-DD-architect.md` outlining the Blast Radius coverage or post-mortem findings, referencing ADR/documentation practices from [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md) and deprecation rules from [deprecation-and-migration](../../.agents/skills/deprecation-and-migration/SKILL.md).
+1. Use `write_to_file` to make a brief note in `second-brain/11-diary/YYYY-MM-DD-architect.md` outlining the Blast Radius coverage or post-mortem findings, referencing ADR/documentation practices from [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md) and deprecation rules from [deprecation-and-migration](../../.agents/skills/deprecation-and-migration/SKILL.md).
 2. Run Brain Linter: Use `run_command` to execute `python3 scripts/brain_linter.py` to check document integrity.
 3. Reply briefly to the PM with the created file link.

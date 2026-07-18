@@ -58,11 +58,11 @@ When you receive a task brief from the PM, follow these steps:
    - If successful (status becomes in-progress), proceed to the next step.
    - If an error occurs (e.g., lock already exists or pending dependencies), terminate work immediately and report to the PM.
 3. Read specifications:
-   - Use `view_file` to read the requirements from `second-brain/10-requirements-spec/features/<slug>/system_spec.md`.
-   - Read the epics and user stories from `second-brain/10-requirements-spec/features/<slug>/epics_user_stories.md` to understand user journeys.
-   - Read past lessons from `second-brain/05-knowledge-base/lessons_learned.md` (if any).
-   - Read the tagging policy from `second-brain/70-resources/tagging-policy.md` (`[[tagging-policy]]`) to ensure correct tags.
-4. Read the design spec template from `second-brain/70-resources/templates/template-design-spec.md` as a structural guide.
+   - Use `view_file` to read the requirements from `second-brain/03-requirements-spec/features/<slug>/system_spec.md`.
+   - Read the epics and user stories from `second-brain/03-requirements-spec/features/<slug>/epics_user_stories.md` to understand user journeys.
+   - Read past lessons from `second-brain/02-knowledge-base/lessons_learned.md` (if any).
+   - Read the tagging policy from `second-brain/09-resources/tagging-policy.md` (`[[tagging-policy]]`) to ensure correct tags.
+4. Read the design spec template from `second-brain/09-resources/templates/template-design-spec.md` as a structural guide.
 
 ### 2. Design and Create
 
@@ -84,7 +84,7 @@ When you receive a task brief from the PM, follow these steps:
    - Responsive breakpoints and behavior
 6. **Interaction & Animation Notes**: Document micro-interactions, transitions, and animation guidelines per [frontend-ui-engineering](../../.agents/skills/frontend-ui-engineering/SKILL.md).
 7. **Accessibility Considerations**: Note WCAG compliance points (contrast ratios, focus management, ARIA labels).
-8. **Write Design Spec**: Use `write_to_file` to write the complete design specification to `second-brain/10-requirements-spec/features/<slug>/design_spec.md`, applying Obsidian Markdown formatting from [obsidian-markdown](../../.agents/skills/obsidian-markdown/SKILL.md). Use Wikilinks to reference `[[system_spec]]` and `[[epics_user_stories]]`.
+8. **Write Design Spec**: Use `write_to_file` to write the complete design specification to `second-brain/03-requirements-spec/features/<slug>/design_spec.md`, applying Obsidian Markdown formatting from [obsidian-markdown](../../.agents/skills/obsidian-markdown/SKILL.md). Use Wikilinks to reference `[[system_spec]]` and `[[epics_user_stories]]`.
 
 ### 3. Repair Returned or Failed Work
 
@@ -98,6 +98,6 @@ When you receive a task brief from the PM, follow these steps:
 
 1. **Release Task Lock**: Use `run_command` to run the script:
    `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent ux-ui --action release`
-2. **Log Diary**: Write a note in `second-brain/diary/YYYY-MM-DD-ux-ui.md` detailing the design decisions and component coverage.
+2. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-ux-ui.md` detailing the design decisions and component coverage.
 3. **Run Brain Linter**: Run `python3 scripts/brain_linter.py` to check Second Brain integrity.
 4. Notify the PM with a link to the design spec file and a brief status report. Do not send the entire specification content into the chat channel.

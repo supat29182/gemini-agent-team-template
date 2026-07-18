@@ -96,9 +96,9 @@ def main():
             folder_type = "bug"
 
         if args.type == "bug":
-            link_path = f"second-brain/20-architecture/bug/{args.slug}/bug_diagnosis.md"
+            link_path = f"second-brain/04-architecture/bug/{args.slug}/bug_diagnosis.md"
         else:
-            link_path = f"second-brain/10-requirements-spec/{folder_type}/{args.slug}/brd.md"
+            link_path = f"second-brain/03-requirements-spec/{folder_type}/{args.slug}/brd.md"
 
         link_text = f"[[{link_path}|{args.title}]]"
         new_row = f"| {current_date} | {link_text} | [Inbox] | {current_date} |"

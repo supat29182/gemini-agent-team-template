@@ -35,11 +35,11 @@ def main():
         folder_type = "bug"
 
     phases = {
-        "requirements": f"second-brain/10-requirements-spec/{folder_type}/{slug}",
-        "architecture": f"second-brain/20-architecture/{folder_type}/{slug}",
-        "development": f"second-brain/30-development/{folder_type}/{slug}",
-        "security": f"second-brain/40-security/{folder_type}/{slug}",
-        "qa": f"second-brain/50-qa-testing/{folder_type}/{slug}"
+        "requirements": f"second-brain/03-requirements-spec/{folder_type}/{slug}",
+        "architecture": f"second-brain/04-architecture/{folder_type}/{slug}",
+        "development": f"second-brain/05-development/{folder_type}/{slug}",
+        "security": f"second-brain/06-security/{folder_type}/{slug}",
+        "qa": f"second-brain/07-qa-testing/{folder_type}/{slug}"
     }
 
     print(f"Creating directories for '{slug}' ({args.type}) in '{folder_type}'...")
@@ -57,9 +57,9 @@ def main():
     templates = []
     if args.type in ["feature", "cr"]:
         templates = [
-            ("second-brain/70-resources/templates/template-brd.md", f"{phases['requirements']}/brd.md", "sa"),
-            ("second-brain/70-resources/templates/template-epics-user-stories.md", f"{phases['requirements']}/epics_user_stories.md", "sa"),
-            ("second-brain/70-resources/templates/template-system-spec.md", f"{phases['requirements']}/system_spec.md", "sa")
+            ("second-brain/09-resources/templates/template-brd.md", f"{phases['requirements']}/brd.md", "sa"),
+            ("second-brain/09-resources/templates/template-epics-user-stories.md", f"{phases['requirements']}/epics_user_stories.md", "sa"),
+            ("second-brain/09-resources/templates/template-system-spec.md", f"{phases['requirements']}/system_spec.md", "sa")
         ]
 
     print("\nCopying templates and filling placeholders...")

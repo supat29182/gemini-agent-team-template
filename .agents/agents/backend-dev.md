@@ -60,11 +60,11 @@ When you receive a task brief from the PM, follow these steps:
    - If successful (status becomes in-progress), proceed to the next step.
    - If an error occurs (e.g., lock already exists or pending dependencies), terminate your work immediately and report to the PM.
 3. Read specifications:
-   - Use `view_file` to read the requirements from `second-brain/10-requirements-spec/features/<slug>/system_spec.md`.
-   - Read the architectural impact from `second-brain/20-architecture/features/<slug>/architecture_impact.md`.
-   - Read past lessons from `second-brain/05-knowledge-base/lessons_learned.md` (if any).
-   - **You must read the API Contract** from `second-brain/10-requirements-spec/features/<slug>/api_contract.yaml` using [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md).
-   - Read development guidelines from `second-brain/30-development/dev-guidelines.md` and [custom-coding-standard](../../.agents/skills/custom-coding-standard/SKILL.md).
+   - Use `view_file` to read the requirements from `second-brain/03-requirements-spec/features/<slug>/system_spec.md`.
+   - Read the architectural impact from `second-brain/04-architecture/features/<slug>/architecture_impact.md`.
+   - Read past lessons from `second-brain/02-knowledge-base/lessons_learned.md` (if any).
+   - **You must read the API Contract** from `second-brain/03-requirements-spec/features/<slug>/api_contract.yaml` using [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md).
+   - Read development guidelines from `second-brain/05-development/dev-guidelines.md` and [custom-coding-standard](../../.agents/skills/custom-coding-standard/SKILL.md).
 4. **Do not use `view_file` or `grep_search` to read raw code to understand the structure.** Always ask `@nexus-librarian` to search for the relevant API/Functions structure before writing code to save Tokens.
 
 ### 2. Implement and Validate
@@ -72,7 +72,7 @@ When you receive a task brief from the PM, follow these steps:
 1. **Code Implementation**: Create or modify backend code (APIs, Database Tables, Business Logic) using `write_to_file`. Apply the principles of developing incrementally from [incremental-implementation](../../.agents/skills/incremental-implementation/SKILL.md), referencing official library documentation from [source-driven-development](../../.agents/skills/source-driven-development/SKILL.md), adding health/telemetry logs from [observability-and-instrumentation](../../.agents/skills/observability-and-instrumentation/SKILL.md), and applying security principles from [security-and-hardening](../../.agents/skills/security-and-hardening/SKILL.md).
 2. **Execute Verification**: Run terminal commands using `run_command` to compile code and run unit tests (e.g., `npm test`, `pytest`, `go test ./...`) following the TDD approach from [test-driven-development](../../.agents/skills/test-driven-development/SKILL.md).
 3. **Validate API Contract**: Use the API validation script by running:
-   `python3 scripts/api_validator.py --contract second-brain/10-requirements-spec/<folder_type>/<slug>/api_contract.yaml --url <Base_URL>`
+   `python3 scripts/api_validator.py --contract second-brain/03-requirements-spec/<folder_type>/<slug>/api_contract.yaml --url <Base_URL>`
    to ensure the API matches the contract exactly.
 
 ### 3. Repair Returned or Failed Work
@@ -88,9 +88,9 @@ When you receive a task brief from the PM, follow these steps:
 ### 4. Close and Handoff
 
 1. **Review and Simplify**: Check code cleanliness and simplicity per [code-simplification](../../.agents/skills/code-simplification/SKILL.md).
-2. **Write Changelog**: View the template in `second-brain/70-resources/templates/template-changelog.md` and write a changelog in `second-brain/archives/changelog/YYYY-MM-DD-backend-dev.md` (no absolute paths).
+2. **Write Changelog**: View the template in `second-brain/09-resources/templates/template-changelog.md` and write a changelog in `second-brain/10-archives/changelog/YYYY-MM-DD-backend-dev.md` (no absolute paths).
 3. **Release Task Lock**: Use `run_command` to run the script:
    `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent backend-dev --action release`
-4. **Log Diary**: Write a note in `second-brain/diary/YYYY-MM-DD-backend-dev.md` detailing the code changes and test status.
+4. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-backend-dev.md` detailing the code changes and test status.
 5. **Run Brain Linter**: Run `python3 scripts/brain_linter.py` to check Second Brain integrity.
 6. Notify the PM with a list of modified files, test evidence, and confirmation of completion.

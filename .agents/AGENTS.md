@@ -50,19 +50,19 @@ To ensure the "Second Brain" system functions as the project's knowledge base wi
     - All AI Agents must use Obsidian wikilink syntax `[[filename]]` or `[[filename#section]]` when referencing documents or specifications across categories.
     - _Do not_ specify filenames loosely without double square brackets.
 2.  **Append-and-Review Rule in the Inbox**:
-    - The `second-brain/00-inbox/inbox_log.md` (`[[inbox_log]]`) file will be used as the main task reception box.
+    - The `second-brain/01-inbox/inbox_log.md` (`[[inbox_log]]`) file will be used as the main task reception box.
     - When there is a new request, append it only to the **very top (Top-append)** of the LOGS, specifying the date, type, status, and a link to the results.
     - Avoid letting outdated records sink down without supervision. Regularly check and update statuses.
 3.  **Project Board**:
     - The `second-brain/project_board.md` (`[[project_board]]`) file is strictly the Single Source of Truth for viewing the overall project status.
     - `@pm-po` must update the task status on this board every time a phase transition occurs. No Agent is allowed to remember the state (Context) on its own to prevent miscommunication issues.
 4.  **Consistency of Main Document Paths**:
-    - **System Spec**: `second-brain/10-requirements-spec/system_spec.md` (`[[system_spec]]`)
-    - **API Contract**: `second-brain/10-requirements-spec/api_contract.yaml` (`[[api_contract]]`)
-    - **Architecture Impact**: `second-brain/20-architecture/architecture_impact.md` (`[[architecture_impact]]`)
-    - **Security Audit**: `second-brain/40-security/security_audit.md` (`[[security_audit]]`)
-    - **Test Plan**: `second-brain/50-qa-testing/test_plan.md` (`[[test_plan]]`)
-    - **Test Execution Log**: `second-brain/50-qa-testing/test_execution.md` (`[[test_execution]]`)
+    - **System Spec**: `second-brain/03-requirements-spec/system_spec.md` (`[[system_spec]]`)
+    - **API Contract**: `second-brain/03-requirements-spec/api_contract.yaml` (`[[api_contract]]`)
+    - **Architecture Impact**: `second-brain/04-architecture/architecture_impact.md` (`[[architecture_impact]]`)
+    - **Security Audit**: `second-brain/06-security/security_audit.md` (`[[security_audit]]`)
+    - **Test Plan**: `second-brain/07-qa-testing/test_plan.md` (`[[test_plan]]`)
+    - **Test Execution Log**: `second-brain/07-qa-testing/test_execution.md` (`[[test_execution]]`)
 
 ---
 
@@ -168,8 +168,8 @@ To conserve Tokens and prevent Context Bloat, AI Agents must adhere to the follo
 **Session Finalization Rules:**
 
 - **Update 00-Index**: If a Phase transition is successful, update the AISDLC Phase Tracker in `00-Index.md`.
-- **Diary Logging**: Record issues or pending task statuses into the `second-brain/diary/` folder.
-- **Changelog Logging**: If code is modified, create a log entry in `second-brain/archives/changelog/` using the Template.
+- **Diary Logging**: Record issues or pending task statuses into the `second-brain/11-diary/` folder.
+- **Changelog Logging**: If code is modified, create a log entry in `second-brain/10-archives/changelog/` using the Template.
 - **Post-Mortem & Reflection (Phase 4)**: Upon successful verification in Phase 3, record the Post-Mortem document following `template-postmortem.md` and extract brief summary lessons (One-Line Rule) to write updates into [[lessons_learned]].
 - **Rule Compounding**: If a previous error or Anti-Pattern repeatedly occurs more than once, immediately update the strict rules (Never Do) section for that specific bot in [AGENTS.md](file://.agents/AGENTS.md) or the bot's system file to enforce it as mandatory behavior in the next cycle.
 
@@ -179,7 +179,7 @@ To conserve Tokens and prevent Context Bloat, AI Agents must adhere to the follo
 
 All AIs must comply with the tagging policy when creating new files (always specified in the YAML Frontmatter):
 
-- **Do not create arbitrary document formats**: Use templates from `second-brain/70-resources/templates/`.
+- **Do not create arbitrary document formats**: Use templates from `second-brain/09-resources/templates/`.
 - **Tagging Policy**: Check `[[tagging-policy]]` (e.g., must include `#doc/spec` and `#phase/design`).
 
 ---
@@ -230,7 +230,7 @@ To prevent chaotic, risky executions, or causing system impact without screening
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **gemini-agent-team-template** (423 symbols, 469 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **gemini-agent-team-template** (448 symbols, 494 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 

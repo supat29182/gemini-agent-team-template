@@ -51,16 +51,16 @@ When receiving a task from the PM, follow these steps:
 
 ### 1. Initialize
 
-1. Use `view_file` to read the latest requirement history from `second-brain/00-inbox/inbox_log.md` (`[[inbox_log]]`) assigned by the PM.
-2. Use `view_file` to read the template from `second-brain/70-resources/templates/template-system-spec.md` as a structural guide.
-3. Read past lessons from `second-brain/05-knowledge-base/lessons_learned.md` (if any) to avoid repeating past spec design mistakes.
-4. Read the tagging policy from `second-brain/70-resources/tagging-policy.md` (`[[tagging-policy]]`) to ensure correct tags are applied in the Frontmatter (must include at least `#doc/spec` and `#phase/design`).
+1. Use `view_file` to read the latest requirement history from `second-brain/01-inbox/inbox_log.md` (`[[inbox_log]]`) assigned by the PM.
+2. Use `view_file` to read the template from `second-brain/09-resources/templates/template-system-spec.md` as a structural guide.
+3. Read past lessons from `second-brain/02-knowledge-base/lessons_learned.md` (if any) to avoid repeating past spec design mistakes.
+4. Read the tagging policy from `second-brain/09-resources/tagging-policy.md` (`[[tagging-policy]]`) to ensure correct tags are applied in the Frontmatter (must include at least `#doc/spec` and `#phase/design`).
 
 ### 2. Implement and Validate
 
-1. **Analyze and create business documents**: Use `write_to_file` to draft and populate `second-brain/10-requirements-spec/features/<slug>/brd.md` (business objectives, scope) and `second-brain/10-requirements-spec/features/<slug>/epics_user_stories.md` (break down requirements into Epics, User Stories, and Acceptance Criteria using the Given-When-Then format) by applying the [planning-and-task-breakdown](../../.agents/skills/planning-and-task-breakdown/SKILL.md) skill.
-2. **Design system specifications**: Analyze and create/edit the system specification document in `second-brain/10-requirements-spec/features/<slug>/system_spec.md` by applying principles of clarity from [spec-driven-development](../../.agents/skills/spec-driven-development/SKILL.md) and Markdown formatting from [obsidian-markdown](../../.agents/skills/obsidian-markdown/SKILL.md). Ensure it covers: User Journey, Business Logic, API Endpoints, and Database Schema.
-3. **Design API Contract**: Utilize the [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md) skill to design a clear API structure (REST/GraphQL/Schema) and use `write_to_file` to write the specification into `second-brain/10-requirements-spec/features/<slug>/api_contract.yaml`.
+1. **Analyze and create business documents**: Use `write_to_file` to draft and populate `second-brain/03-requirements-spec/features/<slug>/brd.md` (business objectives, scope) and `second-brain/03-requirements-spec/features/<slug>/epics_user_stories.md` (break down requirements into Epics, User Stories, and Acceptance Criteria using the Given-When-Then format) by applying the [planning-and-task-breakdown](../../.agents/skills/planning-and-task-breakdown/SKILL.md) skill.
+2. **Design system specifications**: Analyze and create/edit the system specification document in `second-brain/03-requirements-spec/features/<slug>/system_spec.md` by applying principles of clarity from [spec-driven-development](../../.agents/skills/spec-driven-development/SKILL.md) and Markdown formatting from [obsidian-markdown](../../.agents/skills/obsidian-markdown/SKILL.md). Ensure it covers: User Journey, Business Logic, API Endpoints, and Database Schema.
+3. **Design API Contract**: Utilize the [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md) skill to design a clear API structure (REST/GraphQL/Schema) and use `write_to_file` to write the specification into `second-brain/03-requirements-spec/features/<slug>/api_contract.yaml`.
 4. **Reference over Duplication**: In `system_spec.md`, use Wikilinks to reference business documents (e.g., `[[brd#Topic]]` and `[[epics_user_stories#Topic]]`) and link to `[[api_contract.yaml]]`.
 
 ### 3. Repair Returned or Failed Work
@@ -70,6 +70,6 @@ When receiving a task from the PM, follow these steps:
 
 ### 4. Close and Handoff
 
-1. Use `write_to_file` to write a brief note in `second-brain/diary/YYYY-MM-DD-sa.md` detailing what the written specification and API Contract cover, applying ADR/documentation practices from [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md).
+1. Use `write_to_file` to write a brief note in `second-brain/11-diary/YYYY-MM-DD-sa.md` detailing what the written specification and API Contract cover, applying ADR/documentation practices from [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md).
 2. Run Brain Linter: Use `run_command` to execute `python3 scripts/brain_linter.py` to check the integrity of the documents in the Second Brain.
 3. Reply to the PM with the links to the specification files and API Contract, along with a brief status report. Do not send the entire specification content into the chat channel.

@@ -177,9 +177,9 @@ def check_critical_files(workspace_dir):
     critical_files = [
         'second-brain/00-Index.md',
         'second-brain/project_board.md',
-        'second-brain/00-inbox/inbox_log.md',
-        'second-brain/70-resources/templates/template-system-spec.md',
-        'second-brain/70-resources/templates/template-changelog.md',
+        'second-brain/01-inbox/inbox_log.md',
+        'second-brain/09-resources/templates/template-system-spec.md',
+        'second-brain/09-resources/templates/template-changelog.md',
     ]
     
     for rel_path in critical_files:
@@ -591,7 +591,7 @@ def check_workspace_rules(workspace_dir, changed_files=None):
 def check_strategy_b_folders(workspace_dir):
     """Check the completeness of feature folders according to Strategy B"""
     errors = []
-    features_dir = os.path.join(workspace_dir, 'second-brain', '10-requirements-spec', 'features')
+    features_dir = os.path.join(workspace_dir, 'second-brain', '03-requirements-spec', 'features')
     if not os.path.exists(features_dir):
         return errors
         

@@ -17,7 +17,7 @@ def get_paths(workspace_dir, slug, task_type):
         # Default feature, remove cr/bug prefix if mistakenly provided
         slug = slug.replace("cr-", "").replace("bug-", "")
 
-    dev_dir = os.path.join(workspace_dir, "second-brain", "30-development", folder_type, slug)
+    dev_dir = os.path.join(workspace_dir, "second-brain", "05-development", folder_type, slug)
     locks_dir = os.path.join(dev_dir, "locks")
     legacy_file = os.path.join(dev_dir, "task_locks.json")
 

@@ -3,13 +3,13 @@ import shutil
 from datetime import datetime
 
 WORKSPACE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-INBOX_FILE = os.path.join(WORKSPACE_DIR, "second-brain", "00-inbox", "inbox_log.md")
-INBOX_ARCHIVE = os.path.join(WORKSPACE_DIR, "second-brain", "archives", "inbox_archive.md")
+INBOX_FILE = os.path.join(WORKSPACE_DIR, "second-brain", "01-inbox", "inbox_log.md")
+INBOX_ARCHIVE = os.path.join(WORKSPACE_DIR, "second-brain", "10-archives", "inbox_archive.md")
 
-TEST_LOG_FILE = os.path.join(WORKSPACE_DIR, "second-brain", "50-qa-testing", "test_execution.log")
-TEST_LOG_ARCHIVE_DIR = os.path.join(WORKSPACE_DIR, "second-brain", "archives", "test_logs")
-DIARY_DIR = os.path.join(WORKSPACE_DIR, "second-brain", "diary")
-DIARY_ARCHIVE_DIR = os.path.join(WORKSPACE_DIR, "second-brain", "archives", "diary")
+TEST_LOG_FILE = os.path.join(WORKSPACE_DIR, "second-brain", "07-qa-testing", "test_execution.log")
+TEST_LOG_ARCHIVE_DIR = os.path.join(WORKSPACE_DIR, "second-brain", "10-archives", "test_logs")
+DIARY_DIR = os.path.join(WORKSPACE_DIR, "second-brain", "11-diary")
+DIARY_ARCHIVE_DIR = os.path.join(WORKSPACE_DIR, "second-brain", "10-archives", "diary")
 
 INBOX_MAX_LINES = 200
 TEST_LOG_MAX_LINES = 1000

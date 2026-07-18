@@ -163,7 +163,7 @@ To illustrate real operations, here are mock scenarios and system reactions:
 This project coordinates with agent files defined under `.agents/`:
 - `.agents/AGENTS.md` - The AI constitution defining rules and constraints (e.g., GitNexus workflow, PM rules).
 - `.agents/agents/` - The system prompt profiles for each agent bot.
-- `second-brain/` - The Second Brain directory containing specs, code, logs, and lock files. Lock files are placed in `locks/` using atomic file writing to handle parallel task locking securely and avoid merge conflicts.
+- `second-brain/` - The Second Brain directory containing specs, code, logs, and lock files (11 sequential directories: `01-inbox` to `11-diary`). Lock files are placed in `locks/` using atomic file writing to handle parallel task locking securely and avoid merge conflicts.
 
 ### 2. Requesting New Features
 When you want the AI team to develop a new feature, you don't need to communicate with Devs or QA individually. Simply command the **PM** in the chat:

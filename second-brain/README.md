@@ -8,11 +8,15 @@ Welcome to the **AISDLC Second Brain**, the central hub for gathering, analyzing
 
 This folder is designed to support structured and systematic document storage as follows:
 
-### [📥 00-inbox](00-inbox/)
+### [📥 01-inbox](01-inbox/)
 
 - **Goal**: Record raw requirements, meeting notes, client briefs, or initial ideation for development.
 
-### [📝 10-requirements-spec](10-requirements-spec/)
+### [🧠 02-knowledge-base](02-knowledge-base/)
+
+- **Goal**: Accumulated knowledge base, lessons learned, and anti-patterns to avoid.
+
+### [📝 03-requirements-spec](03-requirements-spec/)
 
 - **Goal**: A repository for business requirements and system design specifications, divided into Core (central system) and individual feature/CR documents:
   - `system_spec.md` (Core System Specification): **The core system specification document serving as the Single Source of Truth** (consolidating all current system APIs and DB Schemas).
@@ -23,37 +27,45 @@ This folder is designed to support structured and systematic document storage as
     - `design_spec.md` (Design Specification): Created by `@ux-ui` to define wireframe descriptions, UI component specs, design tokens, and user flows.
 - **Key Documents**: Core `system_spec.md` and feature-specific folders under `features/`.
 
-### [📐 20-architecture](20-architecture/)
+### [📐 04-architecture](04-architecture/)
 
 - **Goal**: System architecture analysis and impact assessment (Blast Radius Analysis):
   - `features/<feature-id-slug>/architecture_impact.md`: Created by `@solution-architect` to outline affected files and design API boundaries/contracts.
 - **Key Documents**: Feature-specific folders under `features/`.
 
-### [💻 30-development](30-development/)
+### [💻 05-development](05-development/)
 
-- **Goal**: Coding guidelines and architectural standards for the project.
+- **Goal**: Coding guidelines and architectural standards for the project, plus decentralized task locks under `locks/`.
 - **Key Documents**: `dev-guidelines.md`.
 
-### [🛡️ 40-security](40-security/)
+### [🛡️ 06-security](06-security/)
 
 - **Goal**: Security audits and vulnerability scans (OWASP Top 10):
   - `features/<feature-id-slug>/security_audit.md`: Created by `@security` to outline scan findings and remediation steps.
 - **Key Documents**: Feature-specific folders under `features/`.
 
-### [🧪 50-qa-testing](50-qa-testing/)
+### [🧪 07-qa-testing](07-qa-testing/)
 
 - **Goal**: E2E quality assurance test planning and executions:
   - `features/<feature-id-slug>/test_plan.md`: Test plan designed by `@qa-automate`.
   - `features/<feature-id-slug>/test_execution.md`: Real execution logs recorded by `@qa-automate`.
 - **Key Documents**: Feature-specific folders under `features/`.
 
-### [🚀 60-delivery-ops](60-delivery-ops/)
+### [🚀 08-delivery-ops](08-delivery-ops/)
 
 - **Goal**: Deployment playbooks, environments details, release notes summaries, and incident reports (Post-Mortem Reports).
 
-### [📚 70-resources](70-resources/)
+### [📚 09-resources](09-resources/)
 
 - **Goal**: General manuals, cheat sheets, links to external docs, and shared knowledge bases.
+
+### [🗄️ 10-archives](10-archives/)
+
+- **Goal**: History of completed feature tasks and old changelogs.
+
+### [📓 11-diary](11-diary/)
+
+- **Goal**: Daily work logs recorded by AI agents.
 
 ---
 
@@ -108,7 +120,7 @@ graph TD
 
     subgraph "Phase 4: Release & Closure"
         PM -->|12. Merge spec changes to Core specs| Master[Core system_spec.md & api_contract.yaml]
-        PM -->|13. Move Folder to Archives| Archive[archives/ folder]
+        PM -->|13. Move Folder to Archives| Archive[10-archives/ folder]
     end
 
     PM -.->|Update Kanban board| PB[project_board.md]
@@ -126,7 +138,7 @@ In this Multi-Agent system, the human developer's role is to provide initial inp
 
 ### 1. Submitting Initial Requirements
 
-To request a new feature or report a bug, append your requirements to the **very top (Top-append)** of [inbox_log.md](file://second-brain/00-inbox/inbox_log.md) following the template format:
+To request a new feature or report a bug, append your requirements to the **very top (Top-append)** of [inbox_log.md](file://second-brain/01-inbox/inbox_log.md) following the template format:
 
 - Date (YYYY-MM-DD)
 - Type (Feature / Hotfix / Task)
@@ -157,7 +169,7 @@ If you want to add custom coding guidelines or standards for agents to follow:
    ---
    ```
 3. Document your guidelines in Markdown inside that file.
-4. Add the skill name to the `skills:` list in the corresponding agent files under [.gemini/agents/](file://../.gemini/agents/) (e.g., `backend-dev.md` or `frontend-dev.md`).
+4. Add the skill name to the `skills:` list in the corresponding agent files under [.agents/agents/](file://../.agents/agents/) (e.g., `backend-dev.md` or `frontend-dev.md`).
 
 ---
 
