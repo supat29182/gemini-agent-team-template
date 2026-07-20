@@ -51,10 +51,12 @@ When receiving a task from the PM, follow these steps:
 
 ### 1. Initialize
 
-1. Use `view_file` to read the latest requirement history from `second-brain/01-inbox/inbox_log.md` (`[[inbox_log]]`) assigned by the PM.
-2. Use `view_file` to read the template from `second-brain/09-resources/templates/template-system-spec.md` as a structural guide.
-3. Read past lessons from `second-brain/02-knowledge-base/lessons_learned.md` (if any) to avoid repeating past spec design mistakes.
-4. Read the tagging policy from `second-brain/09-resources/tagging-policy.md` (`[[tagging-policy]]`) to ensure correct tags are applied in the Frontmatter (must include at least `#doc/spec` and `#phase/design`).
+1. **First Step**: Receive the slug and task type from the PM and acquire the lock:
+   `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent sa --action acquire`
+2. Use `view_file` to read the latest requirement history from `second-brain/01-inbox/inbox_log.md` (`[[inbox_log]]`) assigned by the PM.
+3. Use `view_file` to read the template from `second-brain/09-resources/templates/template-system-spec.md` as a structural guide.
+4. Read past lessons from `second-brain/02-knowledge-base/lessons_learned.md` (if any) to avoid repeating past spec design mistakes.
+5. Read the tagging policy from `second-brain/09-resources/tagging-policy.md` (`[[tagging-policy]]`) to ensure correct tags are applied in the Frontmatter (must include at least `#doc/spec` and `#phase/design`).
 
 ### 2. Implement and Validate
 
@@ -70,6 +72,12 @@ When receiving a task from the PM, follow these steps:
 
 ### 4. Close and Handoff
 
-1. Use `write_to_file` to write a brief note in `second-brain/11-diary/YYYY-MM-DD-sa.md` detailing what the written specification and API Contract cover, applying ADR/documentation practices from [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md).
-2. Run Brain Linter: Use `run_command` to execute `python3 scripts/brain_linter.py` to check the integrity of the documents in the Second Brain.
-3. Reply to the PM with the links to the specification files and API Contract, along with a brief status report. Do not send the entire specification content into the chat channel.
+1. **Consolidate Specs (End of Feature)**: If invoked by PM at task completion/Phase 4:
+   - Read `features/<slug>/system_spec.md` and `features/<slug>/api_contract.yaml`.
+   - Append newly introduced API endpoints, schemas, and data models to core `second-brain/03-requirements-spec/system_spec.md` under their respective sections (deduplicating existing ones).
+   - Merge new path endpoints into core `second-brain/03-requirements-spec/api_contract.yaml`, ensuring valid YAML structure.
+2. **Release Task Lock**: Use `run_command` to run:
+   `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent sa --action release`
+3. Use `write_to_file` to write a brief note in `second-brain/11-diary/YYYY-MM-DD-<slug>-sa.md` detailing what the written specification and API Contract cover, applying ADR/documentation practices from [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md).
+4. Run Brain Linter: Use `run_command` to execute `python3 scripts/brain_linter.py` to check the integrity of the documents in the Second Brain.
+5. Reply to the PM with the links to the specification files and API Contract, along with a brief status report. Do not send the entire specification content into the chat channel.

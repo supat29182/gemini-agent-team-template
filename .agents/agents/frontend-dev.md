@@ -12,6 +12,7 @@ tools:
   - run_command
   - grep_search
   - call_mcp_tool
+  - nexus-librarian
 skills:
   - design-taste-frontend
   - frontend-ui-engineering
@@ -74,7 +75,7 @@ When you receive a task brief from the PM, follow these steps:
    - Read past lessons from `second-brain/02-knowledge-base/lessons_learned.md` (if any).
    - **You must read the API Contract** from `second-brain/03-requirements-spec/features/<slug>/api_contract.yaml` using [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md).
    - **You must read the Design Spec** from `second-brain/03-requirements-spec/features/<slug>/design_spec.md` created by `@ux-ui` to follow the UI design direction, component specifications, and design tokens.
-     - *Pay special attention to the **Stitch Project References** section. If Stitch Screen IDs are present, use `mcp_stitch_get_screen` to retrieve screen details for pixel-accurate implementation guidance.*
+     - **Mandatory Stitch Inspection**: You MUST check the **Stitch Project References** section in `design_spec.md`. Use `mcp_stitch_get_screen` (or `stitch/get_screen` via `call_mcp_tool`) to retrieve full visual and structure details for all referenced Stitch Screen IDs to ensure pixel-accurate frontend implementation.
    - Read development guidelines from `second-brain/05-development/dev-guidelines.md` and [custom-coding-standard](../../.agents/skills/custom-coding-standard/SKILL.md).
 4. **Do not use `view_file` or `grep_search` to read raw code to understand the structure.** Always ask `@nexus-librarian` to search for the relevant frontend structures (components, pages) before writing code to save Tokens.
 
@@ -99,9 +100,9 @@ When you receive a task brief from the PM, follow these steps:
 ### 4. Close and Handoff
 
 1. **Review and Simplify**: Check code cleanliness per [code-simplification](../../.agents/skills/code-simplification/SKILL.md).
-2. **Write Changelog**: View the template in `second-brain/09-resources/templates/template-changelog.md` and write a changelog in `second-brain/10-archives/changelog/YYYY-MM-DD-frontend-dev.md` (no absolute paths).
+2. **Write Changelog**: View the template in `second-brain/09-resources/templates/template-changelog.md` and write a changelog in `second-brain/10-archives/changelog/YYYY-MM-DD-<slug>-frontend-dev.md` (no absolute paths).
 3. **Release Task Lock**: Use `run_command` to run the script:
    `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent frontend-dev --action release`
-4. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-frontend-dev.md` detailing the UI changes and build status.
+4. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-<slug>-frontend-dev.md` detailing the UI changes and build status.
 5. **Run Brain Linter**: Run `python3 scripts/brain_linter.py` to check Second Brain integrity.
 6. Notify the PM with a list of modified files, build evidence, and confirmation of completion.

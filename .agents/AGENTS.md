@@ -13,15 +13,15 @@ The software development process in this Workspace is divided into 4 main phases
                   │                       │                         │
                   ▼                       ▼                         ▼
           [PHASE 1: DESIGN]     [PHASE 2: IMPLEMENTATION]   [PHASE 3: VERIFICATION]
-          (Sequential)          (Sequential/Parallel)       (Parallel Block)
+          (Sequential Chain)    (Sequential/Parallel)       (Parallel Block)
           - sa (Spec)           - backend-dev  &            - security (Audit)
           - ux-ui (Design Spec)   qa-automate (Test Plan)   - qa-automate (E2E)
           - solution-architect  ── Sync Point 2 ──          ── Sync Point 3 ──
             (Impact Analysis)   - frontend-dev                     │
-                                ── Sync Point 2.5 ──               ▼
-                                                       [PHASE 4: POST-MORTEM]
-                                                       - dev / solution-architect
-                                                         (Lessons learned & Rule Compounding)
+          ── Sync Point 1 ──    ── Sync Point 2.5 ──               ▼
+                                                       [PHASE 4: POST-MORTEM & CONSOLIDATION]
+                                                       - solution-architect (Post-Mortem)
+                                                       - sa (Consolidate Specs)
 ```
 
 1.  **Do not skip workflow steps**: Work must always begin with the design phase. The development team is strictly prohibited from writing code before the system specification documents and architectural impact analysis are fully completed.
@@ -75,6 +75,10 @@ To ensure the "Second Brain" system functions as the project's knowledge base wi
 2.  **Security Engineer's Code Modifications**:
     - The `@security` bot is prohibited from modifying or writing core system code by itself to prevent Business Logic Broken issues.
     - Its duty is to analyze, detect risks, and specify remediation steps clearly in the `[[security_audit]]` report so the Dev can execute them.
+3.  **Mandatory Stitch Prototype for UI Tasks**:
+    - The `@ux-ui` agent is strictly prohibited from delivering `design_spec.md` without creating visual prototypes on Google Stitch first.
+    - The `@pm-po` must verify that the handoff includes a Stitch Project ID before transitioning past Sync Point 1.
+    - For non-UI tasks, `@pm-po` must explicitly skip the `ux-ui` lock using `python3 scripts/lock_manager.py --action skip`.
 
 ---
 
@@ -111,7 +115,7 @@ This system orchestrates the collaboration of 9 Agents, whose configurations are
 - **Role**: ออกแบบและสร้าง Visual Prototypes ผ่าน Google Stitch MCP พร้อมเขียน `design_spec.md` (Wireframes, Component Specs, Design Tokens, User Flow)
 - **Input**: Specifications จาก `[[system_spec]]` และ `[[epics_user_stories]]` (สั่งจาก `@pm-po`)
 - **Output**: สร้าง UI Screens บน Stitch และเขียน `design_spec.md` ลงในโฟลเดอร์ Feature เพื่อเป็น Reference ให้ `@frontend-dev`
-- **Critical Constraints**: **ห้ามเขียน Production Code (HTML/CSS/JS) ด้วยตัวเอง** หน้าที่คือออกแบบสร้าง Visual Prototypes บน Stitch และทำ Specification ในรูปแบบข้อความเท่านั้น
+- **Critical Constraints**: **ห้ามเขียน Production Code (HTML/CSS/JS) ด้วยตัวเอง และห้ามส่งงานโดยไม่สร้าง Visual Prototype บน Stitch** ทุกงาน UI ต้องมี Stitch Project ID และ Screen IDs ใน `design_spec.md` เสมอ
 - **Skills Used**: `stitch-design-taste`, `frontend-ui-engineering`, `brandkit`, `obsidian-markdown`, `interview-me`
 
 ### 4. Solution Architect (`solution-architect.md`)
@@ -130,8 +134,8 @@ This system orchestrates the collaboration of 9 Agents, whose configurations are
 
 ### 6. Frontend Developer (`frontend-dev.md`)
 
-- **Role**: Designs and develops UI/UX and connects to Frontend APIs. Has **read-only** access to Stitch MCP for retrieving visual prototype details.
-- **Input**: Specifications from `[[system_spec]]`, API agreements from `api_contract.yaml`, and Stitch screen references from `design_spec.md` (as commanded by `@pm-po`).
+- **Role**: Designs and develops UI/UX and connects to Frontend APIs. Has **read-only** access to Stitch MCP for retrieving visual prototype details designed by `@ux-ui`.
+- **Input**: Specifications from `[[system_spec]]`, API agreements from `api_contract.yaml`, and Stitch screen references from `design_spec.md` (as commanded by `@pm-po`). **Must inspect Stitch screens via Stitch MCP (`get_screen`) before implementing UI.**
 - **Output**: Writes Client-side code referencing `api_contract.yaml` and Stitch prototypes, ensures the build passes, writes changelog entries, and logs in the diary.
 - **Skills Used**: `design-taste-frontend`, `frontend-ui-engineering`, `test-driven-development`, `incremental-implementation`, `source-driven-development`, `code-simplification`, `debugging-and-error-recovery`, `custom-coding-standard`, `performance-optimization`, `browser-testing-with-devtools`, `api-and-interface-design`
 

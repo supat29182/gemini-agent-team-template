@@ -95,6 +95,6 @@ When you receive a task brief from the PM, follow these steps:
 1. **Release Task Lock**:
    - For Phase 2: Run `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent qa-test-plan --action release`.
    - For Phase 3: Run `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent qa-automate-execution --action release`.
-2. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-qa-automate.md`.
+2. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-<slug>-qa-automate.md`.
 3. **Run Brain Linter**: Run `python3 scripts/brain_linter.py` to check Second Brain integrity.
 4. Notify the PM with a link to the output file and a brief summary of test cases and outcomes.

@@ -54,9 +54,11 @@ When receiving a task from the PM, follow these steps:
 
 ### 1. Initialize
 
-1. Identify the task type: **Design Impact Analysis** (Phase 1) or **Post-Mortem Reflection** (Phase 4).
-2. For Phase 1: Use `view_file` to read the feature's system specification from `second-brain/03-requirements-spec/features/<slug>/system_spec.md`.
-3. For Phase 4: Use `view_file` to read the template from `second-brain/09-resources/templates/template-postmortem.md` and read past lessons from `second-brain/02-knowledge-base/lessons_learned.md`.
+1. **First Step**: Receive slug and task type from PM and acquire lock:
+   `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent solution-architect --action acquire`
+2. Identify the task type: **Design Impact Analysis** (Phase 1) or **Post-Mortem Reflection** (Phase 4).
+3. For Phase 1: Use `view_file` to read the feature's system specification from `second-brain/03-requirements-spec/features/<slug>/system_spec.md`.
+4. For Phase 4: Use `view_file` to read the template from `second-brain/09-resources/templates/template-postmortem.md` and read past lessons from `second-brain/02-knowledge-base/lessons_learned.md`.
 
 ### 2. Implement and Validate
 
@@ -79,6 +81,8 @@ When receiving a task from the PM, follow these steps:
 
 ### 4. Close and Handoff
 
-1. Use `write_to_file` to make a brief note in `second-brain/11-diary/YYYY-MM-DD-architect.md` outlining the Blast Radius coverage or post-mortem findings, referencing ADR/documentation practices from [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md) and deprecation rules from [deprecation-and-migration](../../.agents/skills/deprecation-and-migration/SKILL.md).
-2. Run Brain Linter: Use `run_command` to execute `python3 scripts/brain_linter.py` to check document integrity.
-3. Reply briefly to the PM with the created file link.
+1. **Release Task Lock**: Use `run_command` to run:
+   `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent solution-architect --action release`
+2. Use `write_to_file` to make a brief note in `second-brain/11-diary/YYYY-MM-DD-<slug>-architect.md` outlining the Blast Radius coverage or post-mortem findings, referencing ADR/documentation practices from [documentation-and-adrs](../../.agents/skills/documentation-and-adrs/SKILL.md) and deprecation rules from [deprecation-and-migration](../../.agents/skills/deprecation-and-migration/SKILL.md).
+3. Run Brain Linter: Use `run_command` to execute `python3 scripts/brain_linter.py` to check document integrity.
+4. Reply briefly to the PM with the created file link.

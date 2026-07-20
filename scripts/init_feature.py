@@ -10,6 +10,7 @@ def main():
     parser.add_argument("--slug", required=True, help="Folder slug for the feature (e.g. line-notify)")
     parser.add_argument("--title", help="Title of the feature/CR (e.g. Line Notify System)")
     parser.add_argument("--type", choices=["feature", "cr", "bug"], default="feature", help="Type of task (feature, cr, bug)")
+    parser.add_argument("--skip-agents", default="", help="Comma-separated agent names to skip (e.g. ux-ui)")
     args = parser.parse_args()
 
     slug = args.slug.strip().lower().replace(" ", "-")
@@ -95,7 +96,9 @@ def main():
     print(f"\nInitializing decentralized lock files in '{phases['development']}/locks'...")
 
     lock_definitions = {
+        "sa": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 30},
         "ux-ui": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 40},
+        "solution-architect": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 30},
         "backend-dev": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 45},
         "frontend-dev": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 45},
         "qa-test-plan": {"status": "idle", "locked_by": "", "locked_at": "", "completed_at": "", "ttl_mins": 35},
@@ -109,6 +112,14 @@ def main():
         lock_definitions["qa-test-plan"]["reason"] = "Bug fix - No new test plan required"
         lock_definitions["security-audit"]["status"] = "skipped"
         lock_definitions["security-audit"]["reason"] = "Bug fix - No new API endpoints, regression check only"
+
+    # Process --skip-agents flag
+    if args.skip_agents:
+        skip_list = [a.strip() for a in args.skip_agents.split(",") if a.strip()]
+        for sa_name in skip_list:
+            if sa_name in lock_definitions:
+                lock_definitions[sa_name]["status"] = "skipped"
+                lock_definitions[sa_name]["reason"] = "Skipped by PM at init"
 
     for agent_name, init_data in lock_definitions.items():
         lock_file_path = os.path.join(locks_dir, f"{agent_name}.json")

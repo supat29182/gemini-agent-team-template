@@ -7,6 +7,7 @@ tools:
   - list_dir
   - run_command
   - grep_search
+  - nexus-librarian
 skills:
   - test-driven-development
   - incremental-implementation
@@ -88,9 +89,9 @@ When you receive a task brief from the PM, follow these steps:
 ### 4. Close and Handoff
 
 1. **Review and Simplify**: Check code cleanliness and simplicity per [code-simplification](../../.agents/skills/code-simplification/SKILL.md).
-2. **Write Changelog**: View the template in `second-brain/09-resources/templates/template-changelog.md` and write a changelog in `second-brain/10-archives/changelog/YYYY-MM-DD-backend-dev.md` (no absolute paths).
+2. **Write Changelog**: View the template in `second-brain/09-resources/templates/template-changelog.md` and write a changelog in `second-brain/10-archives/changelog/YYYY-MM-DD-<slug>-backend-dev.md` (no absolute paths).
 3. **Release Task Lock**: Use `run_command` to run the script:
    `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent backend-dev --action release`
-4. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-backend-dev.md` detailing the code changes and test status.
+4. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-<slug>-backend-dev.md` detailing the code changes and test status.
 5. **Run Brain Linter**: Run `python3 scripts/brain_linter.py` to check Second Brain integrity.
 6. Notify the PM with a list of modified files, test evidence, and confirmation of completion.

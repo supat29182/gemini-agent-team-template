@@ -54,13 +54,14 @@ When you receive a task brief from the PM, follow these steps:
 2. **Acquire Task Lock**: Use `run_command` to run the script `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent security-audit --action acquire`.
    - If successful (status becomes in-progress), proceed to the next step.
    - If an error occurs (e.g., pending dependencies or lock already exists), terminate work immediately and report to the PM.
-3. Read specifications:
+3. Read specifications & scope:
    - Use `view_file` to read the requirements from `second-brain/03-requirements-spec/features/<slug>/system_spec.md`.
+   - Use `view_file` to read `second-brain/04-architecture/features/<slug>/architecture_impact.md` to identify all modified/added files across both backend and frontend.
    - Read past security issues/lessons from `second-brain/02-knowledge-base/lessons_learned.md` (if any).
 
 ### 2. Implement and Validate
 
-1. **Execute Security Scanning**: Use `grep_search` to scan for suspicious code patterns, hardcoded secrets, or unvalidated inputs. Run automated scan tools (e.g., `npm audit`, `pip-audit`, `truffleHog`, `semgrep`) using `run_command` if available in the workspace.
+1. **Execute Security Scanning**: Use `grep_search` to scan for suspicious code patterns, hardcoded secrets, unvalidated inputs, unsafe innerHTML/DOM manipulation (frontend), or SQL/command injection vulnerabilities (backend) across all identified modified files. Run automated scan tools (e.g., `npm audit`, `pip-audit`, `truffleHog`, `semgrep`) using `run_command` if available in the workspace.
 2. **Perform Code Security Review**: Apply checklists and hardening rules from [security-and-hardening](../../.agents/skills/security-and-hardening/SKILL.md), review API boundaries from [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md), conduct reviews per [code-review-and-quality](../../.agents/skills/code-review-and-quality/SKILL.md), and investigate vulnerabilities per [doubt-driven-development](../../.agents/skills/doubt-driven-development/SKILL.md).
 3. **Compile Audit Report**: Document findings in `second-brain/06-security/features/<slug>/security_audit.md` using `write_to_file`. Ensure you reference spec files via Wikilinks and explicitly set the first heading to **[STATUS: PASSED]** or **[STATUS: FAILED]**.
 
@@ -73,6 +74,6 @@ When you receive a task brief from the PM, follow these steps:
 
 1. **Release Task Lock**: Use `run_command` to run the script:
    `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent security-audit --action release`
-2. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-security.md` detailing the scanned files and findings.
+2. **Log Diary**: Write a note in `second-brain/11-diary/YYYY-MM-DD-<slug>-security.md` detailing the scanned files and findings.
 3. **Run Brain Linter**: Run `python3 scripts/brain_linter.py` to check Second Brain integrity.
 4. Notify the PM with a brief status report: `"Code Audit completed. Result: [STATUS PASSED/FAILED]"` and link to the audit file.

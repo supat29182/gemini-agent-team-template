@@ -589,7 +589,7 @@ def check_workspace_rules(workspace_dir, changed_files=None):
     return errors
 
 def check_strategy_b_folders(workspace_dir):
-    """Check the completeness of feature folders according to Strategy B"""
+    """Check the completeness of feature folders according to Strategy B including YAML contracts"""
     errors = []
     features_dir = os.path.join(workspace_dir, 'second-brain', '03-requirements-spec', 'features')
     if not os.path.exists(features_dir):
@@ -608,6 +608,20 @@ def check_strategy_b_folders(workspace_dir):
                         'file': rel_path,
                         'type': 'missing_feature_artifact',
                         'reason': f"Feature '{slug}' is missing required spec file: {req_file} (Strategy B requires BRD, Epics & User Stories, and System Spec in every feature)"
+                    })
+            
+            # Check api_contract.yaml syntax if present
+            yaml_path = os.path.join(slug_dir, 'api_contract.yaml')
+            if os.path.exists(yaml_path):
+                rel_path = os.path.relpath(yaml_path, workspace_dir)
+                try:
+                    with open(yaml_path, 'r', encoding='utf-8') as f:
+                        yaml.safe_load(f)
+                except yaml.YAMLError as e:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'invalid_api_contract_yaml',
+                        'reason': f"api_contract.yaml in feature '{slug}' contains invalid YAML syntax: {e}"
                     })
     return errors
 

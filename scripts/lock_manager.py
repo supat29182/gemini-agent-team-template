@@ -83,7 +83,7 @@ def main():
     parser.add_argument("--slug", required=True, help="Feature/Bug slug")
     parser.add_argument("--type", choices=["feature", "cr", "bug"], default="feature")
     parser.add_argument("--agent", required=False, help="Agent name (e.g. backend-dev, frontend-dev, qa-test-plan, security-audit, qa-automate-execution)")
-    parser.add_argument("--action", choices=["acquire", "release", "fail", "reset", "status-all"], required=True)
+    parser.add_argument("--action", choices=["acquire", "release", "fail", "reset", "status-all", "skip"], required=True)
     parser.add_argument("--reason", default="", help="Reason for failure (used with fail action)")
     
     args = parser.parse_args()
@@ -105,19 +105,23 @@ def main():
         
     current_time = datetime.now().isoformat()
     
+    default_ttls = {
+        "sa": 30,
+        "ux-ui": 40,
+        "solution-architect": 30,
+        "backend-dev": 45,
+        "frontend-dev": 45,
+        "qa-test-plan": 35,
+        "security-audit": 25,
+        "qa-automate-execution": 35
+    }
+
     if args.action == "status-all":
-        agents_list = ["backend-dev", "frontend-dev", "qa-test-plan", "security-audit", "qa-automate-execution"]
+        agents_list = ["sa", "ux-ui", "solution-architect", "backend-dev", "frontend-dev", "qa-test-plan", "security-audit", "qa-automate-execution"]
         summary = {}
         for ag in agents_list:
             ag_data = read_lock_status(locks_dir, legacy_file, ag, is_decentralized)
             if not ag_data:
-                default_ttls = {
-                    "backend-dev": 45,
-                    "frontend-dev": 45,
-                    "qa-test-plan": 35,
-                    "security-audit": 25,
-                    "qa-automate-execution": 35
-                }
                 ag_data = {
                     "status": "idle",
                     "locked_by": "",
@@ -142,13 +146,6 @@ def main():
     
     if not agent_data:
         # Lazy initialization
-        default_ttls = {
-            "backend-dev": 45,
-            "frontend-dev": 45,
-            "qa-test-plan": 35,
-            "security-audit": 25,
-            "qa-automate-execution": 35
-        }
         agent_data = {
             "status": "idle",
             "locked_by": "",
@@ -166,7 +163,30 @@ def main():
             sys.exit(1)
             
         # Dependency checks
-        if args.agent == "frontend-dev":
+        if args.agent == "ux-ui":
+            sa_status = read_lock_status(locks_dir, legacy_file, "sa", is_decentralized)
+            if sa_status and sa_status.get("status") != "completed":
+                print("Error: Dependency failed. ux-ui requires sa to be completed.")
+                sys.exit(1)
+        elif args.agent == "solution-architect":
+            sa_status = read_lock_status(locks_dir, legacy_file, "sa", is_decentralized)
+            if sa_status and sa_status.get("status") != "completed":
+                print("Error: Dependency failed. solution-architect requires sa to be completed.")
+                sys.exit(1)
+            uxui_status = read_lock_status(locks_dir, legacy_file, "ux-ui", is_decentralized)
+            if uxui_status and uxui_status.get("status") not in ["completed", "skipped"]:
+                print("Error: Dependency failed. solution-architect requires ux-ui to be completed or skipped.")
+                sys.exit(1)
+        elif args.agent == "backend-dev":
+            sa_arch_status = read_lock_status(locks_dir, legacy_file, "solution-architect", is_decentralized)
+            if sa_arch_status and sa_arch_status.get("status") not in ["completed", "skipped"]:
+                print("Error: Dependency failed. backend-dev requires solution-architect to be completed or skipped.")
+                sys.exit(1)
+        elif args.agent == "frontend-dev":
+            uxui_status = read_lock_status(locks_dir, legacy_file, "ux-ui", is_decentralized)
+            if not uxui_status or uxui_status.get("status") not in ["completed", "skipped"]:
+                print("Error: Dependency failed. frontend-dev requires ux-ui to be completed or skipped.")
+                sys.exit(1)
             backend_status = read_lock_status(locks_dir, legacy_file, "backend-dev", is_decentralized)
             if not backend_status or backend_status.get("status") != "completed":
                 print("Error: Dependency failed. frontend-dev requires backend-dev to be completed.")
@@ -177,12 +197,12 @@ def main():
             
             backend_ok = backend_status and backend_status.get("status") == "completed"
             
-            # For bug type, frontend-dev might be skipped or completed
+            # For non-bug tasks, frontend-dev must be completed or skipped (not idle)
             frontend_ok = False
             if frontend_status:
-                frontend_ok = frontend_status.get("status") in ["completed", "skipped", "idle"]
+                allowed_frontend = ["completed", "skipped", "idle"] if args.type == "bug" else ["completed", "skipped"]
+                frontend_ok = frontend_status.get("status") in allowed_frontend
             else:
-                # If frontend-dev file does not exist, check if it's bug type
                 if args.type == "bug":
                     frontend_ok = True
                      
@@ -208,6 +228,14 @@ def main():
         if args.reason:
             agent_data["reason"] = args.reason
         print(f"Success: Marked '{args.agent}' as failed.")
+
+    elif args.action == "skip":
+        agent_data["status"] = "skipped"
+        if args.reason:
+            agent_data["reason"] = args.reason
+        else:
+            agent_data["reason"] = "Skipped by PM"
+        print(f"Success: Marked '{args.agent}' as skipped.")
         
     elif args.action == "reset":
         agent_data["status"] = "idle"
