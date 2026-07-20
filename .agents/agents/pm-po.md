@@ -69,6 +69,27 @@ When notified to start work, or upon finding new Requirement data at the very to
 
 ### 2. Implement and Validate
 
+#### Triage: Hotfix Lane vs Standard Lane
+
+Before entering Phase 1, evaluate the task scope:
+
+- **Hotfix Lane** — Use when ALL of the following are true:
+  - The change affects **≤ 3 files** and does NOT add new API endpoints, routes, database tables, or architectural components.
+  - Examples: CSS color/spacing fix, text/typo correction, broken link repair, copy update, simple config change.
+- **Standard Lane** — Use for everything else (new features, CRs with new screens/APIs, structural changes).
+
+---
+
+#### [If Hotfix Lane]
+
+1. Skip Phase 1 (SA, UX-UI, Solution Architect). Directly assign the task to `@frontend-dev` or `@backend-dev` with a clear description of the fix.
+2. Once Dev finishes, proceed to **Phase 3 (QA only)** — invoke `@qa-automate` for testing. Skip `@security` for CSS/text-only changes.
+3. After QA passes, skip Phase 4 (Post-Mortem) and go directly to **Close and Handoff** (step 4).
+
+---
+
+#### [If Standard Lane]
+
 1. **[PHASE 1: DESIGN]**: Send the Requirement brief with the slug to `@sa` to draft business docs (`brd.md`, `epics_user_stories.md`), the `system_spec.md` spec, and `api_contract.yaml`.
 2. Once `@sa` finishes, send the spec file to `@ux-ui` to create `design_spec.md` with wireframe descriptions, component specifications, design tokens, and user flow diagrams in `second-brain/03-requirements-spec/features/<slug>/design_spec.md`.
 3. Once `@ux-ui` finishes, send the spec file to `@solution-architect` to analyze impact and record it in `second-brain/04-architecture/features/<slug>/architecture_impact.md`. Wait until all documents are complete.

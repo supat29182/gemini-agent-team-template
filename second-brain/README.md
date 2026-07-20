@@ -24,7 +24,7 @@ This folder is designed to support structured and systematic document storage as
     - `brd.md` (Business Requirement Document): Created by `@pm-po` to define the goals, scope, and target users.
     - `epics_user_stories.md` (Epics, User Stories & Acceptance Criteria): Created by `@pm-po` to break down features into user stories with AC (Given-When-Then format).
     - `system_spec.md` (Feature System Specification): Created by `@sa` to describe technical specs specific to this feature.
-    - `design_spec.md` (Design Specification): Created by `@ux-ui` to define wireframe descriptions, UI component specs, design tokens, and user flows.
+    - `design_spec.md` (Design Specification): Created by `@ux-ui` to define wireframe descriptions, UI component specs, design tokens, and user flows, using Stitch MCP for visual prototyping (with `DESIGN.md`).
 - **Key Documents**: Core `system_spec.md` and feature-specific folders under `features/`.
 
 ### [📐 04-architecture](04-architecture/)
@@ -48,7 +48,7 @@ This folder is designed to support structured and systematic document storage as
 
 - **Goal**: E2E quality assurance test planning and executions:
   - `features/<feature-id-slug>/test_plan.md`: Test plan designed by `@qa-automate`.
-  - `features/<feature-id-slug>/test_execution.md`: Real execution logs recorded by `@qa-automate`.
+  - `features/<feature-id-slug>/test_execution.md`: Real execution logs recorded by `@qa-automate` (using Playwright MCP for UI tasks or CLI runners for non-UI tasks based on Decision Rule).
 - **Key Documents**: Feature-specific folders under `features/`.
 
 ### [🚀 08-delivery-ops](08-delivery-ops/)
@@ -141,7 +141,7 @@ In this Multi-Agent system, the human developer's role is to provide initial inp
 To request a new feature or report a bug, append your requirements to the **very top (Top-append)** of [inbox_log.md](file://second-brain/01-inbox/inbox_log.md) following the template format:
 
 - Date (YYYY-MM-DD)
-- Type (Feature / Hotfix / Task)
+- Type (Feature / Hotfix / CR / Bug)
 - Detailed Requirements
 - Initial Status: `Pending`
 

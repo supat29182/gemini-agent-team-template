@@ -74,8 +74,13 @@ When you receive a task brief from the PM, follow these steps:
 #### [If Phase 3: Automated Test Execution]
 
 1. Read the Test Plan at `second-brain/07-qa-testing/features/<slug>/test_plan.md`.
-2. **Execute E2E Tests**: Use `playwright` MCP tools (e.g., `mcp_playwright_navigate`, `mcp_playwright_click`) to run browser tests interactively, or run test scripts via CLI using `run_command` (e.g., `npx playwright test`).
-3. **Save Results**: Write results to `second-brain/07-qa-testing/features/<slug>/test_execution.md` using `write_to_file`.
+2. **Determine Test Strategy (Decision Rule)**:
+   - Check if `design_spec.md` exists in the feature folder (`second-brain/03-requirements-spec/features/<slug>/design_spec.md`).
+   - **If `design_spec.md` exists → UI Task**: Use **Playwright MCP** tools (`mcp_playwright_navigate`, `mcp_playwright_click`, `mcp_playwright_screenshot`) to run browser-based E2E tests that validate visual elements, user flows, and interactions.
+   - **If `design_spec.md` does NOT exist → Non-UI Task**: Use **`run_command`** to execute CLI-based tests (e.g., `npm test`, `pytest`, `curl` for API validations). Do NOT invoke Playwright.
+   - **If both UI and API changes exist**: Run Playwright for UI flows AND CLI tests for API validations.
+3. **Execute Tests** according to the strategy determined above.
+4. **Save Results**: Write results to `second-brain/07-qa-testing/features/<slug>/test_execution.md` using `write_to_file`.
 
 ### 3. Repair Returned or Failed Work
 

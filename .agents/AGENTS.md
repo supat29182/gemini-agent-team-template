@@ -25,6 +25,7 @@ The software development process in this Workspace is divided into 4 main phases
 ```
 
 1.  **Do not skip workflow steps**: Work must always begin with the design phase. The development team is strictly prohibited from writing code before the system specification documents and architectural impact analysis are fully completed.
+    - **Exception — Hotfix Lane**: For trivial changes (≤ 3 files, no new endpoints/routes/tables), `@pm-po` may skip Phase 1 (SA, UX-UI, Architect) and assign directly to Dev → QA. Security Audit may be skipped for CSS/text-only changes. Phase 4 (Post-Mortem) is optional for Hotfix tasks.
 2.  **Scope of forwarded data**: Design data, code, and security audit results must be converted into documentation in the Second Brain so the team can utilize and reference them.
 3.  **Feedback Loop Mechanism**:
     - If `@security` detects a vulnerability at the FAILED level in `[[security_audit]]`, send a report directly to `@pm-po` so the PM can send the task back to the Dev team to fix until it passes.
@@ -95,7 +96,7 @@ This system orchestrates the collaboration of 9 Agents, whose configurations are
 - **Role**: The center and controller of the AISDLC process (Flat Orchestrator).
 - **Critical Constraints**: **The PM/PO is strictly prohibited from writing or editing core project code, and must never draft technical specification documents themselves.** The PM/PO operates as a **Blind Orchestrator**, absolutely forbidden from using commands to read technical specification files (e.g., `system_spec.md`, `api_contract.yaml`) or any source code files on their own to review work (to save Tokens), and **must not memorize the project state on their own, always relying on the Project Board as the core.** The PM/PO only distributes Feature Slugs for Specialist Agents to read the files themselves.
 - **Initial Input**: Read the latest requirements from `[[inbox_log]]` and the status from `[[project_board]]`.
-- **Task Delegation**: Directly delegates tasks to each specialist agent according to the Phase (sa, ux-ui, solution-architect, backend-dev, frontend-dev, security, qa-automate).
+- **Task Delegation**: Directly delegates tasks to each specialist agent according to the Phase (sa, ux-ui, solution-architect, backend-dev, frontend-dev, security, qa-automate). For trivial changes (Hotfix Lane), may skip Phase 1 and assign directly to Dev → QA.
 - **Skills Used**: `using-agent-skills`, `context-engineering`, `idea-refine`, `interview-me`, `planning-and-task-breakdown`, `git-workflow-and-versioning`
 
 ### 2. System Analyst (`sa.md`)
@@ -107,11 +108,11 @@ This system orchestrates the collaboration of 9 Agents, whose configurations are
 
 ### 3. UX/UI Designer (`ux-ui.md`)
 
-- **Role**: ออกแบบ Wireframes, UI Component Specifications, Design Tokens และ User Flow Diagrams ในรูปแบบ text-based (`design_spec.md`)
+- **Role**: ออกแบบและสร้าง Visual Prototypes ผ่าน Google Stitch MCP พร้อมเขียน `design_spec.md` (Wireframes, Component Specs, Design Tokens, User Flow)
 - **Input**: Specifications จาก `[[system_spec]]` และ `[[epics_user_stories]]` (สั่งจาก `@pm-po`)
-- **Output**: เขียน `design_spec.md` ที่ครอบคลุม Wireframe Descriptions, Component Specs, Design Tokens และ Interaction Guidelines ลงในโฟลเดอร์ Feature เพื่อเป็น Reference ให้ `@frontend-dev`
-- **Critical Constraints**: **ห้ามเขียน Production Code (HTML/CSS/JS) ด้วยตัวเอง** หน้าที่คือออกแบบและสร้าง Visual Specification ในรูปแบบข้อความเท่านั้น
-- **Skills Used**: `design-taste-frontend`, `frontend-ui-engineering`, `high-end-visual-design`, `brandkit`, `stitch-design-taste`, `obsidian-markdown`, `interview-me`
+- **Output**: สร้าง UI Screens บน Stitch และเขียน `design_spec.md` ลงในโฟลเดอร์ Feature เพื่อเป็น Reference ให้ `@frontend-dev`
+- **Critical Constraints**: **ห้ามเขียน Production Code (HTML/CSS/JS) ด้วยตัวเอง** หน้าที่คือออกแบบสร้าง Visual Prototypes บน Stitch และทำ Specification ในรูปแบบข้อความเท่านั้น
+- **Skills Used**: `stitch-design-taste`, `frontend-ui-engineering`, `brandkit`, `obsidian-markdown`, `interview-me`
 
 ### 4. Solution Architect (`solution-architect.md`)
 
@@ -129,9 +130,9 @@ This system orchestrates the collaboration of 9 Agents, whose configurations are
 
 ### 6. Frontend Developer (`frontend-dev.md`)
 
-- **Role**: Designs and develops UI/UX and connects to Frontend APIs.
-- **Input**: Specifications from `[[system_spec]]`, API agreements from `api_contract.yaml` (as commanded by `@pm-po`).
-- **Output**: Writes Client-side code referencing `api_contract.yaml`, ensures the build passes, writes changelog entries, and logs in the diary.
+- **Role**: Designs and develops UI/UX and connects to Frontend APIs. Has **read-only** access to Stitch MCP for retrieving visual prototype details.
+- **Input**: Specifications from `[[system_spec]]`, API agreements from `api_contract.yaml`, and Stitch screen references from `design_spec.md` (as commanded by `@pm-po`).
+- **Output**: Writes Client-side code referencing `api_contract.yaml` and Stitch prototypes, ensures the build passes, writes changelog entries, and logs in the diary.
 - **Skills Used**: `design-taste-frontend`, `frontend-ui-engineering`, `test-driven-development`, `incremental-implementation`, `source-driven-development`, `code-simplification`, `debugging-and-error-recovery`, `custom-coding-standard`, `performance-optimization`, `browser-testing-with-devtools`, `api-and-interface-design`
 
 ### 7. Security Engineer (`security.md`)
@@ -143,9 +144,9 @@ This system orchestrates the collaboration of 9 Agents, whose configurations are
 
 ### 8. QA Automation Engineer (`qa-automate.md`)
 
-- **Role**: Writes Test Plans and executes automated E2E test suites using Playwright MCP (incorporating Manual QA duties).
+- **Role**: Writes Test Plans and executes automated test suites. Uses **Playwright MCP for UI tasks** (when `design_spec.md` exists) and **CLI-based tests for non-UI tasks** (when `design_spec.md` does not exist).
 - **Input**: Specifications from `[[system_spec]]` (as commanded by `@pm-po`).
-- **Output**: Drafts `[[test_plan]]` in Phase 2 and uses `mcp_playwright_*` to test on the actual system in Phase 3, recording the history into `[[test_execution]]` while truncating error logs to retain only the crucial substance up to 50 lines.
+- **Output**: Drafts `[[test_plan]]` in Phase 2 and executes tests in Phase 3 (Playwright or CLI based on Decision Rule), recording the history into `[[test_execution]]` while truncating error logs to retain only the crucial substance up to 50 lines.
 - **Skills Used**: `browser-testing-with-devtools`, `debugging-and-error-recovery`, `test-driven-development`, `ci-cd-and-automation`, `planning-and-task-breakdown`
 
 ### 9. Nexus Librarian (`nexus-librarian.md`)
@@ -230,7 +231,7 @@ To prevent chaotic, risky executions, or causing system impact without screening
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **gemini-agent-team-template** (448 symbols, 494 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **gemini-agent-team-template** (450 symbols, 496 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 

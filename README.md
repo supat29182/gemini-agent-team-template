@@ -113,21 +113,26 @@ sequenceDiagram
 ## 📝 Step-by-Step Process
 
 **Initiation:**
-The user submits a requirement in the chat. The first bot to wake up is **`@pm-po`** (Project Manager). It records the requirement in `inbox_log.md` and runs `init_feature.py --type` to initialize separate folders for each task type (Feature, CR, Bug Fix).
+The user submits a requirement in the chat. The first bot to wake up is **`@pm-po`** (Project Manager). It records the requirement in `inbox_log.md` and evaluates the task scope:
+- **Standard Lane** (Features/CRs/Bugs): Runs `init_feature.py --type` to initialize separate folders and proceed through Phase 1-4.
+- **Hotfix Lane** (Trivial changes ≤ 3 files with no new endpoints/routes/tables): Skips Phase 1 (SA/UX-UI/Architect), delegating directly to Dev → QA.
 
 **Phase 1: Design (Design Stage)**
-1. For **Features and CRs**: `pm-po` assigns the task to **`@sa` (System Analyst)** to analyze requirements and write `system_spec.md` and `api_contract.yaml`. Next, **`@ux-ui` (UX/UI Designer)** creates `design_spec.md` covering wireframe descriptions, UI component specifications, design tokens, and user flow diagrams. Then **`@solution-architect`** analyzes the architectural impact, designs the proposed directory/file structure, and records them in `architecture_impact.md`.
+1. For **Features and CRs**: `pm-po` assigns the task to **`@sa` (System Analyst)** to analyze requirements and write `system_spec.md` and `api_contract.yaml`. Next, **`@ux-ui` (UX/UI Designer)** creates `DESIGN.md`, generates visual prototypes using Google Stitch MCP, and documents `design_spec.md` covering wireframe descriptions, UI component specifications, design tokens, and user flow diagrams. Then **`@solution-architect`** analyzes the architectural impact, designs the proposed directory/file structure, and records them in `architecture_impact.md`.
 2. For **Bug Fixes**: Bypasses SA and UX/UI specs. `@solution-architect` directly writes the analysis and remediation steps in `bug_diagnosis.md`.
+3. For **Hotfix Lane**: Skips Phase 1 completely.
 
 **Phase 2: Implementation (Build Stage)**
-1. For **Features and CRs**: `pm-po` triggers **`@backend-dev`** (or frontend) and **`@qa-automate`** in parallel (Developer writes code, QA designs the Test Plan). `@frontend-dev` reads both `api_contract.yaml` and `design_spec.md` to implement the UI according to the design tokens and component specs.
-2. For **Bug Fixes**: Bypasses the Test Plan. Developers immediately start fixing the code.
+1. For **Features and CRs**: `pm-po` triggers **`@backend-dev`** (or frontend) and **`@qa-automate`** in parallel (Developer writes code, QA designs the Test Plan). `@frontend-dev` reads `api_contract.yaml` and `design_spec.md` (using read-only Stitch MCP access via `mcp_stitch_get_screen` to inspect screen details) to implement the UI according to the design tokens and component specs.
+2. For **Bug Fixes & Hotfixes**: Bypasses the Test Plan. Developers immediately start fixing the code.
 3. Once the Backend Developer finishes, the task is handed over to the Frontend Developer to integrate components.
 
 **Phase 3: Verification (Validation Stage)**
-1. The `@qa-automate` bot executes the E2E Test suite to check functionality and prevent regression.
-2. For **Features and CRs**: `@security` runs a Security Audit (Diff Scan) to check for vulnerabilities.
-3. Once both checks pass (Security PASSED + E2E PASSED), the PM archives the feature folder and summarizes the project delivery.
+1. The **`@qa-automate`** bot executes automated tests based on its **Decision Rule**:
+   - **UI Tasks** (`design_spec.md` exists): Executes Playwright MCP browser E2E test suite (`mcp_playwright_*`).
+   - **Non-UI Tasks** (`design_spec.md` does not exist): Executes CLI-based test runners via `run_command` (`npm test`, `pytest`, `curl`).
+2. For **Features, CRs, and Non-CSS Bugs**: `@security` runs a Security Audit (Diff Scan) to check for vulnerabilities. (Skipped for CSS/text-only hotfixes).
+3. Once both checks pass (Security PASSED + Test PASSED), the PM archives the feature folder and summarizes the project delivery.
 
 ---
 
@@ -174,6 +179,7 @@ When you want the AI team to develop a new feature, you don't need to communicat
 ### 3. Required Integrations (MCP Servers)
 To unlock full capabilities, the agents rely on these backend integrations:
 - **`GitNexus`**: Used by Librarian, Devs, and Architects to build call graphs and inspect structures while saving tokens.
-- **`Playwright`**: Used by QA Automation to test real UI flows in Chromium.
+- **`Playwright`**: Used by QA Automation (`@qa-automate`) for browser-based UI testing.
+- **`Stitch`**: Used by UX/UI Designer (`@ux-ui`) to generate Design Systems and Visual Prototypes from text prompts. Frontend Developer (`@frontend-dev`) has read-only access to inspect screen details.
 
 *(These MCP services run automatically via `npx` in the background as requested.)*

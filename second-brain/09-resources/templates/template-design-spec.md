@@ -15,6 +15,22 @@ tags:
 
 ---
 
+## 0. Stitch Project References
+
+| Field | Value |
+| --- | --- |
+| **Stitch Project ID** | `<project_id>` |
+| **Stitch Project URL** | `https://labs.google/stitch/projects/<project_id>` |
+| **Design System ID** | `assets/<design_system_id>` |
+
+### Generated Screens
+
+| Screen Name | Screen ID | Device | Description |
+| --- | --- | --- | --- |
+| [Screen Name] | `<screen_id>` | DESKTOP / MOBILE | [Brief description] |
+
+---
+
 ## 1. Design Direction & Rationale
 
 > Describe the overall visual direction, style, mood, and brand identity.
@@ -37,7 +53,8 @@ tags:
 
 ## 3. Screen Wireframe Descriptions
 
-> For each key screen, describe the layout structure, content placement, and hierarchy in text form.
+> **Note:** These layout descriptions correspond to the visual prototypes generated in Stitch.
+> For each key screen, describe the layout structure, content placement, and hierarchy.
 
 ### Screen: [Screen Name]
 
@@ -67,6 +84,8 @@ tags:
 ---
 
 ## 5. Design Tokens
+
+> **Note:** These tokens are derived from the `DESIGN.md` used to generate the Stitch Design System.
 
 ### Colors
 
