@@ -15,13 +15,13 @@ The system is designed to work in a hybrid **Sequential** and **Parallel** manne
 
 ```mermaid
 graph TD
-    INBOX["inbox_log.md"] -->|"1. PM reads requirements"| PM[("pm-po")]
-    PM -->|"2. init_feature.py"| Init{Task Type?}
+    INBOX["inbox_log.md"] -->|"1. PM reads requirement & triages"| PM[("pm-po")]
+    PM -->|"2. init_feature.py"| Init{Task Type / Lane?}
     
-    %% Feature & CR Flow
-    Init -->|"Feature / CR"| SA("sa")
-    SA -->|"3. Draft Spec & API"| UXUI("ux-ui")
-    UXUI -->|"4. Design Spec & Tokens"| ARCH("solution-architect")
+    %% Feature & CR Flow (Standard Lane)
+    Init -->|"Standard Lane (Feature/CR)"| SA("sa")
+    SA -->|"3. Draft Spec & API Contract"| UXUI("ux-ui")
+    UXUI -->|"4. Design Spec & Stitch Prototype"| ARCH("solution-architect")
     ARCH -->|"5. Impact & Directory Design"| PM
     
     PM -->|"Phase 2"| BACK("backend-dev")
@@ -32,16 +32,17 @@ graph TD
     PM -->|"Phase 3"| SEC("security (Audit)")
     PM -->|"Phase 3"| QA_E("qa-automate (Execution)")
     
-    %% Bug Flow
-    Init -->|"Bug Fix"| ARCH_BUG("solution-architect")
-    ARCH_BUG -->|"3. Diagnosis"| PM_BUG[PM directs coding]
-    PM_BUG -->|"Phase 2"| DEV_BUG("backend-dev / frontend-dev")
-    DEV_BUG -->|"Done"| QA_BUG("qa-automate (Execution)")
-    QA_BUG --> PM
+    %% Hotfix Lane
+    Init -->|"Hotfix Lane (≤ 3 files)"| DEV_HOTFIX("backend-dev / frontend-dev")
+    DEV_HOTFIX -->|"Phase 3"| QA_HOTFIX("qa-automate (Execution)")
+    QA_HOTFIX --> PM
     
-    %% Verification & DONE
-    SEC & QA_E -.->|"Passed"| DONE["Project Board: DONE"]
-    QA_BUG -.->|"Passed"| DONE
+    %% Verification & Phase 4
+    SEC & QA_E -.->|"Passed"| P4["Phase 4: Post-Mortem & Consolidation"]
+    P4 -->|"Post-Mortem"| ARCH_P4("solution-architect")
+    P4 -->|"Consolidate Specs"| SA_P4("sa")
+    ARCH_P4 & SA_P4 --> DONE["Project Board: DONE"]
+    QA_HOTFIX -.->|"Passed"| DONE
 ```
 
 ### ⏱️ 2. Sequence Diagram (Detailed Invocation)
@@ -56,56 +57,58 @@ sequenceDiagram
     participant Arch as solution-architect
     participant Devs as backend and frontend
     participant QA as qa-automate
+    participant Sec as security
     participant Nexus as GitNexus
     
     User->>PM: Submits requirement (to Inbox)
-    Note over PM: PM is strictly forbidden from reading code directly
+    Note over PM: PM is strictly forbidden from reading technical files
     
     rect rgb(240, 248, 255)
-        Note right of PM: PHASE 1: DESIGN (Feature/CR goes through SA & UX/UI, Bug Fix bypasses them)
-        alt Feature or CR
-            PM->>SA: Create System Spec & API Contract
-            SA-->>PM: Completed (system_spec.md & api_contract.yaml)
-            PM->>UX: Create Design Spec
-            UX-->>PM: Completed (design_spec.md)
-            PM->>Arch: Analyze Impact & Design Directory
-        else Bug Fix
-            PM->>Arch: Analyze Root Cause
-        end
+        Note right of PM: PHASE 1: DESIGN (Sequential Chain with Lock Enforcement)
+        PM->>SA: Create System Spec & API Contract (acquire lock: sa)
+        SA-->>PM: Completed (release lock: sa)
+        PM->>UX: Create Design Spec & Stitch Prototype (acquire lock: ux-ui)
+        UX-->>PM: Completed (release lock: ux-ui)
+        PM->>Arch: Analyze Impact & Directory Design (acquire lock: solution-architect)
         Arch->>Nexus: mcp_gitnexus_impact
-        Nexus-->>Arch: Return summary JSON
-        Arch-->>PM: Completed (impact & directory design / diagnosis)
+        Nexus-->>Arch: Return blast radius JSON
+        Arch-->>PM: Completed (release lock: solution-architect)
     end
 
     rect rgb(240, 255, 240)
-        Note right of PM: PHASE 2: IMPLEMENTATION (Event-Driven)
-        PM->>Devs: Direct coding/fixing
-        opt Feature or CR
-            PM->>QA: Direct Test Plan creation
-        end
-        Note over PM: PM enters Sleep mode
-        
-        Devs->>Nexus: Search existing structure
-        Devs-->>PM: Wake PM (Dev completed)
-        opt Feature or CR
-            QA-->>PM: Wake PM (Test Plan completed)
-        end
+        Note right of PM: PHASE 2: IMPLEMENTATION (Event-Driven Locks)
+        PM->>Devs: Backend coding & QA Test Plan in parallel
+        Devs->>Nexus: Query codebase structure via Librarian / GitNexus
+        Devs-->>PM: Completed (release lock: backend-dev)
+        QA-->>PM: Completed (release lock: qa-test-plan)
+        PM->>Devs: Frontend coding (inspects Stitch prototypes via MCP)
+        Devs-->>PM: Completed (release lock: frontend-dev)
     end
 
     rect rgb(255, 240, 245)
         Note right of PM: PHASE 3: VERIFICATION
-        PM->>QA: Run qa-automate (run E2E Test)
-        opt Feature or CR
-            PM->>Devs: Run security audit
-        end
-        Note over PM: PM enters Sleep mode
+        PM->>QA: Run E2E Tests (Playwright for UI / CLI for Non-UI)
+        PM->>Sec: Run Security Audit (Backend + Frontend scan)
         
-        QA-->>PM: Wake PM (Error found, logs truncated to 50 lines)
-        Note over PM: Feedback Loop: Return task to Dev
-        PM->>Devs: Send 50-line logs for fixing
+        alt Verification Passed
+            QA-->>PM: Passed (release lock: qa-automate-execution)
+            Sec-->>PM: Passed (release lock: security-audit)
+        else Failure Found
+            QA-->>PM: Failed (truncated 50-line logs)
+            Note over PM: Reset locks for Dev & Phase 3 agents
+            PM->>Devs: Send 50-line logs for fixing
+        end
+    end
+
+    rect rgb(255, 245, 238)
+        Note right of PM: PHASE 4: POST-MORTEM & CONSOLIDATION
+        PM->>Arch: Write Post-Mortem & One-Line Rule (reset & acquire lock)
+        Arch-->>PM: Completed
+        PM->>SA: Consolidate Feature Specs to Core Spec & API Contract (reset & acquire lock)
+        SA-->>PM: Completed
     end
     
-    PM->>User: Update board, summarize delivery
+    PM->>User: Update board to DONE, summarize delivery
 ```
 
 ---
@@ -114,25 +117,26 @@ sequenceDiagram
 
 **Initiation:**
 The user submits a requirement in the chat. The first bot to wake up is **`@pm-po`** (Project Manager). It records the requirement in `inbox_log.md` and evaluates the task scope:
-- **Standard Lane** (Features/CRs/Bugs): Runs `init_feature.py --type` to initialize separate folders and proceed through Phase 1-4.
-- **Hotfix Lane** (Trivial changes ≤ 3 files with no new endpoints/routes/tables): Skips Phase 1 (SA/UX-UI/Architect), delegating directly to Dev → QA.
+- **Standard Lane** (Features/CRs/Bugs): Evaluates requirements, then initializes directories using `init_feature.py --type` and proceeds sequentially through Phase 1-4.
+- **Hotfix Lane** (Trivial changes ≤ 3 files with no new endpoints/routes/tables): Initializes directories with `init_feature.py --skip-agents sa,ux-ui,solution-architect`, delegating directly to Dev → QA.
 
-**Phase 1: Design (Design Stage)**
-1. For **Features and CRs**: `pm-po` assigns the task to **`@sa` (System Analyst)** to analyze requirements and write `system_spec.md` and `api_contract.yaml`. Next, **`@ux-ui` (UX/UI Designer)** creates `DESIGN.md`, generates visual prototypes using Google Stitch MCP, and documents `design_spec.md` covering wireframe descriptions, UI component specifications, design tokens, and user flow diagrams. Then **`@solution-architect`** analyzes the architectural impact, designs the proposed directory/file structure, and records them in `architecture_impact.md`.
-2. For **Bug Fixes**: Bypasses SA and UX/UI specs. `@solution-architect` directly writes the analysis and remediation steps in `bug_diagnosis.md`.
-3. For **Hotfix Lane**: Skips Phase 1 completely.
+**Phase 1: Design (Design Stage — Sequential Chain)**
+1. **System Specification**: `pm-po` assigns the task to **`@sa` (System Analyst)** (acquires `sa` lock) to analyze requirements and write `system_spec.md` and `api_contract.yaml`.
+2. **Visual Prototyping & Design Spec**: Next, **`@ux-ui` (UX/UI Designer)** (acquires `ux-ui` lock after `sa` completes) creates `DESIGN.md`, generates visual prototypes using Google Stitch MCP, and documents `design_spec.md` covering wireframes, component specs, design tokens, and user flow diagrams.
+3. **Architecture Impact**: Then **`@solution-architect`** (acquires `solution-architect` lock after `ux-ui` completes) analyzes system impact (Blast Radius), designs proposed directory/file structures, and records them in `architecture_impact.md`.
 
 **Phase 2: Implementation (Build Stage)**
-1. For **Features and CRs**: `pm-po` triggers **`@backend-dev`** (or frontend) and **`@qa-automate`** in parallel (Developer writes code, QA designs the Test Plan). `@frontend-dev` reads `api_contract.yaml` and `design_spec.md` (using read-only Stitch MCP access via `mcp_stitch_get_screen` to inspect screen details) to implement the UI according to the design tokens and component specs.
-2. For **Bug Fixes & Hotfixes**: Bypasses the Test Plan. Developers immediately start fixing the code.
-3. Once the Backend Developer finishes, the task is handed over to the Frontend Developer to integrate components.
+1. **Backend & Test Plan (Parallel)**: `pm-po` triggers **`@backend-dev`** (acquires `backend-dev` lock after `solution-architect` completes) and **`@qa-automate`** (acquires `qa-test-plan` lock) in parallel.
+2. **Frontend Implementation**: Once Backend and Test Plan finish, `pm-po` triggers **`@frontend-dev`** (acquires `frontend-dev` lock). `@frontend-dev` inspects Stitch visual prototypes via Stitch MCP (`get_screen`) and connects to endpoints defined in `api_contract.yaml`.
 
 **Phase 3: Verification (Validation Stage)**
-1. The **`@qa-automate`** bot executes automated tests based on its **Decision Rule**:
-   - **UI Tasks** (`design_spec.md` exists): Executes Playwright MCP browser E2E test suite (`mcp_playwright_*`).
-   - **Non-UI Tasks** (`design_spec.md` does not exist): Executes CLI-based test runners via `run_command` (`npm test`, `pytest`, `curl`).
-2. For **Features, CRs, and Non-CSS Bugs**: `@security` runs a Security Audit (Diff Scan) to check for vulnerabilities. (Skipped for CSS/text-only hotfixes).
-3. Once both checks pass (Security PASSED + Test PASSED), the PM archives the feature folder and summarizes the project delivery.
+1. **Automated Testing**: **`@qa-automate`** (acquires `qa-automate-execution` lock) executes automated tests based on its Decision Rule (Playwright MCP for UI tasks / CLI runners for Non-UI tasks).
+2. **Security Audit**: **`@security`** (acquires `security-audit` lock) runs a full audit scanning both Backend and Frontend code for vulnerabilities, hardcoded secrets, and XSS.
+3. **Defect Loop**: If failures occur, PM resets locks for Dev and Phase 3 agents, sending truncated 50-line logs back to Devs for fixing.
+
+**Phase 4: Post-Mortem & Consolidation (Reflect & Merge Stage)**
+1. **Post-Mortem**: `@pm-po` resets Phase 4 locks and commands **`@solution-architect`** to write a Post-Mortem report and extract a One-Line Rule into `lessons_learned.md`.
+2. **Spec Consolidation**: **`@sa`** merges feature endpoints, schemas, and specs from `features/<slug>/` into core `second-brain/03-requirements-spec/system_spec.md` and `api_contract.yaml` (preserving PM's Blind Orchestrator constraint).
 
 ---
 

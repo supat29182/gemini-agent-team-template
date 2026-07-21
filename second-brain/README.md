@@ -19,29 +19,29 @@ This folder is designed to support structured and systematic document storage as
 ### [📝 03-requirements-spec](03-requirements-spec/)
 
 - **Goal**: A repository for business requirements and system design specifications, divided into Core (central system) and individual feature/CR documents:
-  - `system_spec.md` (Core System Specification): **The core system specification document serving as the Single Source of Truth** (consolidating all current system APIs and DB Schemas).
+  - `system_spec.md` (Core System Specification): **The core system specification document serving as the Single Source of Truth** (consolidating all current system APIs and DB Schemas, merged by `@sa` in Phase 4).
   - `features/<feature-id-slug>/`: Dedicated folders for each feature or CR to store the development artifacts for that cycle:
-    - `brd.md` (Business Requirement Document): Created by `@pm-po` to define the goals, scope, and target users.
-    - `epics_user_stories.md` (Epics, User Stories & Acceptance Criteria): Created by `@pm-po` to break down features into user stories with AC (Given-When-Then format).
+    - `brd.md` (Business Requirement Document): Created by `@sa` to define goals, scope, and target users.
+    - `epics_user_stories.md` (Epics, User Stories & Acceptance Criteria): Created by `@sa` to break down features into user stories with AC (Given-When-Then format).
     - `system_spec.md` (Feature System Specification): Created by `@sa` to describe technical specs specific to this feature.
     - `design_spec.md` (Design Specification): Created by `@ux-ui` to define wireframe descriptions, UI component specs, design tokens, and user flows, using Stitch MCP for visual prototyping (with `DESIGN.md`).
-- **Key Documents**: Core `system_spec.md` and feature-specific folders under `features/`.
+- **Key Documents**: Core `system_spec.md`, `api_contract.yaml`, and feature-specific folders under `features/`.
 
 ### [📐 04-architecture](04-architecture/)
 
 - **Goal**: System architecture analysis and impact assessment (Blast Radius Analysis):
-  - `features/<feature-id-slug>/architecture_impact.md`: Created by `@solution-architect` to outline affected files and design API boundaries/contracts.
+  - `features/<feature-id-slug>/architecture_impact.md`: Created by `@solution-architect` using GitNexus to outline affected files and design API boundaries/contracts.
 - **Key Documents**: Feature-specific folders under `features/`.
 
 ### [💻 05-development](05-development/)
 
-- **Goal**: Coding guidelines and architectural standards for the project, plus decentralized task locks under `locks/`.
-- **Key Documents**: `dev-guidelines.md`.
+- **Goal**: Coding guidelines and architectural standards for the project, plus 8 decentralized task locks under `locks/` (`sa`, `ux-ui`, `solution-architect`, `backend-dev`, `frontend-dev`, `qa-test-plan`, `security-audit`, `qa-automate-execution`).
+- **Key Documents**: `dev-guidelines.md` and feature `locks/` folders.
 
 ### [🛡️ 06-security](06-security/)
 
-- **Goal**: Security audits and vulnerability scans (OWASP Top 10):
-  - `features/<feature-id-slug>/security_audit.md`: Created by `@security` to outline scan findings and remediation steps.
+- **Goal**: Security audits and vulnerability scans (OWASP Top 10, XSS, Hardcoded Secrets):
+  - `features/<feature-id-slug>/security_audit.md`: Created by `@security` scanning both backend and frontend code to outline scan findings and remediation steps.
 - **Key Documents**: Feature-specific folders under `features/`.
 
 ### [🧪 07-qa-testing](07-qa-testing/)
@@ -53,7 +53,7 @@ This folder is designed to support structured and systematic document storage as
 
 ### [🚀 08-delivery-ops](08-delivery-ops/)
 
-- **Goal**: Deployment playbooks, environments details, release notes summaries, and incident reports (Post-Mortem Reports).
+- **Goal**: Deployment playbooks, environments details, release notes summaries, and incident reports (`postmortem/` reports created by `@solution-architect` in Phase 4).
 
 ### [📚 09-resources](09-resources/)
 
@@ -61,11 +61,11 @@ This folder is designed to support structured and systematic document storage as
 
 ### [🗄️ 10-archives](10-archives/)
 
-- **Goal**: History of completed feature tasks and old changelogs.
+- **Goal**: History of completed feature tasks and old changelogs (`YYYY-MM-DD-<slug>-<agent>.md`).
 
 ### [📓 11-diary](11-diary/)
 
-- **Goal**: Daily work logs recorded by AI agents.
+- **Goal**: Daily work logs recorded by AI agents (`YYYY-MM-DD-<slug>-<agent>.md`).
 
 ---
 
@@ -75,57 +75,50 @@ This folder is designed to support structured and systematic document storage as
 graph TD
     User([User Requirement]) -->|Write to Inbox Log| PM[pm-po]
 
-    subgraph "Phase 0: Initiation"
-        PM -->|1. Run init_feature.py --type| Init[Feature/CR/Bug Folders]
+    subgraph "Phase 0: Initiation & Triage"
+        PM -->|1. Triage & Run init_feature.py| Init[Feature/CR/Bug Folders]
     end
 
-    subgraph "Phase 1: Design & Analysis"
-        Init -->|Check Type| TypeDecision{Type?}
+    subgraph "Phase 1: Design & Analysis (Sequential Chain)"
+        Init -->|Check Lane| TypeDecision{Lane?}
         
-        TypeDecision -->|Feature/CR| SA[sa]
-        SA -->|2. Write BRD, Epics & Spec| Spec[Feature system_spec.md]
+        TypeDecision -->|Standard Lane| SA[sa]
+        SA -->|2. Write BRD, User Stories & Spec| Spec[Feature system_spec.md & api_contract.yaml]
         Spec --> UXUI[ux-ui]
-        UXUI -->|3. Design Spec & Tokens| DesignSpec[design_spec.md]
-        DesignSpec --> PM_Arch[PM Forwards Specs]
-        PM_Arch --> Arch[solution-architect]
-        
-        TypeDecision -->|Bug Fix| BugArch[solution-architect]
-        BugArch -->|2. Analyze Root Cause| BugDiag[bug_diagnosis.md]
-        
+        UXUI -->|3. Design Spec & Stitch Prototype| DesignSpec[design_spec.md]
+        DesignSpec --> Arch[solution-architect]
         Arch -->|4. Analyze Impact & Directory Design| Impact[architecture_impact.md]
+        
+        TypeDecision -->|Hotfix Lane| DevHotfix[backend-dev / frontend-dev]
     end
 
-    subgraph "Phase 2: Implementation"
-        PM -->|4. Command Backend/Frontend implementation| Dev[backend-dev / frontend-dev]
-        
-        %% Feature/CR Flow
-        Spec & Impact -.->|References| Dev
-        PM -->|5. Command Test Plan design| QAP[qa-automate]
+    subgraph "Phase 2: Implementation (Event-Driven Locks)"
+        Impact -->|5. Command Backend & Test Plan| Backend[backend-dev]
+        Impact -->|5. Command Test Plan design| QAP[qa-automate]
         QAP -->|6. Design Test Plan| TP[test_plan.md]
         
-        %% Bug Flow
-        BugDiag -.->|References for fixing| Dev
-        
-        Dev -->|7. Commit code and write Changelog| Code[Backend/Frontend Code]
+        Backend & QAP -.->|Both Done| Frontend[frontend-dev]
+        Frontend -->|7. Build UI with Stitch & API Contracts| Code[Backend/Frontend Code]
     end
 
     subgraph "Phase 3: Verification"
-        PM -->|8. Command E2E Test execution| QAA[qa-automate]
-        QAA -->|9. Run E2E Test| Exec[test_execution.md]
+        Code -->|8. Command E2E Test & Security Audit| QAA[qa-automate]
+        Code -->|8. Command Security Audit| SE[security]
         
-        %% Feature/CR Flow Only
-        PM -->|10. Command Security Audit| SE[security]
-        SE -->|11. Scan for Vulnerabilities| Audit[security_audit.md]
+        QAA -->|9. Run E2E Test| Exec[test_execution.md]
+        SE -->|10. Scan Backend & Frontend| Audit[security_audit.md]
     end
 
-    subgraph "Phase 4: Release & Closure"
-        PM -->|12. Merge spec changes to Core specs| Master[Core system_spec.md & api_contract.yaml]
-        PM -->|13. Move Folder to Archives| Archive[10-archives/ folder]
+    subgraph "Phase 4: Release & Post-Mortem"
+        Exec & Audit -.->|Passed| PostMortem[solution-architect: Post-Mortem]
+        PostMortem --> Consolidation[sa: Consolidate Specs to Core]
+        Consolidation --> Master[Core system_spec.md & api_contract.yaml]
+        Master --> Archive[10-archives/ folder]
     end
 
     PM -.->|Update Kanban board| PB[project_board.md]
     PM -.->|Update Master index| Idx[00-Index.md]
-    PM -->|14. Summarize and notify results| User
+    Archive -->|11. Summarize and notify results| User
 ```
 
 This documentation acts as the project's "Second Brain", ensuring all AI agents in the development loop access consistent, up-to-date information, delivering high-standard and secure software.
