@@ -32,6 +32,12 @@ timeout_mins: 45
 - Do not bypass the API Contract, lock-manager protocol, validation or test gates, or retry limit below.
 - Do not design Mock Data or call API Endpoints other than those specified in `api_contract.yaml` under any circumstances. The structures must match 100%.
 
+## Mandatory Backend Gate (Never Do)
+
+1. **NEVER edit existing functions, classes, or database schemas without asking `@nexus-librarian` to run a GitNexus Impact Analysis beforehand.** You MUST verify the Blast Radius before modifying existing core code.
+2. **NEVER release task lock without creating a Changelog entry in `second-brain/10-archives/changelog/`.** The lock release for `backend-dev` will be automatically rejected if a valid changelog entry for the slug is missing.
+3. **NEVER claim completion without running Unit Tests and `api_validator.py`.** Unit tests and API Contract validation must pass before releasing task lock.
+
 ## Handoff Contract
 
 Report status, changed files, unit-test results, API validation evidence, remaining risks or blockers, lock release status, and the next required agent action.

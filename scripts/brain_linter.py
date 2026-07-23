@@ -625,6 +625,172 @@ def check_strategy_b_folders(workspace_dir):
                     })
     return errors
 
+def check_stitch_spec_integrity(root_dir, changed_files=None):
+    """Ensure all design_spec.md files contain valid Stitch Project References and non-placeholder IDs"""
+    errors = []
+    for dirpath, _, filenames in os.walk(root_dir):
+        for filename in filenames:
+            if filename == "design_spec.md":
+                full_path = os.path.join(dirpath, filename)
+                rel_path = os.path.relpath(full_path, root_dir)
+                norm_rel = os.path.normpath(os.path.join("second-brain", rel_path))
+
+                if changed_files is not None and norm_rel not in changed_files:
+                    continue
+
+                try:
+                    with open(full_path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                except Exception as e:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'Stitch Spec Integrity',
+                        'reason': f"Could not read design_spec.md: {e}"
+                    })
+                    continue
+
+                if "Stitch Project References" not in content and "Stitch Project ID" not in content:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'Stitch Spec Integrity',
+                        'reason': "design_spec.md is missing 'Stitch Project References' section."
+                    })
+                    continue
+
+                project_id_match = re.search(r'Stitch Project ID\b[^|]*\|\s*`?([^`\s|<>]+)`?', content, re.IGNORECASE)
+                if not project_id_match:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'Stitch Spec Integrity',
+                        'reason': "design_spec.md does not contain a valid 'Stitch Project ID'."
+                    })
+                    continue
+
+                pid = project_id_match.group(1).strip()
+                if not pid or pid.lower() in ["<project_id>", "n/a", "none", "null", "placeholder"]:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'Stitch Spec Integrity',
+                        'reason': f"design_spec.md contains invalid or placeholder Stitch Project ID: '{pid}'"
+                    })
+
+    return errors
+
+def check_playwright_execution_integrity(root_dir, changed_files=None):
+    """Ensure UI tasks (where design_spec.md exists) have test_execution.md with Playwright evidence"""
+    errors = []
+    for dirpath, _, filenames in os.walk(root_dir):
+        for filename in filenames:
+            if filename == "design_spec.md":
+                spec_full = os.path.join(dirpath, filename)
+                feature_folder = os.path.dirname(spec_full)
+                feature_name = os.path.basename(feature_folder)
+                parent_folder_name = os.path.basename(os.path.dirname(feature_folder))
+
+                exec_full = os.path.join(root_dir, "07-qa-testing", parent_folder_name, feature_name, "test_execution.md")
+                rel_exec_path = os.path.relpath(exec_full, root_dir)
+                norm_rel = os.path.normpath(os.path.join("second-brain", rel_exec_path))
+
+                if changed_files is not None and norm_rel not in changed_files:
+                    continue
+
+                if not os.path.exists(exec_full):
+                    continue
+
+                try:
+                    with open(exec_full, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                except Exception as e:
+                    errors.append({
+                        'file': rel_exec_path,
+                        'type': 'Playwright Integrity',
+                        'reason': f"Could not read test_execution.md: {e}"
+                    })
+                    continue
+
+                playwright_keywords = [
+                    "playwright", "mcp_playwright", "browser", "page.navigate", "page.click",
+                    "navigate", "screenshot", "chromium", "firefox", "webkit", "headless"
+                ]
+
+                has_evidence = any(kw in content.lower() for kw in playwright_keywords)
+                if not has_evidence:
+                    errors.append({
+                        'file': rel_exec_path,
+                        'type': 'Playwright Integrity',
+                        'reason': "test_execution.md for UI task does not contain evidence of Playwright MCP browser test execution."
+                    })
+
+    return errors
+
+def check_security_audit_integrity(root_dir, changed_files=None):
+    """Ensure all security_audit.md files contain explicit [STATUS: PASSED] or [STATUS: FAILED]"""
+    errors = []
+    for dirpath, _, filenames in os.walk(root_dir):
+        for filename in filenames:
+            if filename == "security_audit.md":
+                full_path = os.path.join(dirpath, filename)
+                rel_path = os.path.relpath(full_path, root_dir)
+                norm_rel = os.path.normpath(os.path.join("second-brain", rel_path))
+
+                if changed_files is not None and norm_rel not in changed_files:
+                    continue
+
+                try:
+                    with open(full_path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                except Exception as e:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'Security Audit Integrity',
+                        'reason': f"Could not read security_audit.md: {e}"
+                    })
+                    continue
+
+                if "[STATUS: PASSED]" not in content and "[STATUS: FAILED]" not in content:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'Security Audit Integrity',
+                        'reason': "security_audit.md is missing explicit '[STATUS: PASSED]' or '[STATUS: FAILED]' header."
+                    })
+
+    return errors
+
+def check_architecture_impact_integrity(root_dir, changed_files=None):
+    """Ensure all architecture_impact.md files contain Blast Radius details"""
+    errors = []
+    for dirpath, _, filenames in os.walk(root_dir):
+        for filename in filenames:
+            if filename == "architecture_impact.md":
+                full_path = os.path.join(dirpath, filename)
+                rel_path = os.path.relpath(full_path, root_dir)
+                norm_rel = os.path.normpath(os.path.join("second-brain", rel_path))
+
+                if changed_files is not None and norm_rel not in changed_files:
+                    continue
+
+                try:
+                    with open(full_path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                except Exception as e:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'Architecture Impact Integrity',
+                        'reason': f"Could not read architecture_impact.md: {e}"
+                    })
+                    continue
+
+                impact_keywords = ["blast radius", "impact", "gitnexus", "affected", "symbol"]
+                has_evidence = any(kw in content.lower() for kw in impact_keywords)
+                if not has_evidence:
+                    errors.append({
+                        'file': rel_path,
+                        'type': 'Architecture Impact Integrity',
+                        'reason': "architecture_impact.md does not contain Blast Radius or GitNexus impact analysis details."
+                    })
+
+    return errors
+
 def sync_gitnexus_agents(workspace_dir):
     """Automatically sync GitNexus data from AGENTS.md (Root) to .agents/AGENTS.md"""
     root_agents = os.path.join(workspace_dir, 'AGENTS.md')
@@ -734,6 +900,26 @@ def main():
     print(f"Checked Spec Structures (Headers).")
     all_errors.extend(spec_errors)
 
+    # Check 2.8: Stitch Spec Integrity
+    stitch_errors = check_stitch_spec_integrity(root_dir, changed_files)
+    print(f"Checked Stitch Design Spec integrity.")
+    all_errors.extend(stitch_errors)
+
+    # Check 2.9: Playwright Execution Integrity
+    playwright_errors = check_playwright_execution_integrity(root_dir, changed_files)
+    print(f"Checked Playwright E2E execution integrity.")
+    all_errors.extend(playwright_errors)
+
+    # Check 2.10: Security Audit Integrity
+    sec_errors = check_security_audit_integrity(root_dir, changed_files)
+    print(f"Checked Security Audit report integrity.")
+    all_errors.extend(sec_errors)
+
+    # Check 2.11: Architecture Impact Integrity
+    arch_errors = check_architecture_impact_integrity(root_dir, changed_files)
+    print(f"Checked Architecture Impact analysis integrity.")
+    all_errors.extend(arch_errors)
+
     # Check 3: Agent configurations
     total_agents, agent_errors = check_agent_configurations(workspace_dir, changed_files)
     print(f"Checked {total_agents} agent configurations in .agents/agents/.")
@@ -763,6 +949,10 @@ def main():
         print("   - Secrets & Credentials Leak Scan: OK")
         print("   - Strategy B Feature Folders: OK")
         print("   - Spec Structures (Headers): OK")
+        print("   - Stitch Design Spec Integrity: OK")
+        print("   - Playwright E2E Integrity: OK")
+        print("   - Security Audit Integrity: OK")
+        print("   - Architecture Impact Integrity: OK")
         print("   - Agent Configs (No absolute paths & links valid): OK")
         print("   - AGENTS.md Workspace Rules (No absolute paths): OK")
         sys.exit(0)

@@ -179,8 +179,20 @@ We adapted **Andrej Karpathy's** personal knowledge management principles to opt
 
 - **Execution**: AI agents use **Obsidian Wikilinks (`[[Filename#Section]]`)** to link documents across directories. This maintains an interconnected, dynamically linked knowledge graph.
 
-### 3. Health Checks & Linting (Data Integrity Scanning)
+### 3. Health Checks & Automated Gate Enforcement (Data Integrity Scanning)
 
-- **Execution**: We use the [brain_linter.py](file://../scripts/brain_linter.py) script to scan documentation health:
+- **Execution**: We use [brain_linter.py](file://../scripts/brain_linter.py) and [lock_manager.py](file://../scripts/lock_manager.py) to enforce 12 automated health checks and strict lock release gates:
   - Command: `python3 scripts/brain_linter.py`
-  - It searches for **broken links** or **missing references** to ensure the AI's knowledge base remains consistent throughout the AISDLC workflow.
+  - **Comprehensive Verification Categories**:
+    1. Second Brain Wikilinks Integrity (`[[wikilinks]]`)
+    2. YAML Frontmatter & Tags (`doc/*`, `phase/*`)
+    3. Secrets & Credentials Leak Scan
+    4. Absolute System Paths Scan (relative path enforcement)
+    5. Orphan Files Detection
+    6. Critical Files & Templates Integrity
+    7. Strategy B Active Feature Folders Completeness
+    8. Spec Structures & Heading Hierarchies
+    9. **Stitch Design Spec Integrity**: Verifies valid `Stitch Project ID` references in `design_spec.md`.
+    10. **Playwright E2E Integrity**: Verifies Playwright MCP browser execution evidence in `test_execution.md` for UI tasks.
+    11. **Security Audit Integrity**: Verifies explicit `[STATUS: PASSED]` or `[STATUS: FAILED]` headers in `security_audit.md`.
+    12. **Architecture Impact Integrity**: Verifies GitNexus Blast Radius analysis in `architecture_impact.md`.

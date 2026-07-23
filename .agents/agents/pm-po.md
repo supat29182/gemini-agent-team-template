@@ -107,7 +107,7 @@ Before entering Phase 1, evaluate the task scope:
 12. Invoke `@security` and `@qa-automate` (for E2E Test execution) in parallel.
 13. **Sync Point 3**: Stop working (End Turn) and wait for the scans to finish:
     - `@security` lock is `"completed"` and the result is **[STATUS: PASSED]**.
-    - `@qa-automate-execution` lock is `"completed"` and E2E tests pass.
+    - `@qa-automate-execution` lock is `"completed"` and E2E tests pass. For UI tasks (where `design_spec.md` exists), verify from `@qa-automate`'s handoff summary that Playwright MCP Browser Tests were executed. If CLI unit tests were substituted for UI E2E testing, reject the handoff.
 
 ### 3. Repair Returned or Failed Work
 

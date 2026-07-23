@@ -30,6 +30,13 @@ timeout_mins: 35
 - Do not bypass the lock-manager protocol, validation or test gates, or retry limit below.
 - **Log Truncation Rule**: If a test failure occurs, do not print or save the entire command line stdout/stderr log. Extract only the exact failing lines (maximum 50 lines) to present to the PM and log files to prevent context bloat.
 
+## Mandatory Playwright Gate (Never Do)
+
+1. **NEVER execute UI E2E tests without using Playwright MCP.** When `design_spec.md` exists in the task directory, you MUST execute browser E2E tests via Playwright MCP tools using `call_mcp_tool` (ServerName: `playwright`). Note: Playwright MCP tools are lazy-loaded, so invoke them using `call_mcp_tool` (ServerName: `"playwright"`, ToolName: `navigate` / `click` / `screenshot` / etc.).
+2. **NEVER substitute native framework CLI tests (e.g. `npm test`, `vitest`, `pytest`) for Playwright MCP on UI tasks.** CLI test suites do NOT satisfy the E2E Browser testing requirement for UI tasks.
+3. **NEVER use fake or text-only execution logs pretending Playwright ran.** If Playwright MCP fails, times out, or cannot connect to a browser, NEVER claim success. Run `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent qa-automate-execution --action fail --reason "Playwright MCP failure"` and report the failure to the PM.
+4. **NEVER hand off to the PM for UI tasks without including Playwright execution logs/proof** in `test_execution.md`.
+
 ## Handoff Contract
 
 Report status, E2E test results, path to test execution log (`test_execution.md` or `test_plan.md`), truncated error logs if failed, lock release status, and the next required agent action.

@@ -41,6 +41,12 @@ timeout_mins: 45
 - Do not design Mock Data or call API Endpoints other than those specified in `api_contract.yaml` under any circumstances. The structures must match 100%.
 - You may use Stitch MCP tools **only for reading** (`get_project`, `get_screen`, `list_screens`, `list_design_systems`). You are strictly prohibited from creating, editing, or deleting Stitch projects, screens, or design systems.
 
+## Mandatory Frontend Gate (Never Do)
+
+1. **NEVER edit existing components, routes, or state architecture without asking `@nexus-librarian` to run a GitNexus Impact Analysis beforehand.** You MUST verify the Blast Radius before modifying existing core frontend code.
+2. **NEVER release task lock without creating a Changelog entry in `second-brain/10-archives/changelog/`.** The lock release for `frontend-dev` will be automatically rejected if a valid changelog entry for the slug is missing.
+3. **NEVER claim completion without verifying project build/lint cleanly.** Running `npm run build` or `npm run lint` must pass before releasing task lock.
+
 ## Handoff Contract
 
 Report status, changed files, build/lint check evidence, frontend-test results, remaining risks or blockers, lock release status, and the next required agent action.
@@ -75,7 +81,7 @@ When you receive a task brief from the PM, follow these steps:
    - Read past lessons from `second-brain/02-knowledge-base/lessons_learned.md` (if any).
    - **You must read the API Contract** from `second-brain/03-requirements-spec/features/<slug>/api_contract.yaml` using [api-and-interface-design](../../.agents/skills/api-and-interface-design/SKILL.md).
    - **You must read the Design Spec** from `second-brain/03-requirements-spec/features/<slug>/design_spec.md` created by `@ux-ui` to follow the UI design direction, component specifications, and design tokens.
-     - **Mandatory Stitch Inspection**: You MUST check the **Stitch Project References** section in `design_spec.md`. Use `mcp_stitch_get_screen` (or `stitch/get_screen` via `call_mcp_tool`) to retrieve full visual and structure details for all referenced Stitch Screen IDs to ensure pixel-accurate frontend implementation.
+      - **Mandatory Stitch Inspection**: You MUST check the **Stitch Project References** section in `design_spec.md`. Note: Stitch MCP tools are lazy-loaded, so you MUST use `call_mcp_tool` (ServerName: `"stitch"`, ToolName: `"get_screen"`, Arguments: `{"id": "<screen_id>"}`) to inspect visual layout details for all generated Stitch screens before writing frontend code.
    - Read development guidelines from `second-brain/05-development/dev-guidelines.md` and [custom-coding-standard](../../.agents/skills/custom-coding-standard/SKILL.md).
 4. **Do not use `view_file` or `grep_search` to read raw code to understand the structure.** Always ask `@nexus-librarian` to search for the relevant frontend structures (components, pages) before writing code to save Tokens.
 

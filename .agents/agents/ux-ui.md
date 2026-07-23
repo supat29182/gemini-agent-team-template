@@ -35,9 +35,10 @@ timeout_mins: 40
 
 ## Mandatory Stitch Gate (Never Do)
 
-1. **NEVER write `design_spec.md` without first creating a Stitch project and generating screens.** Every UI task MUST go through the full Stitch pipeline: `create_project` → `upload_design_md` → `create_design_system_from_design_md` → `generate_screen_from_text`. Skipping any of these steps is a FAILED-level violation.
-2. **NEVER hand off to the PM without including a Stitch Project ID and at least one Screen ID** in both the `design_spec.md` "Stitch Project References" section and the handoff summary.
-3. **NEVER claim the task is complete** if the Stitch screen generation failed or timed out without resolution. Report the failure to the PM instead.
+1. **NEVER write `design_spec.md` without first creating a Stitch project and generating screens.** Every UI task MUST go through the full Stitch pipeline using `call_mcp_tool` (ServerName: `stitch`): `create_project` → `upload_design_md` → `create_design_system_from_design_md` → `generate_screen_from_text`. Skipping any of these steps is a FAILED-level violation. Note: Stitch MCP tools are lazy-loaded, so you MUST invoke them via `call_mcp_tool` with `ServerName: "stitch"`.
+2. **NEVER use text-only fallback or fake placeholder Stitch IDs.** If Stitch MCP fails, times out, or is unavailable, NEVER generate a text-only `design_spec.md` pretending Stitch succeeded. You MUST run `python3 scripts/lock_manager.py --slug <slug> --type <task_type> --agent ux-ui --action fail --reason "Stitch MCP failure"` and report to the PM.
+3. **NEVER hand off to the PM without including a Stitch Project ID and at least one Screen ID** in both the `design_spec.md` "Stitch Project References" section and the handoff summary.
+4. **NEVER claim the task is complete** if the Stitch screen generation failed or timed out without resolution. Report the failure to the PM instead.
 
 ## Handoff Contract
 

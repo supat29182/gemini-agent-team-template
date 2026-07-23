@@ -3,7 +3,181 @@ import os
 import sys
 import json
 import argparse
+import re
+import yaml
 from datetime import datetime
+
+def validate_uxui_stitch_references(workspace_dir, slug, task_type):
+    folder_type = "features"
+    if task_type == "cr":
+        folder_type = "cr"
+        if not slug.startswith("cr-"): slug = f"cr-{slug}"
+    elif task_type == "bug":
+        folder_type = "bug"
+        if not slug.startswith("bug-"): slug = f"bug-{slug}"
+    else:
+        slug = slug.replace("cr-", "").replace("bug-", "")
+
+    spec_path = os.path.join(workspace_dir, "second-brain", "03-requirements-spec", folder_type, slug, "design_spec.md")
+    if not os.path.exists(spec_path):
+        return False, f"Missing design_spec.md at {spec_path}"
+
+    try:
+        with open(spec_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception as e:
+        return False, f"Could not read design_spec.md: {e}"
+
+    if "Stitch Project References" not in content and "Stitch Project ID" not in content:
+        return False, "design_spec.md does not contain a 'Stitch Project References' section."
+
+    project_id_match = re.search(r'Stitch Project ID\b[^|]*\|\s*`?([^`\s|<>]+)`?', content, re.IGNORECASE)
+    if not project_id_match:
+        return False, "Could not find a valid 'Stitch Project ID' in design_spec.md."
+
+    pid = project_id_match.group(1).strip()
+    if not pid or pid.lower() in ["<project_id>", "n/a", "none", "null", "placeholder"]:
+        return False, f"Invalid or placeholder Stitch Project ID found: '{pid}'"
+
+    return True, "Valid Stitch references found."
+
+def validate_qa_playwright_references(workspace_dir, slug, task_type):
+    folder_type = "features"
+    if task_type == "cr":
+        folder_type = "cr"
+        if not slug.startswith("cr-"): slug = f"cr-{slug}"
+    elif task_type == "bug":
+        folder_type = "bug"
+        if not slug.startswith("bug-"): slug = f"bug-{slug}"
+    else:
+        slug = slug.replace("cr-", "").replace("bug-", "")
+
+    design_spec_path = os.path.join(workspace_dir, "second-brain", "03-requirements-spec", folder_type, slug, "design_spec.md")
+    if not os.path.exists(design_spec_path):
+        return True, "Non-UI task (no design_spec.md), Playwright check bypassed."
+
+    exec_path = os.path.join(workspace_dir, "second-brain", "07-qa-testing", folder_type, slug, "test_execution.md")
+    if not os.path.exists(exec_path):
+        return False, f"Missing test_execution.md for UI task at {exec_path}"
+
+    try:
+        with open(exec_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception as e:
+        return False, f"Could not read test_execution.md: {e}"
+
+    playwright_keywords = [
+        "playwright", "mcp_playwright", "browser", "page.navigate", "page.click",
+        "navigate", "screenshot", "chromium", "firefox", "webkit", "headless"
+    ]
+
+    has_evidence = any(kw in content.lower() for kw in playwright_keywords)
+    if not has_evidence:
+        return False, "test_execution.md for UI task does not contain evidence of Playwright MCP browser test execution."
+
+    return True, "Valid Playwright execution evidence found."
+
+def validate_security_audit_references(workspace_dir, slug, task_type):
+    folder_type = "features"
+    if task_type == "cr":
+        folder_type = "cr"
+        if not slug.startswith("cr-"): slug = f"cr-{slug}"
+    elif task_type == "bug":
+        folder_type = "bug"
+        if not slug.startswith("bug-"): slug = f"bug-{slug}"
+    else:
+        slug = slug.replace("cr-", "").replace("bug-", "")
+
+    audit_path = os.path.join(workspace_dir, "second-brain", "06-security", folder_type, slug, "security_audit.md")
+    if not os.path.exists(audit_path):
+        return False, f"Missing security_audit.md at {audit_path}"
+
+    try:
+        with open(audit_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception as e:
+        return False, f"Could not read security_audit.md: {e}"
+
+    if "[STATUS: PASSED]" not in content and "[STATUS: FAILED]" not in content:
+        return False, "security_audit.md is missing explicit '[STATUS: PASSED]' or '[STATUS: FAILED]' status header."
+
+    return True, "Valid security audit status found."
+
+def validate_architect_impact_references(workspace_dir, slug, task_type):
+    folder_type = "features"
+    if task_type == "cr":
+        folder_type = "cr"
+        if not slug.startswith("cr-"): slug = f"cr-{slug}"
+    elif task_type == "bug":
+        folder_type = "bug"
+        if not slug.startswith("bug-"): slug = f"bug-{slug}"
+    else:
+        slug = slug.replace("cr-", "").replace("bug-", "")
+
+    impact_path = os.path.join(workspace_dir, "second-brain", "04-architecture", folder_type, slug, "architecture_impact.md")
+    if not os.path.exists(impact_path):
+        return False, f"Missing architecture_impact.md at {impact_path}"
+
+    try:
+        with open(impact_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception as e:
+        return False, f"Could not read architecture_impact.md: {e}"
+
+    impact_keywords = ["blast radius", "impact", "gitnexus", "affected", "symbol"]
+    has_impact_evidence = any(kw in content.lower() for kw in impact_keywords)
+    if not has_impact_evidence:
+        return False, "architecture_impact.md does not contain Blast Radius or GitNexus impact analysis details."
+
+    return True, "Valid architecture impact analysis found."
+
+def validate_sa_contract_references(workspace_dir, slug, task_type):
+    folder_type = "features"
+    if task_type == "cr":
+        folder_type = "cr"
+        if not slug.startswith("cr-"): slug = f"cr-{slug}"
+    elif task_type == "bug":
+        folder_type = "bug"
+        if not slug.startswith("bug-"): slug = f"bug-{slug}"
+    else:
+        slug = slug.replace("cr-", "").replace("bug-", "")
+
+    spec_path = os.path.join(workspace_dir, "second-brain", "03-requirements-spec", folder_type, slug, "system_spec.md")
+    contract_path = os.path.join(workspace_dir, "second-brain", "03-requirements-spec", folder_type, slug, "api_contract.yaml")
+
+    if not os.path.exists(spec_path):
+        return False, f"Missing system_spec.md at {spec_path}"
+
+    if not os.path.exists(contract_path):
+        return False, f"Missing api_contract.yaml at {contract_path}"
+
+    try:
+        with open(contract_path, 'r', encoding='utf-8') as f:
+            yaml.safe_load(f)
+    except Exception as e:
+        return False, f"api_contract.yaml contains invalid YAML syntax: {e}"
+
+    return True, "Valid SA specs and API contract found."
+
+def validate_dev_changelog_references(workspace_dir, slug, agent):
+    changelog_dir = os.path.join(workspace_dir, "second-brain", "10-archives", "changelog")
+    if not os.path.exists(changelog_dir):
+        return False, f"Changelog directory does not exist at {changelog_dir}"
+
+    slug_clean = slug.replace("cr-", "").replace("bug-", "")
+    found = False
+    try:
+        for filename in os.listdir(changelog_dir):
+            if filename.endswith(".md") and (slug in filename or slug_clean in filename):
+                found = True
+                break
+    except Exception as e:
+        return False, f"Could not scan changelog directory: {e}"
+
+    if not found:
+        return False, f"Missing changelog entry for '{slug}' in second-brain/10-archives/changelog/"
+
+    return True, f"Valid changelog entry found for {agent}."
 
 def get_paths(workspace_dir, slug, task_type):
     folder_type = "features"
@@ -216,6 +390,37 @@ def main():
         print(f"Success: Acquired lock for '{args.agent}'.")
         
     elif args.action == "release":
+        if args.agent == "ux-ui":
+            valid, msg = validate_uxui_stitch_references(workspace_dir, args.slug, args.type)
+            if not valid:
+                print(f"Error: Mandatory Stitch Gate failed for ux-ui release: {msg}")
+                sys.exit(1)
+        elif args.agent == "qa-automate-execution":
+            valid, msg = validate_qa_playwright_references(workspace_dir, args.slug, args.type)
+            if not valid:
+                print(f"Error: Mandatory Playwright Gate failed for qa-automate-execution release: {msg}")
+                sys.exit(1)
+        elif args.agent == "security-audit":
+            valid, msg = validate_security_audit_references(workspace_dir, args.slug, args.type)
+            if not valid:
+                print(f"Error: Mandatory Security Gate failed for security-audit release: {msg}")
+                sys.exit(1)
+        elif args.agent == "solution-architect":
+            valid, msg = validate_architect_impact_references(workspace_dir, args.slug, args.type)
+            if not valid:
+                print(f"Error: Mandatory Architect Impact Gate failed for solution-architect release: {msg}")
+                sys.exit(1)
+        elif args.agent == "sa":
+            valid, msg = validate_sa_contract_references(workspace_dir, args.slug, args.type)
+            if not valid:
+                print(f"Error: Mandatory SA Spec & Contract Gate failed for sa release: {msg}")
+                sys.exit(1)
+        elif args.agent in ["backend-dev", "frontend-dev"]:
+            valid, msg = validate_dev_changelog_references(workspace_dir, args.slug, args.agent)
+            if not valid:
+                print(f"Error: Mandatory Changelog Gate failed for {args.agent} release: {msg}")
+                sys.exit(1)
+
         if agent_data.get("status") != "in-progress":
             print(f"Warning: Releasing lock for '{args.agent}' but status was '{agent_data.get('status')}'.")
             

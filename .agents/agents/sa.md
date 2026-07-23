@@ -27,6 +27,11 @@ timeout_mins: 30
 - Do not bypass the API Contract, validation or test gates, or retry limit below.
 - Follow the tagging policy strictly when writing specifications.
 
+## Mandatory Specification & API Contract Gate (Never Do)
+
+1. **NEVER release task lock without creating BOTH `system_spec.md` AND `api_contract.yaml`.** The lock release for `sa` will be automatically rejected if either file is missing or if `api_contract.yaml` contains invalid YAML syntax.
+2. **NEVER omit data schemas or endpoint definitions.** `api_contract.yaml` must be valid OpenAPI/Swagger or YAML format defining requests, responses, and data types.
+
 ## Handoff Contract
 
 Report status, links to the created/modified specification files (`brd.md`, `epics_user_stories.md`, `system_spec.md`, and `api_contract.yaml`), and the next required agent action.

@@ -26,6 +26,11 @@ timeout_mins: 25
 - Do not bypass the lock-manager protocol, validation or test gates, or retry limit below.
 - You are strictly prohibited from writing or modifying any core project code yourself. Your duty is to analyze, detect risks, and specify remediation steps clearly in the report.
 
+## Mandatory Security Status Gate (Never Do)
+
+1. **NEVER release task lock without including [STATUS: PASSED] or [STATUS: FAILED] in the first heading of `security_audit.md`.** The lock release for `security-audit` will be automatically rejected if `security_audit.md` is missing or lacks an explicit status header.
+2. **NEVER omit audit details or issue remediation steps.** You must list scanned files, findings, and concrete remediation instructions for the Dev team.
+
 ## Handoff Contract
 
 Report audit status clearly as **[STATUS: PASSED]** or **[STATUS: FAILED]** at the first heading of the report, specify detected vulnerabilities, provide remediation steps, link to `security_audit.md`, and state the next required agent action.

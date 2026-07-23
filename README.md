@@ -187,3 +187,20 @@ To unlock full capabilities, the agents rely on these backend integrations:
 - **`Stitch`**: Used by UX/UI Designer (`@ux-ui`) to generate Design Systems and Visual Prototypes from text prompts. Frontend Developer (`@frontend-dev`) has read-only access to inspect screen details.
 
 *(These MCP services run automatically via `npx` in the background as requested.)*
+
+---
+
+## 🛡️ System-Wide Quality & Safety Gates (Automated Lock Enforcement)
+
+To prevent AI hallucination, shortcutting, or silent fallback (YOLO mode), the workspace enforces **7 Automated Quality Gates** at the script level (`lock_manager.py` and `brain_linter.py`):
+
+| Agent Role | Gate Name | Automated Validation Rules (`lock_manager.py` & `brain_linter.py`) |
+| :--- | :--- | :--- |
+| **`@ux-ui`** | **Stitch Gate** | `design_spec.md` MUST contain a valid `Stitch Project ID` generated via Google Stitch MCP. Placeholder IDs or text-only fallbacks are automatically blocked upon lock release. |
+| **`@qa-automate`** | **Playwright Gate** | For UI tasks (`design_spec.md` exists), `test_execution.md` MUST contain evidence of Playwright MCP browser E2E test execution. CLI unit test substitution is blocked. |
+| **`@security`** | **Security Status Gate** | `security_audit.md` MUST contain an explicit `[STATUS: PASSED]` or `[STATUS: FAILED]` header. |
+| **`@solution-architect`** | **Architect Impact Gate** | `architecture_impact.md` MUST contain a non-empty Blast Radius / Symbol Impact Analysis section powered by GitNexus. |
+| **`@sa`** | **SA Spec & Contract Gate** | Both `system_spec.md` AND `api_contract.yaml` MUST exist, with `api_contract.yaml` passing strict YAML syntax parsing. |
+| **`@backend-dev` & `@frontend-dev`** | **Dev Changelog Gate** | Lock release is automatically blocked unless a corresponding changelog entry is written in `second-brain/10-archives/changelog/`. Devs must also verify Blast Radius via `@nexus-librarian` before editing existing code. |
+| **`@nexus-librarian`** | **Information Provider Gate** | MUST format all file locations as workspace-relative paths (never absolute system paths) and auto-trigger `npx gitnexus analyze` if the index becomes stale. |
+
