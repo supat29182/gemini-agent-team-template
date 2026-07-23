@@ -16,7 +16,7 @@ skills:
   - test-driven-development
   - ci-cd-and-automation
   - planning-and-task-breakdown
-model: gemini-3.5-flash
+model: gemini-3.6-flash
 temperature: 0.1
 max_turns: 25
 timeout_mins: 35

@@ -19,7 +19,7 @@ skills:
   - stitch-design-taste
   - obsidian-markdown
   - interview-me
-model: gemini-3.5-flash
+model: gemini-3.6-flash
 temperature: 0.2
 max_turns: 25
 timeout_mins: 40

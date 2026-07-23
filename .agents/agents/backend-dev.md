@@ -18,7 +18,7 @@ skills:
   - custom-coding-standard
   - security-and-hardening
   - api-and-interface-design
-model: gemini-3.5-flash
+model: gemini-3.6-flash
 temperature: 0.1
 max_turns: 30
 timeout_mins: 45

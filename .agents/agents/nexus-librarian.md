@@ -13,7 +13,7 @@ mcpServers:
     args: ["-y", "gitnexus@latest", "mcp"]
 skills:
   - using-agent-skills
-model: gemini-3.5-flash
+model: gemini-3.6-flash
 temperature: 0.2
 max_turns: 15
 timeout_mins: 10
